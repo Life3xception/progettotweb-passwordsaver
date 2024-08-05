@@ -24,13 +24,15 @@ public class PoolingPersistenceManager {
 
     private PoolingPersistenceManager() {
         try {
-            Class.forName("org.postgresql.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres?currentSchema=rpgpc");
-            config.setUsername("jakarta");
-            config.setPassword("jakarta");
-            config.addDataSourceProperty("dataSourceClassName", "org.postgresql.ds.PGSimpleDataSource");
-            config.addDataSourceProperty("maximumPoolSize", "25");
+            config.setJdbcUrl("jdbc:mysql://localhost:3306/passwordsaver");
+            config.setUsername("admin");
+            config.setPassword("admin");
+            config.setDriverClassName("com.mysql.jdbc.Driver");
+            config.addDataSourceProperty("cachePrepStmts", "true");
+            config.addDataSourceProperty("prepStmtCacheSize", "250");
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
             dataSource = new HikariDataSource(config);
         } catch (ClassNotFoundException ex) {
