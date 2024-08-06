@@ -24,18 +24,18 @@ public class PoolingPersistenceManager {
 
     private PoolingPersistenceManager() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:mysql://localhost:3306/passwordsaver");
-            config.setUsername("admin");
-            config.setPassword("admin");
-            config.setDriverClassName("com.mysql.jdbc.Driver");
+            config.setJdbcUrl("jdbc:mysql://localhost:3306/PasswordSaver");
+            config.setUsername("root");
+            config.setPassword("4321test");
+            //config.setDriverClassName("com.mysql.jdbc.Driver");
             config.addDataSourceProperty("cachePrepStmts", "true");
             config.addDataSourceProperty("prepStmtCacheSize", "250");
             config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
             dataSource = new HikariDataSource(config);
-        } catch (ClassNotFoundException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

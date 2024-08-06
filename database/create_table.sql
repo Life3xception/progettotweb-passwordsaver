@@ -25,7 +25,7 @@ CREATE TABLE Users (
     IdUser INT NOT NULL AUTO_INCREMENT,
     Email VARCHAR(100) NOT NULL UNIQUE,
     Username VARCHAR(100) NOT NULL UNIQUE, -- non so se ha senso
-    Password VARCHAR(55) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
+    Password VARCHAR(75) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
     IdUserType INT NOT NULL,
     Validity BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (IdUser),
@@ -50,7 +50,7 @@ CREATE TABLE Services (
 
 CREATE TABLE Passwords (
     IdPassword INT NOT NULL AUTO_INCREMENT,
-    Password VARCHAR(55) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt 
+    Password VARCHAR(75) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
     IdUser INT NOT NULL,
     IdService INT NOT NULL,
     PassPhrase VARCHAR(200) NOT NULL,
