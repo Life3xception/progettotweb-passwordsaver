@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 import passwordsaver.progettotwebpasswordsaver.dbmodel.LoginManagerDB;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(name = "Login-Servlet",
-            urlPatterns = {LoginService.LOGIN_PATH, LoginService.LOGOUT_PATH})
+            urlPatterns = {Routes.LOGIN, Routes.LOGOUT})
 public class LoginServlet extends HttpServlet {
 
     public void init() {
@@ -35,7 +36,7 @@ public class LoginServlet extends HttpServlet {
         boolean error = true;
         String errorMessage = "";
 
-        if(request.getServletPath().equals(LoginService.LOGIN_PATH)) {
+        if(request.getServletPath().equals(Routes.LOGIN)) {
             // return the login status
             operation = "status";
             username = LoginService.getCurrentLogin(request.getSession());
@@ -45,7 +46,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 errorMessage = "No user logged in.";
             }
-        } else if (request.getServletPath().equals(LoginService.LOGOUT_PATH)) {
+        } else if (request.getServletPath().equals(Routes.LOGOUT)) {
             operation = "logout";
             username = LoginService.getCurrentLogin(request.getSession());
 
@@ -79,7 +80,7 @@ public class LoginServlet extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // POST accepts only /login to perform log in
 
-        if(request.getServletPath().equals(LoginService.LOGIN_PATH)) {
+        if(request.getServletPath().equals(Routes.LOGIN)) {
             response.setContentType("application/json");
 
             // retrieve the object passed in the POST request

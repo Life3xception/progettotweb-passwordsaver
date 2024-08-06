@@ -4,8 +4,6 @@ import jakarta.servlet.http.HttpSession;
 
 public class LoginService {
     private final static String SESSION_USER_KEY = "user";
-    public final static String LOGIN_PATH = "/login";
-    public final static String LOGOUT_PATH = "/logout";
 
     /* Restituisce lo username dell'utente che ha fatto log in in questa sessione
      * o la stringa vuota se un utente siffatto non esiste
