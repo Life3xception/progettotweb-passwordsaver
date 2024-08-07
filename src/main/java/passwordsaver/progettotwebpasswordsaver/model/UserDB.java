@@ -1,6 +1,4 @@
-package passwordsaver.progettotwebpasswordsaver.dbmodel;
-
-import com.mysql.cj.protocol.Resultset;
+package passwordsaver.progettotwebpasswordsaver.model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

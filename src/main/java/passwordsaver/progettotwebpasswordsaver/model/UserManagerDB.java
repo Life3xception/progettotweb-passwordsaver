@@ -1,4 +1,4 @@
-package passwordsaver.progettotwebpasswordsaver.dbmodel;
+package passwordsaver.progettotwebpasswordsaver.model;
 
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 

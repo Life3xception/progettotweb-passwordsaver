@@ -1,4 +1,4 @@
-package passwordsaver.progettotwebpasswordsaver.dbmodel;
+package passwordsaver.progettotwebpasswordsaver.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passwordsaver.progettotwebpasswordsaver.db.PasswordEncoder;
