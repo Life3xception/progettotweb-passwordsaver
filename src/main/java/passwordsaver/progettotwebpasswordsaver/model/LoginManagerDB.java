@@ -1,7 +1,7 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import passwordsaver.progettotwebpasswordsaver.db.PasswordEncoder;
+import passwordsaver.progettotwebpasswordsaver.encryption.BcryptEncoder;
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ public class LoginManagerDB {
 
     private LoginManagerDB() {
         persistence = PoolingPersistenceManager.getPersistenceManager();
-        encoder = PasswordEncoder.getPasswordEncoder();
+        encoder = BcryptEncoder.getPasswordEncoder();
     }
 
     public static LoginManagerDB getManager() {

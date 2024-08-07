@@ -27,6 +27,8 @@ CREATE TABLE Users (
     Username VARCHAR(100) NOT NULL UNIQUE, -- VA UNIQUE PERCHE' SI USA PER LE SESSION!!!
     Password VARCHAR(75) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
     IdUserType INT NOT NULL,
+    EncodedSecretKey VARCHAR(100) NOT NULL,
+    InitializationVector VARCHAR(100) NOT NULL,
     Validity BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (IdUser),
     CONSTRAINT FK_Users_UserTypes FOREIGN KEY (IdUserType) REFERENCES `UserTypes`(IdUserType)
