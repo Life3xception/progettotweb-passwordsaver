@@ -43,14 +43,17 @@ CREATE TABLE Services (
     IdService INT NOT NULL AUTO_INCREMENT,
     Name VARCHAR(100) NOT NULL,
     IdServiceType INT NOT NULL,
+    IdUser INT NOT NULL,
     Validity BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (IdService),
-    CONSTRAINT FK_Services_ServiceTypes FOREIGN KEY IdServiceType REFERENCES `ServiceTypes`(IdServiceType)
+    CONSTRAINT FK_Services_ServiceTypes FOREIGN KEY (IdServiceType) REFERENCES `ServiceTypes`(IdServiceType),
+    CONSTRAINT FK_Services_Users FOREIGN KEY (IdUser) REFERENCES `Users`(IdUser)
 );
 
 CREATE TABLE Passwords (
     IdPassword INT NOT NULL AUTO_INCREMENT,
     Password VARCHAR(75) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
+    Email VARCHAR(100) NOT NULL,
     IdUser INT NOT NULL,
     IdService INT NOT NULL,
     PassPhrase VARCHAR(200) NOT NULL,

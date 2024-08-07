@@ -21,12 +21,16 @@ public class AuthFilter extends HttpFilter {
             return;
         }
 
+        // check if the user is logged in
         if (!LoginService.getCurrentLogin(req.getSession()).isEmpty()) {
             chain.doFilter(req, res);
             return;
         }
 
+        // if the urls are not LOGIN nor LOGOUT and the user is not logged in
+        // we return 401 and STOP the chain filter (otherwise we get errors,
+        // because we already send an error in the response!!!)
         res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        chain.doFilter(req, res);
+        //chain.doFilter(req, res);
     }
 }
