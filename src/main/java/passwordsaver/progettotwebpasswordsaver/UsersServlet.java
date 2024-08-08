@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,12 +15,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 @WebServlet(name = "Users-Servlet",
             urlPatterns = {
                 Routes.USERS,
                 Routes.USERS_ADDUSER,
-                Routes.USERS_UPDATEUSER
+                Routes.USERS_UPDATEUSER,
+                Routes.USERS_DELETEUSER
             })
 public class UsersServlet extends HttpServlet {
     private Gson gson;
@@ -76,7 +79,7 @@ public class UsersServlet extends HttpServlet {
                         "characters long and contain at least one lowercase letter, at least one uppercase letter," +
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
             } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
@@ -125,7 +128,7 @@ public class UsersServlet extends HttpServlet {
             } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
             } else if(!UserManagerDB.getManager().updateUser(u)) {
@@ -139,6 +142,38 @@ public class UsersServlet extends HttpServlet {
                     }
                     // it will be the client to manage the redirect to login page
                 }
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getServletPath().equals(Routes.USERS_DELETEUSER)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username);
+            boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idUser")) {
+                int idUser = Integer.parseInt(pars.get("idUser")[0]);
+
+                if(!UserManagerDB.getManager().userExists(idUser)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+                } else if(UserManagerDB.getManager().getUser(idUser).getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not delete another user.");
+                } else if(!UserManagerDB.getManager().deleteUser(idUser)) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                } else {
+                    // if the user was not admin, he deleted its account, so after removing the user
+                    // we have to destroy the session
+                    if(!isAdmin && !LoginService.doLogOut(request.getSession(), username))
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

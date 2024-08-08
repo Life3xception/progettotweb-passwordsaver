@@ -130,7 +130,6 @@ public class PasswordsServlet extends HttpServlet {
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(request.getServletPath().equals(Routes.PASSWORDS_DELETEPASSWORD)) {
             response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
 
             // retrieving of the parameters coming from the querystring
@@ -147,7 +146,7 @@ public class PasswordsServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

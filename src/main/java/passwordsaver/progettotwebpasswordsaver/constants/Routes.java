@@ -10,4 +10,5 @@ public class Routes {
     public static final String USERS = "/users";
     public static final String USERS_ADDUSER = "/users/adduser";
     public static final String USERS_UPDATEUSER = "/users/updateuser";
+    public static final String USERS_DELETEUSER = "/users/deleteuser";
 }

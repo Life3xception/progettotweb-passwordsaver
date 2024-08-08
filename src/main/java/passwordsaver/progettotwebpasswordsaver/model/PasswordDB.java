@@ -94,6 +94,7 @@ public class PasswordDB {
         return ret;
     }
 
+    // FIXME: aggiungere validityCheck come fatto per UserDB
     public static PasswordDB loadPassword(int idPwd, Connection conn) throws SQLException {
         PasswordDB p = null;
         String sql = "SELECT * FROM Passwords WHERE IdPassword = ? AND Validity = TRUE";

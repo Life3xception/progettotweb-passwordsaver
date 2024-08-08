@@ -148,4 +148,18 @@ public class UserManagerDB {
 
         return updated;
     }
+
+    public boolean deleteUser(int idUser) {
+        boolean deleted = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserDB user = UserDB.loadUser(idUser, conn, true);
+            if(user != null)
+                deleted = user.delete(conn);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - deleteUser: " + ex.getMessage());
+        }
+
+        return deleted;
+    }
 }

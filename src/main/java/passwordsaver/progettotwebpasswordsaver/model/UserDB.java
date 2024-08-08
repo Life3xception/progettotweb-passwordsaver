@@ -233,4 +233,16 @@ public class UserDB {
 
         return ret;
     }
+
+    public boolean delete(Connection conn) throws SQLException {
+        boolean deleted = false;
+        String sql = "UPDATE Users SET Validity = FALSE WHERE IdUser = ? AND Validity = TRUE";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            deleted = st.executeUpdate() > 0;
+        }
+
+        return deleted;
+    }
 }
