@@ -8,9 +8,7 @@ import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import jakarta.servlet.annotation.WebServlet;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
-import passwordsaver.progettotwebpasswordsaver.model.LoginManagerDB;
-import passwordsaver.progettotwebpasswordsaver.model.UserDB;
-import passwordsaver.progettotwebpasswordsaver.model.UserManagerDB;
+import passwordsaver.progettotwebpasswordsaver.model.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +18,7 @@ import java.util.ArrayList;
 @WebServlet(name = "Users-Servlet",
             urlPatterns = {
                 Routes.USERS,
+                Routes.USERS_ADDUSER,
                 Routes.USERS_UPDATEUSER
             })
 public class UsersServlet extends HttpServlet {
@@ -38,6 +37,58 @@ public class UsersServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(users));
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(request.getServletPath().equals(Routes.USERS_ADDUSER)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the UserDB class, so we perform the mapping
+            // using the Gson library
+            UserDB u = gson.fromJson(in, UserDB.class);
+
+            // first we check if the user is admin
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(u == null) { // input validation
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email is required.");
+            } else if(!u.getEmail().matches(Regex.EMAIL_PATTERN)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+            } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
+            } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is required.");
+            } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
+            } else if(u.getPassword() == null || u.getPassword().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
+            } else if(!u.getPassword().matches(Regex.PASSWORD_PATTERN)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password must be from 8 to 50 " +
+                        "characters long and contain at least one lowercase letter, at least one uppercase letter," +
+                        " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
+            } else if(u.getIdUserType() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type is required.");
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
+            } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
+                // retrieving the user inserted to return it to as response
+                u = UserManagerDB.getManager().getUser(u.getIdUser());
+                if(u != null)
+                    out.println(gson.toJson(u));
+                else
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the user after inserting it.");
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

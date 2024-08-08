@@ -8,5 +8,6 @@ public class Routes {
     public static final String PASSWORDS_UPDATEPASSWORD = "/passwords/updatepassword";
     public static final String PASSWORDS_DELETEPASSWORD = "/passwords/deletepassword";
     public static final String USERS = "/users";
+    public static final String USERS_ADDUSER = "/users/adduser";
     public static final String USERS_UPDATEUSER = "/users/updateuser";
 }

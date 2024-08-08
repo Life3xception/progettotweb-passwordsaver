@@ -1,6 +1,7 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
 import passwordsaver.progettotwebpasswordsaver.encryption.BcryptEncoder;
@@ -68,6 +69,19 @@ public class UserManagerDB {
         }
 
         return ret;
+    }
+
+    public boolean checkIfUserIsAdmin(String username) {
+        boolean isAdmin = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserDB u = UserDB.loadUserByUsername(username, conn, true);
+            isAdmin = u.getIdUserType() == Config.adminIdUserType;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - userExists: "  + ex.getMessage());
+        }
+
+        return isAdmin;
     }
 
     public boolean checkIfEmailExists(int idUser, String email) {

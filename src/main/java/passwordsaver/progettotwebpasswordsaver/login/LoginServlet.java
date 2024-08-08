@@ -120,23 +120,18 @@ public class LoginServlet extends HttpServlet {
                 } else {
                     errorMessage = "Invalid credentials.";
                 }
-
-                // creation of response JsonObject
-                result.addProperty("operation", operation);
-                result.addProperty("username", username);
-                result.addProperty("success", success);
-                result.addProperty("error", error);
-                result.addProperty("errorMessage", errorMessage);
-
-                // return of response object
-                response.getWriter().println(result);
             }
+
+            // creation of response JsonObject
+            result.addProperty("operation", operation);
+            result.addProperty("username", username);
+            result.addProperty("success", success);
+            result.addProperty("error", error);
+            result.addProperty("errorMessage", errorMessage);
+
+            // return of response object
+            response.getWriter().println(result);
         } else
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    }
-
-    public void destroy() {
-        // TODO: capire se il posto giusto dove farlo
-        PoolingPersistenceManager.getPersistenceManager().terminateDataSource();
     }
 }
