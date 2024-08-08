@@ -27,10 +27,11 @@ public class UserManagerDB {
         return manager;
     }
 
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllUsers
     public ArrayList<UserDB> getAllUsers() {
         ArrayList<UserDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = UserDB.loadAllUsers(conn);
+            ret = UserDB.loadAllUsers(conn, true);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getAllUsers: " + ex.getMessage());
         }

@@ -19,10 +19,11 @@ public class PasswordManagerDB {
         return manager;
     }
 
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllPasswords
     public ArrayList<PasswordDB> getAllPasswords(String username) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = PasswordDB.loadAllPasswords(username, conn);
+            ret = PasswordDB.loadAllPasswords(username, conn, true);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllPasswords: " + ex.getMessage());
         }
@@ -33,7 +34,7 @@ public class PasswordManagerDB {
         PasswordDB p = null;
 
         try (Connection conn = persistence.getConnection()) {
-            p = PasswordDB.loadPassword(idPwd, conn);
+            p = PasswordDB.loadPassword(idPwd, conn, true);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getPassword: " + ex.getMessage());
         }
@@ -46,7 +47,7 @@ public class PasswordManagerDB {
 
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username).getIdUser();
-            ret = PasswordDB.loadPassword(idPwd, conn).getIdUser() == idUser;
+            ret = PasswordDB.loadPassword(idPwd, conn, true).getIdUser() == idUser;
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - userIsOwnerOfPassword: "  + ex.getMessage());
         }
@@ -58,7 +59,7 @@ public class PasswordManagerDB {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = PasswordDB.loadPassword(idPwd, conn) != null;
+            ret = PasswordDB.loadPassword(idPwd, conn, true) != null;
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - passwordExists: "  + ex.getMessage());
         }
@@ -94,7 +95,7 @@ public class PasswordManagerDB {
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {
-            PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn);
+            PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn, true);
             if(pwd != null)
                 deleted = pwd.delete(conn);
         } catch (SQLException ex) {

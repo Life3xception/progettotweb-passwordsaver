@@ -77,9 +77,11 @@ public class UserDB {
         );
     }
 
-    public static ArrayList<UserDB> loadAllUsers(Connection conn) throws SQLException {
+    public static ArrayList<UserDB> loadAllUsers(Connection conn, boolean validityCheck) throws SQLException {
         ArrayList<UserDB> ret = new ArrayList<>();
-        String sql = "SELECT * FROM Users WHERE Validity = TRUE";
+        String sql = "SELECT * FROM Users WHERE";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             ResultSet rs = st.executeQuery();

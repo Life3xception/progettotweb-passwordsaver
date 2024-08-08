@@ -40,9 +40,12 @@ public class ServiceDB {
         return validity;
     }
 
-    public static ServiceDB loadService(int idService, Connection conn) throws SQLException {
+    public static ServiceDB loadService(int idService, Connection conn, boolean validityCheck) throws SQLException {
         ServiceDB s = null;
-        String sql = "SELECT * FROM Services WHERE IdService = ? AND Validity = TRUE";
+        String sql = "SELECT * FROM Services WHERE IdService = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
+
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idService);
             ResultSet rs = st.executeQuery();

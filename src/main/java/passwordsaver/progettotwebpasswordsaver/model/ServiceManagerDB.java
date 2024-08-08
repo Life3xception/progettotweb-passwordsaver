@@ -22,7 +22,7 @@ public class ServiceManagerDB {
         ServiceDB s = null;
 
         try (Connection conn = persistence.getConnection()) {
-            s = ServiceDB.loadService(idService, conn);
+            s = ServiceDB.loadService(idService, conn, true);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getService: "  + ex.getMessage());
         }
@@ -35,7 +35,7 @@ public class ServiceManagerDB {
 
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username).getIdUser();
-            ret = ServiceDB.loadService(idService, conn).getIdUser() == idUser;
+            ret = ServiceDB.loadService(idService, conn, true).getIdUser() == idUser;
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - userIsOwnerOfService: "  + ex.getMessage());
         }

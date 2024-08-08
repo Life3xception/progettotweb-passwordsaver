@@ -77,9 +77,12 @@ public class PasswordDB {
         );
     }
 
-    public static ArrayList<PasswordDB> loadAllPasswords(String username, Connection conn) throws SQLException {
+    public static ArrayList<PasswordDB> loadAllPasswords(String username, Connection conn, boolean validityCheck) throws SQLException {
         ArrayList<PasswordDB> ret = new ArrayList<>();
-        String sql = "SELECT * FROM Passwords WHERE IdUser = ? AND Validity = TRUE";
+        String sql = "SELECT * FROM Passwords WHERE IdUser = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
+
         int idUser = UserDB.loadUserByUsername(username, conn, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
@@ -94,10 +97,11 @@ public class PasswordDB {
         return ret;
     }
 
-    // FIXME: aggiungere validityCheck come fatto per UserDB
-    public static PasswordDB loadPassword(int idPwd, Connection conn) throws SQLException {
+    public static PasswordDB loadPassword(int idPwd, Connection conn, boolean validityCheck) throws SQLException {
         PasswordDB p = null;
-        String sql = "SELECT * FROM Passwords WHERE IdPassword = ? AND Validity = TRUE";
+        String sql = "SELECT * FROM Passwords WHERE IdPassword = ?";
+        if(validityCheck)
+                sql += " AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idPwd);
