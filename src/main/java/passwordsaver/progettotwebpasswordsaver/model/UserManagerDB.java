@@ -3,7 +3,6 @@ package passwordsaver.progettotwebpasswordsaver.model;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
-import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
 import passwordsaver.progettotwebpasswordsaver.encryption.BcryptEncoder;
 
 import java.sql.Connection;
@@ -26,6 +25,8 @@ public class UserManagerDB {
         }
         return manager;
     }
+
+    /***** USERS METHODS *****/
 
     // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllUsers
     public ArrayList<UserDB> getAllUsers() {
@@ -113,18 +114,6 @@ public class UserManagerDB {
         return ret;
     }
 
-    public boolean checkIfUserTypeExists(int idUserType) {
-        boolean ret = false;
-
-        try (Connection conn = persistence.getConnection()) {
-            ret = UserTypeDB.loadUserType(idUserType, conn, true) != null;
-        } catch (SQLException ex) {
-            System.out.println("UserManagerDB - checkIfUserTypeExists: "  + ex.getMessage());
-        }
-
-        return ret;
-    }
-
     // Returns the id of the added user
     public int addNewUser(UserDB user) {
         int ret = -1;
@@ -159,6 +148,92 @@ public class UserManagerDB {
                 deleted = user.delete(conn);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - deleteUser: " + ex.getMessage());
+        }
+
+        return deleted;
+    }
+
+    /***** USERTYPES METHODS *****/
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllUsers
+    public ArrayList<UserTypeDB> getAllUserTypes() {
+        ArrayList<UserTypeDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserTypeDB.loadAllUserTypes(conn, true);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getAllUserTypes: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    public UserTypeDB getUserType(int idUserType) {
+        UserTypeDB ut = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            ut = UserTypeDB.loadUserType(idUserType, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getUserType: " + ex.getMessage());
+        }
+
+        return ut;
+    }
+
+    public boolean checkIfUserTypeExists(int idUserType) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserTypeDB.loadUserType(idUserType, conn, true) != null;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - checkIfUserTypeExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean checkIfUserTypeNameExists(String name) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserTypeDB.findIfNameExists(name, conn);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - checkIfUserTypeNameExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public int addNewUserType(UserTypeDB ut) {
+        int ret = -1;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = ut.saveAsNew(conn);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - addNewUserType: " + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean updateUserType(UserTypeDB ut) {
+        boolean updated = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            updated = ut.saveUpdate(conn);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - updateUserType: " + ex.getMessage());
+        }
+
+        return updated;
+    }
+
+    public boolean deleteUserType(int idUserType) {
+        boolean deleted = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserTypeDB ut = UserTypeDB.loadUserType(idUserType, conn, true);
+            if(ut != null)
+                deleted = ut.delete(conn);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - deleteUserType: " + ex.getMessage());
         }
 
         return deleted;

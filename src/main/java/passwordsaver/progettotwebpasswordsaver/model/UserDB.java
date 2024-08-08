@@ -64,30 +64,30 @@ public class UserDB {
         return validity;
     }
 
-    private static UserDB fromResultSet(ResultSet rs) throws SQLException {
+    private static UserDB fromResultSet(ResultSet rs, boolean limited) throws SQLException {
         return new UserDB(
                 rs.getInt("IdUser"),
                 rs.getString("Username"),
                 rs.getString("Email"),
-                rs.getString("Password"),
+                limited ? "" : rs.getString("Password"),
                 rs.getInt("IdUserType"),
-                rs.getString("EncodedSecretKey"),
-                rs.getString("InitializationVector"),
+                limited ? "" : rs.getString("EncodedSecretKey"),
+                limited ? "" : rs.getString("InitializationVector"),
                 rs.getBoolean("Validity")
         );
     }
 
     public static ArrayList<UserDB> loadAllUsers(Connection conn, boolean validityCheck) throws SQLException {
         ArrayList<UserDB> ret = new ArrayList<>();
-        String sql = "SELECT * FROM Users WHERE";
+        String sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users";
         if(validityCheck)
-            sql += " AND Validity = TRUE";
+            sql += " WHERE Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             ResultSet rs = st.executeQuery();
 
             while(rs.next()) {
-                ret.add(fromResultSet(rs));
+                ret.add(fromResultSet(rs, true));
             }
         }
         return ret;
@@ -95,7 +95,7 @@ public class UserDB {
 
     public static UserDB loadUser(int id, Connection conn, boolean validityCheck) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT * FROM Users WHERE IdUser = ?";
+        String sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE IdUser = ?";
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
@@ -104,7 +104,7 @@ public class UserDB {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
-                u = fromResultSet(rs);
+                u = fromResultSet(rs, true);
             }
         }
         return u;
@@ -112,7 +112,7 @@ public class UserDB {
 
     public static UserDB loadUserByUsername(String username, Connection conn, boolean validityCheck) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT * FROM Users WHERE Username = ?";
+        String sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE Username = ?";
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
@@ -121,7 +121,7 @@ public class UserDB {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
-                u = fromResultSet(rs);
+                u = fromResultSet(rs, true);
             }
         }
 
@@ -131,7 +131,7 @@ public class UserDB {
     // The validityCheck tells if the load must be done with the validity=TRUE check or not
     public static UserDB loadUserByEmail(String email, Connection conn, boolean validityCheck) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT * FROM Users WHERE Email = ?";
+        String sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE Email = ?";
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
@@ -140,7 +140,7 @@ public class UserDB {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
-                u = fromResultSet(rs);
+                u = fromResultSet(rs, true);
             }
         }
 

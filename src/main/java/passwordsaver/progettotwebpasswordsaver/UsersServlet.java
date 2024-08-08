@@ -20,9 +20,15 @@ import java.util.Map;
 @WebServlet(name = "Users-Servlet",
             urlPatterns = {
                 Routes.USERS,
+                Routes.USERS_GETUSER,
                 Routes.USERS_ADDUSER,
                 Routes.USERS_UPDATEUSER,
-                Routes.USERS_DELETEUSER
+                Routes.USERS_DELETEUSER,
+                Routes.USERTYPES,
+                Routes.USERTYPES_GETUSERTYPE,
+                Routes.USERTYPES_ADDUSERTYPE,
+                Routes.USERTYPES_UPDATEUSERTYPE,
+                Routes.USERTYPES_DELETEUSERTYPE
             })
 public class UsersServlet extends HttpServlet {
     private Gson gson;
@@ -44,6 +50,68 @@ public class UsersServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(users));
+        } else if(request.getServletPath().equals(Routes.USERS_GETUSER)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username);
+            boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idUser")) {
+                int idUser = Integer.parseInt(pars.get("idUser")[0]);
+
+                if(!UserManagerDB.getManager().userExists(idUser)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+                } else {
+                    UserDB user = UserManagerDB.getManager().getUser(idUser);
+
+                    if(user.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of another user.");
+                    }
+
+                    out.println(gson.toJson(user));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User must be provided.");
+            }
+        } else if(request.getServletPath().equals(Routes.USERTYPES)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            // retrieving all the usertypes
+            ArrayList<UserTypeDB> userTypes = UserManagerDB.getManager().getAllUserTypes();
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(userTypes));
+        } else if(request.getServletPath().equals(Routes.USERTYPES_GETUSERTYPE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idUserType")) {
+                int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
+
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+                } else {
+                    UserTypeDB userType = UserManagerDB.getManager().getUserType(idUserType);
+                    out.println(gson.toJson(userType));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type must be provided.");
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -93,6 +161,36 @@ public class UsersServlet extends HttpServlet {
                     out.println(gson.toJson(u));
                 else
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the user after inserting it.");
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else if(request.getServletPath().equals(Routes.USERTYPES_ADDUSERTYPE)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the UserTypeDB class, so we perform the mapping
+            // using the Gson library
+            UserTypeDB ut = gson.fromJson(in, UserTypeDB.class);
+
+            // first we check if the user is admin
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(ut == null) { // input validation
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(ut.getName() == null || ut.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is required.");
+            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type already exists.");
+            } else if(UserManagerDB.getManager().addNewUserType(ut) > 0) {
+                // retrieving the usertype inserted to return it to as response
+                ut = UserManagerDB.getManager().getUserType(ut.getIdUserType());
+                if(ut != null)
+                    out.println(gson.toJson(ut));
+                else
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the user type after inserting it.");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -147,6 +245,32 @@ public class UsersServlet extends HttpServlet {
                     // it will be the client to manage the redirect to login page
                 }
             }
+        } else if(request.getServletPath().equals(Routes.USERTYPES_UPDATEUSERTYPE)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the UserTypeDB class, so we perform the mapping
+            // using the Gson library
+            UserTypeDB ut = gson.fromJson(in, UserTypeDB.class);
+
+            // first we check if the user is admin
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(ut == null) { // input validation
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(ut.getIdUserType() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(ut.getIdUserType())) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+            } else if(ut.getName() == null || ut.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is required.");
+            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type name already used.");
+            } else if(!UserManagerDB.getManager().updateUserType(ut)) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -155,7 +279,6 @@ public class UsersServlet extends HttpServlet {
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getServletPath().equals(Routes.USERS_DELETEUSER)) {
             response.setContentType("application/json");
-            PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
@@ -178,6 +301,27 @@ public class UsersServlet extends HttpServlet {
                 }
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User must be provided.");
+            }
+        } else if(request.getServletPath().equals(Routes.USERTYPES_DELETEUSERTYPE)) {
+            response.setContentType("application/json");
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idUserType")) {
+                int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
+
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+                }  else if(!UserManagerDB.getManager().deleteUserType(idUserType)) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
