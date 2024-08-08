@@ -205,4 +205,16 @@ public class PasswordDB {
         }
         return ret;
     }
+
+    public boolean delete(Connection conn) throws SQLException {
+        boolean deleted = false;
+        String sql = "UPDATE Passwords SET Validity = FALSE WHERE IdPassword = ? AND Validity = TRUE";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idPassword);
+            deleted = st.executeUpdate() > 0;
+        }
+
+        return deleted;
+    }
 }

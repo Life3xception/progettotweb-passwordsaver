@@ -54,6 +54,18 @@ public class PasswordManagerDB {
         return ret;
     }
 
+    public boolean passwordExists(int idPwd) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = PasswordDB.loadPassword(idPwd, conn) != null;
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - passwordExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
     public int addNewPassword(PasswordDB pwd, String username) {
         int ret = -1;
 
@@ -76,5 +88,19 @@ public class PasswordManagerDB {
         }
 
         return updated;
+    }
+
+    public boolean deletePassword(int idPwd) {
+        boolean deleted = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn);
+            if(pwd != null)
+                deleted = pwd.delete(conn);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - deletePassword: " + ex.getMessage());
+        }
+
+        return deleted;
     }
 }
