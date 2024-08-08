@@ -35,6 +35,10 @@ public class UsersServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
 
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
             // retrieving all the users
             ArrayList<UserDB> users = UserManagerDB.getManager().getAllUsers();
 
