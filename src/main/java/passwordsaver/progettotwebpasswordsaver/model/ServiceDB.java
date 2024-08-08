@@ -43,18 +43,20 @@ public class ServiceDB {
     public static ServiceDB loadService(int idService, Connection conn) throws SQLException {
         ServiceDB s = null;
         String sql = "SELECT * FROM Services WHERE IdService = ? AND Validity = TRUE";
-        PreparedStatement st = conn.prepareStatement(sql);
-        st.setInt(1, idService);
-        ResultSet rs = st.executeQuery();
-        if(rs.next()) {
-            s = new ServiceDB(
-                    rs.getInt("IdService"),
-                    rs.getString("Name"),
-                    rs.getInt("IdServiceType"),
-                    rs.getInt("IdUser"),
-                    rs.getBoolean("Validity")
-            );
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idService);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                s = new ServiceDB(
+                        rs.getInt("IdService"),
+                        rs.getString("Name"),
+                        rs.getInt("IdServiceType"),
+                        rs.getInt("IdUser"),
+                        rs.getBoolean("Validity")
+                );
+            }
         }
+
         return s;
     }
 }

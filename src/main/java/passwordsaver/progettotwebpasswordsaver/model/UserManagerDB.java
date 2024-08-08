@@ -28,8 +28,8 @@ public class UserManagerDB {
 
     public ArrayList<UserDB> getAllUsers() {
         ArrayList<UserDB> ret = new ArrayList<>();
-        try {
-            ret = UserDB.loadAllUsers(persistence.getConnection());
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserDB.loadAllUsers(conn);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getAllUsers: " + ex.getMessage());
         }
@@ -38,8 +38,10 @@ public class UserManagerDB {
 
     public UserDB getUser(int idUser) {
         UserDB u = null;
-        try {
-            u = UserDB.loadUser(idUser, persistence.getConnection());
+        // this is the try-with-resources, it allows to autoclose the resources
+        // specified in () if they implement the AutoClosable interface
+        try (Connection conn = persistence.getConnection()) {
+            u = UserDB.loadUser(idUser, conn);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUser: " + ex.getMessage());
         }
@@ -48,8 +50,8 @@ public class UserManagerDB {
 
     public UserDB getUserByUsername(String username) {
         UserDB u = null;
-        try {
-            u = UserDB.loadUserByUsername(username, persistence.getConnection());
+        try (Connection conn = persistence.getConnection()) {
+            u = UserDB.loadUserByUsername(username, conn);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUserByUsername: " + ex.getMessage());
         }
@@ -60,8 +62,8 @@ public class UserManagerDB {
     public int addNewUser(UserDB user) {
         int ret = -1;
 
-        try {
-            ret = user.saveAsNew(persistence.getConnection(), bcryptEncoder);
+        try (Connection conn = persistence.getConnection()) {
+            ret = user.saveAsNew(conn, bcryptEncoder);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - addNewUser: " + ex.getMessage());
         }
@@ -72,8 +74,8 @@ public class UserManagerDB {
     public boolean updateUser(UserDB user) {
         boolean updated = false;
 
-        try {
-            updated = user.saveUpdate(persistence.getConnection(), bcryptEncoder);
+        try (Connection conn = persistence.getConnection()) {
+            updated = user.saveUpdate(conn, bcryptEncoder);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - updateUser: " + ex.getMessage());
         }

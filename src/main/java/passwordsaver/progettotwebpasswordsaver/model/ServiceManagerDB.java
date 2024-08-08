@@ -2,6 +2,7 @@ package passwordsaver.progettotwebpasswordsaver.model;
 
 import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ServiceManagerDB {
@@ -20,8 +21,8 @@ public class ServiceManagerDB {
     public ServiceDB getService(int idService) {
         ServiceDB s = null;
 
-        try {
-            s = ServiceDB.loadService(idService, persistence.getConnection());
+        try (Connection conn = persistence.getConnection()) {
+            s = ServiceDB.loadService(idService, conn);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getService: "  + ex.getMessage());
         }
@@ -32,9 +33,9 @@ public class ServiceManagerDB {
     public boolean userIsOwnerOfService(int idService, String username) {
         boolean ret = false;
 
-        try {
+        try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username).getIdUser();
-            ret = ServiceDB.loadService(idService, persistence.getConnection()).getIdUser() == idUser;
+            ret = ServiceDB.loadService(idService, conn).getIdUser() == idUser;
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - userIsOwnerOfService: "  + ex.getMessage());
         }

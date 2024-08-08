@@ -20,7 +20,8 @@ import java.util.ArrayList;
 @WebServlet(name = "Passwords-Servlet",
             urlPatterns = {
                     Routes.PASSWORDS,
-                    Routes.PASSWORDS_ADDPASSWORD
+                    Routes.PASSWORDS_ADDPASSWORD,
+                    Routes.PASSWORDS_UPDATEPASSWORD
             })
 public class PasswordsServlet extends HttpServlet {
     private Gson gson;
@@ -64,7 +65,7 @@ public class PasswordsServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(p.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
-            } else if(!p.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
@@ -81,6 +82,41 @@ public class PasswordsServlet extends HttpServlet {
                 else
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the password after inserting it");
             } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(request.getServletPath().equals(Routes.PASSWORDS_UPDATEPASSWORD)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the PasswordDB class, so we perform the mapping
+            // using the Gson library
+            PasswordDB p = gson.fromJson(in, PasswordDB.class);
+
+            // input validation
+            if(p == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(p.getIdPassword() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password is required.");
+            } else if(!PasswordManagerDB.getManager().userIsOwnerOfPassword(p.getIdPassword(), username)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
+            } else if(p.getPassword().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
+            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+            } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
+            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+            } else if(!PasswordManagerDB.getManager().updatePassword(p, username)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {

@@ -28,16 +28,14 @@ public class LoginManagerDB {
 
     public boolean validateCredentials(String username, String password) {
         boolean result = false;
-
-        try {
-            // retrieve connection
-            Connection conn = persistence.getConnection();
-            // preparing of query
-            PreparedStatement st = conn.prepareStatement("""
+        String sql = """
                 SELECT * FROM Users
                 WHERE Username = ? AND Validity = TRUE
-                """);
+                """;
 
+        try (Connection conn = persistence.getConnection();
+                PreparedStatement st = conn.prepareStatement(sql)
+            ) {
             st.setString(1, username);
             ResultSet rs = st.executeQuery();
 

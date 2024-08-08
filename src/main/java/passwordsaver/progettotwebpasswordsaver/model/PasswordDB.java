@@ -1,12 +1,15 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
+import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class PasswordDB {
     private int idPassword;
@@ -74,18 +77,18 @@ public class PasswordDB {
         );
     }
 
-    public static ArrayList<PasswordDB> loadAllPasswords(Connection conn, String username) throws SQLException {
+    public static ArrayList<PasswordDB> loadAllPasswords(String username, Connection conn) throws SQLException {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         String sql = "SELECT * FROM Passwords WHERE IdUser = ? AND Validity = TRUE";
-        int idUser = UserDB.loadUserByUsername(conn, username).getIdUser();
+        int idUser = UserDB.loadUserByUsername(username, conn).getIdUser();
 
-        PreparedStatement st = conn.prepareStatement(sql);
-        st.setInt(1, idUser);
-        ResultSet rs = st.executeQuery();
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            ResultSet rs = st.executeQuery();
 
-        while(rs.next()) {
-            PasswordDB pwd = fromResultSet(rs);
-            ret.add(pwd);
+            while (rs.next()) {
+                ret.add(fromResultSet(rs));
+            }
         }
 
         return ret;
@@ -94,47 +97,112 @@ public class PasswordDB {
     public static PasswordDB loadPassword(int idPwd, Connection conn) throws SQLException {
         PasswordDB p = null;
         String sql = "SELECT * FROM Passwords WHERE IdPassword = ? AND Validity = TRUE";
-        PreparedStatement st = conn.prepareStatement(sql);
-        st.setInt(1, idPwd);
-        ResultSet rs = st.executeQuery();
-        if(rs.next()) {
-            p = fromResultSet(rs);
-        }
-        return p;
-    }
 
-    public int saveAsNew(String loggedUsername, Connection conn, BCryptPasswordEncoder passwordEncoder) throws SQLException {
-        String sql = "INSERT INTO Passwords (Password, Email, Username, IdUser, IdService, PassPhrase) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement st = conn.prepareStatement(sql);
-
-        // before adding the parameters, we have to retrieve the idUser from the username
-        // and to encrypt the password!
-        this.password = passwordEncoder.encode(this.password);
-        this.idUser = UserManagerDB.getManager().getUserByUsername(loggedUsername).getIdUser();
-
-        // now we can add the parameters to the statement
-        st.setString(1, password);
-        st.setString(2, email);
-        st.setString(3, username);
-        st.setInt(4, idUser);
-        st.setInt(5, idService);
-        st.setString(6, passPhrase); // TODO: needs to be validated?
-
-        if(st.executeUpdate() > 0) {
-            // The ID that was generated is maintained in the server on a per-connection basis.
-            // This means that the value returned by the function to a given client is the first
-            // AUTO_INCREMENT value generated for most recent statement affecting an AUTO_INCREMENT
-            // column by that client.
-            // So the value returned by LAST_INSERT_ID() is per user and is unaffected by other
-            // queries that might be running on the server from other users.
-            ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()");
-            if(rs.next()) {
-                idPassword = rs.getInt(1);
-                return idPassword;
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idPwd);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                p = fromResultSet(rs);
             }
         }
 
-        return -1; // means an error occurred during saving
+        return p;
+    }
+
+    public int saveAsNew(String loggedUsername, Connection conn) throws SQLException {
+        int ret = -1; // -1 means an error occurred during saving
+        String sql = "INSERT INTO Passwords (Password, Email, Username, IdUser, IdService, PassPhrase) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            // before adding the parameters, we have to retrieve the idUser from the username
+            // and to encrypt the password! To encrypt the password we have to recover the secretkey and the IV
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername);
+
+            try {
+                this.password = Base64.getEncoder().encodeToString(
+                        AesEncoder.do_AESEncryption(this.password,
+                                AesEncoder.getSecretKeyFromByteArray(Base64.getDecoder().decode(loggedUser.getEncodedSecretKey())),
+                                Base64.getDecoder().decode(loggedUser.getInitializationVector())
+                        ));
+            } catch (Exception ex) {
+                System.out.println("PasswordDB - saveAsNew: " + ex.getMessage());
+
+                // we return earlier than usual, so we must close the statement
+                // (autoclose will not be performed)
+                st.close();
+
+                return ret;
+            }
+
+            // now we can add the parameters to the statement
+            st.setString(1, password);
+            st.setString(2, email);
+            st.setString(3, username);
+            st.setInt(4, idUser);
+            st.setInt(5, idService);
+            st.setString(6, passPhrase); // TODO: needs to be validated?
+
+            if (st.executeUpdate() > 0) {
+                // The ID that was generated is maintained in the server on a per-connection basis.
+                // This means that the value returned by the function to a given client is the first
+                // AUTO_INCREMENT value generated for most recent statement affecting an AUTO_INCREMENT
+                // column by that client.
+                // So the value returned by LAST_INSERT_ID() is per user and is unaffected by other
+                // queries that might be running on the server from other users.
+                ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()");
+                if (rs.next()) {
+                    idPassword = rs.getInt(1);
+                    ret = idPassword;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    public boolean saveUpdate(Connection conn, String loggedUsername) throws SQLException {
+        boolean ret = false;
+        String sql = """
+                    UPDATE Passwords SET
+                    Password = ?,
+                    Email = ?,
+                    Username = ?,
+                    IdService = ?,
+                    PassPhrase = ?
+                    WHERE IdPassword = ? AND Validity = TRUE
+                """;
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            // before adding the parameters, we have to retrieve the idUser from the username
+            // and to encrypt the password! To encrypt the password we have to recover the secretkey
+            // and the initialization vector
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername);
+
+            try {
+                this.password = Base64.getEncoder().encodeToString(
+                        AesEncoder.do_AESEncryption(this.password,
+                                AesEncoder.getSecretKeyFromByteArray(Base64.getDecoder().decode(loggedUser.getEncodedSecretKey())),
+                                Base64.getDecoder().decode(loggedUser.getInitializationVector())
+                        ));
+            } catch (Exception ex) {
+                System.out.println("PasswordDB - saveAsNew: " + ex.getMessage());
+
+                // we return earlier than usual, so we must close the statement
+                // (autoclose will not be performed)
+                st.close();
+
+                return ret;
+            }
+
+            st.setString(1, password);
+            st.setString(2, email);
+            st.setString(3, username);
+            st.setInt(4, idService);
+            st.setString(5, passPhrase);
+            st.setInt(6, idPassword);
+            ret = st.executeUpdate() > 0;
+        }
+        return ret;
     }
 }
