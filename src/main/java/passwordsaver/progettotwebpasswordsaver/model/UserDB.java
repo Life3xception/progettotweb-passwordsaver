@@ -91,9 +91,11 @@ public class UserDB {
         return ret;
     }
 
-    public static UserDB loadUser(int id, Connection conn) throws SQLException {
+    public static UserDB loadUser(int id, Connection conn, boolean validityCheck) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT * FROM Users WHERE IdUser = ? AND Validity = TRUE";
+        String sql = "SELECT * FROM Users WHERE IdUser = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, id);
@@ -106,12 +108,33 @@ public class UserDB {
         return u;
     }
 
-    public static UserDB loadUserByUsername(String username, Connection conn) throws SQLException {
+    public static UserDB loadUserByUsername(String username, Connection conn, boolean validityCheck) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT * FROM Users WHERE Username = ? AND Validity = TRUE";
+        String sql = "SELECT * FROM Users WHERE Username = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, username);
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                u = fromResultSet(rs);
+            }
+        }
+
+        return u;
+    }
+
+    // The validityCheck tells if the load must be done with the validity=TRUE check or not
+    public static UserDB loadUserByEmail(String email, Connection conn, boolean validityCheck) throws SQLException {
+        UserDB u = null;
+        String sql = "SELECT * FROM Users WHERE Email = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, email);
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
@@ -187,7 +210,7 @@ public class UserDB {
 
             st.setString(1, email);
             st.setString(2, username);
-            st.setInt(3, idUserType); // FIXME: il cambiamento va permesso solo se l'utente è admin!
+            //st.setInt(3, idUserType); // FIXME: il cambiamento va permesso solo se l'utente è admin!
 
             /*try {
                 // FIXME: il cambiamento va permesso solo se l'utente è admin!

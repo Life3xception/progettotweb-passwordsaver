@@ -41,7 +41,7 @@ public class UserManagerDB {
         // this is the try-with-resources, it allows to autoclose the resources
         // specified in () if they implement the AutoClosable interface
         try (Connection conn = persistence.getConnection()) {
-            u = UserDB.loadUser(idUser, conn);
+            u = UserDB.loadUser(idUser, conn, true);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUser: " + ex.getMessage());
         }
@@ -51,11 +51,63 @@ public class UserManagerDB {
     public UserDB getUserByUsername(String username) {
         UserDB u = null;
         try (Connection conn = persistence.getConnection()) {
-            u = UserDB.loadUserByUsername(username, conn);
+            u = UserDB.loadUserByUsername(username, conn, true);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUserByUsername: " + ex.getMessage());
         }
         return u;
+    }
+
+    public boolean userExists(int idUser) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserDB.loadUser(idUser, conn, true) != null;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - userExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean checkIfEmailExists(int idUser, String email) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserDB user = UserDB.loadUserByEmail(email, conn, false);
+            // returns true only if the user exists and is not the one provided
+            ret = user != null && user.getIdUser() != idUser;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - checkIfEmailExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean checkIfUsernameExists(int idUser, String username) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserDB user = UserDB.loadUserByUsername(username, conn, false);
+            // returns true only if the user exists and is not the one provided
+            ret = user != null && user.getIdUser() != idUser;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - checkIfUserExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean checkIfUserTypeExists(int idUserType) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = UserTypeDB.loadUserType(idUserType, conn, true) != null;
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - checkIfUserTypeExists: "  + ex.getMessage());
+        }
+
+        return ret;
     }
 
     // Returns the id of the added user

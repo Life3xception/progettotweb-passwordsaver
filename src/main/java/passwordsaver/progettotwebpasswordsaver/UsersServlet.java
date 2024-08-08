@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import jakarta.servlet.annotation.WebServlet;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
+import passwordsaver.progettotwebpasswordsaver.model.LoginManagerDB;
 import passwordsaver.progettotwebpasswordsaver.model.UserDB;
 import passwordsaver.progettotwebpasswordsaver.model.UserManagerDB;
 
@@ -45,7 +47,6 @@ public class UsersServlet extends HttpServlet {
         if(request.getServletPath().equals(Routes.USERS_UPDATEUSER)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
 
             // in the body of the request we expect to have the data
@@ -54,10 +55,40 @@ public class UsersServlet extends HttpServlet {
             UserDB u = gson.fromJson(in, UserDB.class);
 
             // input validation
-            // TODO
-
-            UserManagerDB.getManager().updateUser(u);
-
+            if(u == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(u.getIdUser() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User is required.");
+            } else if(!UserManagerDB.getManager().userExists(u.getIdUser())) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+            } else if(UserManagerDB.getManager().getUserByUsername(username).getIdUser() != u.getIdUser()) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
+            } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email is required.");
+            } else if(!u.getEmail().isEmpty() && !u.getEmail().matches(Regex.EMAIL_PATTERN)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+            } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
+            } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is required.");
+            } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
+            } else if(u.getIdUserType() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type is required.");
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
+            } else if(!UserManagerDB.getManager().updateUser(u)) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } else {
+                // the update was successful, if the username has changed
+                if(!username.equals(u.getUsername())) {
+                    // we need to perform logout
+                    if(!LoginService.doLogOut(request.getSession(), username)) {
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    }
+                    // it will be the client to manage the redirect to login page
+                }
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

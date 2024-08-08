@@ -80,7 +80,7 @@ public class PasswordDB {
     public static ArrayList<PasswordDB> loadAllPasswords(String username, Connection conn) throws SQLException {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         String sql = "SELECT * FROM Passwords WHERE IdUser = ? AND Validity = TRUE";
-        int idUser = UserDB.loadUserByUsername(username, conn).getIdUser();
+        int idUser = UserDB.loadUserByUsername(username, conn, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idUser);

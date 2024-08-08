@@ -95,7 +95,6 @@ public class PasswordsServlet extends HttpServlet {
         if(request.getServletPath().equals(Routes.PASSWORDS_UPDATEPASSWORD)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
 
             // in the body of the request we expect to have the data
