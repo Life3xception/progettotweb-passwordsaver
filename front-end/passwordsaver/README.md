@@ -25,3 +25,24 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+# Angular 
+## Creation of components and modules
+
+### Creation of core component
+```
+ng g module core // only first time
+ng g component core/components/componentname --module=core/core.module.ts
+```
+
+### Creation of new page
+```
+ng g module pages/pagename --module=pages/pages.module.ts
+ng g module pages/pagename/pagename-routing --module=pages/pagename/pagename.module.ts --flat
+ng g component pages/pagename --module=pages/pagename/pagename.module.ts
+```
+
+### Creation of service
+```
+ng g service shared/services/servicename
+```
