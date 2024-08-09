@@ -189,11 +189,11 @@ public class UserManagerDB {
         return ret;
     }
 
-    public boolean checkIfUserTypeNameExists(String name) {
+    public boolean checkIfUserTypeNameExists(String name, int idUserType) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = UserTypeDB.findIfNameExists(name, conn);
+            ret = UserTypeDB.findIfNameExists(name, idUserType, conn);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - checkIfUserTypeNameExists: "  + ex.getMessage());
         }

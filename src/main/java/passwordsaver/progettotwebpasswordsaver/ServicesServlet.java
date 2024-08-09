@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
@@ -21,6 +20,7 @@ import java.util.Map;
         Routes.SERVICES,
         Routes.SERVICES_GETSERVICE,
         Routes.SERVICES_ADDSERVICE,
+        Routes.SERVICES_UPDATESERVICE,
 })
 public class ServicesServlet extends HttpServlet {
     private Gson gson;
@@ -89,7 +89,7 @@ public class ServicesServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(s.getName() == null || s.getName().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
-            } else if(ServiceManagerDB.getManager().checkIfServiceNameExists(s.getName(), username)) {
+            } else if(ServiceManagerDB.getManager().checkIfServiceNameExists(s.getName(), 0, username)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service name already used.");
             } else if(s.getIdServiceType() == 0) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
@@ -106,6 +106,43 @@ public class ServicesServlet extends HttpServlet {
                 else
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the service after inserting it");
             } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getServletPath().equals(Routes.SERVICES_UPDATESERVICE)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the ServiceDB class, so we perform the mapping
+            // using the Gson library
+            ServiceDB s = gson.fromJson(in, ServiceDB.class);
+
+            // input validation
+            if(s == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(s.getIdService() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
+            } else if(!ServiceManagerDB.getManager().serviceExists(s.getIdService())) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(s.getIdService(), username)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+            } else if(s.getName() == null || s.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+            } else if(ServiceManagerDB.getManager().checkIfServiceNameExists(s.getName(), s.getIdService(), username)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service name already used.");
+            } else if(s.getIdServiceType() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
+            } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType()) == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type doesn't exist.");
+            } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {

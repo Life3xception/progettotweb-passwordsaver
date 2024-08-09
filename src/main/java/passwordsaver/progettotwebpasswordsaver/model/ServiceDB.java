@@ -91,13 +91,14 @@ public class ServiceDB {
         return s;
     }
 
-    public static boolean findIfNameExists(String name, int idUser, Connection conn) throws SQLException {
+    public static boolean findIfNameExists(String name, int idService, int idUser, Connection conn) throws SQLException {
         boolean ret = false;
-        String sql = "SELECT COUNT(*) FROM Services WHERE UPPER(Name) = ? AND IdUser = ?";
+        String sql = "SELECT COUNT(*) FROM Services WHERE UPPER(Name) = ? AND IdService <> ? AND IdUser = ?";
 
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name.toUpperCase());
-            st.setInt(2, idUser);
+            st.setInt(2, idService);
+            st.setInt(3, idUser);
             ResultSet rs = st.executeQuery();
             if(rs.next()) {
                 ret = rs.getInt(1) > 0;
@@ -135,6 +136,19 @@ public class ServiceDB {
             }
         }
 
+        return ret;
+    }
+
+    public boolean saveUpdate(Connection conn) throws SQLException {
+        boolean ret = false;
+        String sql = "UPDATE Services SET Name = ?, IdServiceType = ? WHERE IdService = ? AND Validity = TRUE";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, name);
+            st.setInt(2, idServiceType);
+            st.setInt(3, idService);
+            ret = st.executeUpdate() > 0;
+        }
         return ret;
     }
 }

@@ -72,12 +72,13 @@ public class UserTypeDB {
         return ut;
     }
 
-    public static boolean findIfNameExists(String name, Connection conn) throws SQLException {
+    public static boolean findIfNameExists(String name, int idUserType, Connection conn) throws SQLException {
         boolean ret = false;
-        String sql = "SELECT COUNT(*) FROM UserTypes WHERE UPPER(Name) = ?";
+        String sql = "SELECT COUNT(*) FROM UserTypes WHERE UPPER(Name) = ? AND IdUserType <> ?";
 
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name.toUpperCase());
+            st.setInt(2, idUserType);
             ResultSet rs = st.executeQuery();
             if(rs.next()) {
                 ret = rs.getInt(1) > 0;

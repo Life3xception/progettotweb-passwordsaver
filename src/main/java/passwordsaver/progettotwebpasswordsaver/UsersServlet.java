@@ -181,7 +181,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
-            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
+            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), 0)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type already exists.");
             } else if(UserManagerDB.getManager().addNewUserType(ut) > 0) {
                 // retrieving the usertype inserted to return it to as response
@@ -265,7 +265,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
-            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
+            } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), ut.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type name already used.");
             } else if(!UserManagerDB.getManager().updateUserType(ut)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

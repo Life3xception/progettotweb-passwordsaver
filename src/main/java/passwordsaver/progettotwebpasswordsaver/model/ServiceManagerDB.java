@@ -68,12 +68,12 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public boolean checkIfServiceNameExists(String name, String username) {
+    public boolean checkIfServiceNameExists(String name, int idService, String username) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
-            ret = ServiceDB.findIfNameExists(name, idUser, conn);
+            ret = ServiceDB.findIfNameExists(name, idService, idUser, conn);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - checkIfServiceNameExists: "  + ex.getMessage());
         }
@@ -91,6 +91,18 @@ public class ServiceManagerDB {
         }
 
         return ret;
+    }
+
+    public boolean updateService(ServiceDB service) {
+        boolean updated = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            updated = service.saveUpdate(conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - updateService: " + ex.getMessage());
+        }
+
+        return updated;
     }
 
     /***** SERVICETYPES METHODS *****/
