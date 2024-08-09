@@ -62,7 +62,7 @@ public class ServicesServlet extends HttpServlet {
                     out.println(gson.toJson(service));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Service must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

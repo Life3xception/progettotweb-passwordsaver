@@ -67,7 +67,7 @@ public class PasswordsServlet extends HttpServlet {
                     out.println(gson.toJson(pwd));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -90,9 +90,11 @@ public class PasswordsServlet extends HttpServlet {
             if(p == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(p.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+            } else if(p.getIdService() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
@@ -130,15 +132,17 @@ public class PasswordsServlet extends HttpServlet {
             if(p == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(p.getIdPassword() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idPassword is required.");
             } else if(!PasswordManagerDB.getManager().passwordExists(p.getIdPassword())) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
             } else if(!PasswordManagerDB.getManager().userIsOwnerOfPassword(p.getIdPassword(), username)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
             } else if(p.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+            } else if(p.getIdService() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
@@ -170,7 +174,7 @@ public class PasswordsServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

@@ -72,7 +72,7 @@ public class UsersServlet extends HttpServlet {
                     out.println(gson.toJson(user));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
             }
         } else if(request.getServletPath().equals(Routes.USERTYPES)) {
             response.setContentType("application/json");
@@ -109,7 +109,7 @@ public class UsersServlet extends HttpServlet {
                     out.println(gson.toJson(userType));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUserType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -134,23 +134,23 @@ public class UsersServlet extends HttpServlet {
             } else if(u == null) { // input validation
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
             } else if(!u.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
             } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter username is required.");
             } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
             } else if(u.getPassword() == null || u.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
             } else if(!u.getPassword().matches(Regex.PASSWORD_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password must be from 8 to 50 " +
                         "characters long and contain at least one lowercase letter, at least one uppercase letter," +
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
             } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
@@ -180,7 +180,7 @@ public class UsersServlet extends HttpServlet {
             } else if(ut == null) { // input validation
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type already exists.");
             } else if(UserManagerDB.getManager().addNewUserType(ut) > 0) {
@@ -213,23 +213,23 @@ public class UsersServlet extends HttpServlet {
             if(u == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(u.getIdUser() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUser is required.");
             } else if(!UserManagerDB.getManager().userExists(u.getIdUser())) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
             } else if(UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
             } else if(!u.getEmail().isEmpty() && !u.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
             } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter username is required.");
             } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
             } else if(!UserManagerDB.getManager().updateUser(u)) {
@@ -260,11 +260,11 @@ public class UsersServlet extends HttpServlet {
             } else if(ut == null) { // input validation
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(ut.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(ut.getIdUserType())) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name is required.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type name already used.");
             } else if(!UserManagerDB.getManager().updateUserType(ut)) {
@@ -299,7 +299,7 @@ public class UsersServlet extends HttpServlet {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
             }
         } else if(request.getServletPath().equals(Routes.USERTYPES_DELETEUSERTYPE)) {
             response.setContentType("application/json");
@@ -320,7 +320,7 @@ public class UsersServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User Type must be provided.");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUserType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
