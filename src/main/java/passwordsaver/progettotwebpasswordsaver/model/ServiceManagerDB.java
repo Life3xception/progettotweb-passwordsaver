@@ -4,6 +4,7 @@ import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ServiceManagerDB {
     private static ServiceManagerDB manager;
@@ -16,6 +17,16 @@ public class ServiceManagerDB {
             manager = new ServiceManagerDB();
         }
         return manager;
+    }
+
+    public ArrayList<ServiceDB> getAllServices(String username) {
+        ArrayList<ServiceDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = ServiceDB.loadAllServices(username, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getAllServices: " + ex.getMessage());
+        }
+        return ret;
     }
 
     public ServiceDB getService(int idService) {

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ServiceDB {
     private int idService;
@@ -40,6 +41,36 @@ public class ServiceDB {
         return validity;
     }
 
+    private static ServiceDB fromResultSet(ResultSet rs) throws SQLException {
+        return new ServiceDB(
+                rs.getInt("IdService"),
+                rs.getString("Name"),
+                rs.getInt("IdServiceType"),
+                rs.getInt("IdUser"),
+                rs.getBoolean("Validity")
+        );
+    }
+
+    public static ArrayList<ServiceDB> loadAllServices(String username, Connection conn, boolean validityCheck) throws SQLException {
+        ArrayList<ServiceDB> ret = new ArrayList<>();
+        String sql = "SELECT * FROM Services WHERE IdUser = ?";
+        if(validityCheck)
+            sql += " AND Validity = TRUE";
+
+        int idUser = UserDB.loadUserByUsername(username, conn, true).getIdUser();
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                ret.add(fromResultSet(rs));
+            }
+        }
+
+        return ret;
+    }
+
     public static ServiceDB loadService(int idService, Connection conn, boolean validityCheck) throws SQLException {
         ServiceDB s = null;
         String sql = "SELECT * FROM Services WHERE IdService = ?";
@@ -50,13 +81,7 @@ public class ServiceDB {
             st.setInt(1, idService);
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
-                s = new ServiceDB(
-                        rs.getInt("IdService"),
-                        rs.getString("Name"),
-                        rs.getInt("IdServiceType"),
-                        rs.getInt("IdUser"),
-                        rs.getBoolean("Validity")
-                );
+                s = fromResultSet(rs);
             }
         }
 

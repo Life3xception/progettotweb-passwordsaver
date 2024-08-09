@@ -18,13 +18,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
-@WebServlet(name = "Passwords-Servlet",
-            urlPatterns = {
-                    Routes.PASSWORDS,
-                    Routes.PASSWORDS_ADDPASSWORD,
-                    Routes.PASSWORDS_UPDATEPASSWORD,
-                    Routes.PASSWORDS_DELETEPASSWORD
-            })
+@WebServlet(name = "Passwords-Servlet", urlPatterns = {
+        Routes.PASSWORDS,
+        Routes.PASSWORDS_ADDPASSWORD,
+        Routes.PASSWORDS_UPDATEPASSWORD,
+        Routes.PASSWORDS_DELETEPASSWORD
+})
 public class PasswordsServlet extends HttpServlet {
     private Gson gson;
 

@@ -17,19 +17,18 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
-@WebServlet(name = "Users-Servlet",
-            urlPatterns = {
-                Routes.USERS,
-                Routes.USERS_GETUSER,
-                Routes.USERS_ADDUSER,
-                Routes.USERS_UPDATEUSER,
-                Routes.USERS_DELETEUSER,
-                Routes.USERTYPES,
-                Routes.USERTYPES_GETUSERTYPE,
-                Routes.USERTYPES_ADDUSERTYPE,
-                Routes.USERTYPES_UPDATEUSERTYPE,
-                Routes.USERTYPES_DELETEUSERTYPE
-            })
+@WebServlet(name = "Users-Servlet", urlPatterns = {
+        Routes.USERS,
+        Routes.USERS_GETUSER,
+        Routes.USERS_ADDUSER,
+        Routes.USERS_UPDATEUSER,
+        Routes.USERS_DELETEUSER,
+        Routes.USERTYPES,
+        Routes.USERTYPES_GETUSERTYPE,
+        Routes.USERTYPES_ADDUSERTYPE,
+        Routes.USERTYPES_UPDATEUSERTYPE,
+        Routes.USERTYPES_DELETEUSERTYPE
+})
 public class UsersServlet extends HttpServlet {
     private Gson gson;
 

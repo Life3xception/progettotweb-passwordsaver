@@ -17,4 +17,5 @@ public class Routes {
     public static final String USERTYPES_ADDUSERTYPE = "/usertypes/addusertype";
     public static final String USERTYPES_UPDATEUSERTYPE = "/usertypes/updateusertype";
     public static final String USERTYPES_DELETEUSERTYPE = "/usertypes/deleteusertype";
+    public static final String SERVICES = "/services";
 }
