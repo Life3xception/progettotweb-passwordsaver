@@ -53,4 +53,16 @@ public class ServiceManagerDB {
 
         return ret;
     }
+
+    public boolean serviceExists(int idService) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = ServiceDB.loadService(idService, conn, true) != null;
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - serviceExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
 }
