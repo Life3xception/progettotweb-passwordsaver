@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import passwordsaver.progettotwebpasswordsaver.model.*;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
@@ -91,7 +90,7 @@ public class PasswordsServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
-            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(p.getIdService() == 0) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
@@ -139,7 +138,7 @@ public class PasswordsServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
-            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(p.getIdService() == 0) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");

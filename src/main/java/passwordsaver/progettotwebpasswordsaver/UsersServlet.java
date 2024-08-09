@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
 import jakarta.servlet.annotation.WebServlet;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
@@ -135,7 +134,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
-            } else if(!u.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
@@ -145,7 +144,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
             } else if(u.getPassword() == null || u.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
-            } else if(!u.getPassword().matches(Regex.PASSWORD_PATTERN)) {
+            } else if(!u.getPassword().matches(Config.PASSWORD_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password must be from 8 to 50 " +
                         "characters long and contain at least one lowercase letter, at least one uppercase letter," +
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
@@ -220,7 +219,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
-            } else if(!u.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
