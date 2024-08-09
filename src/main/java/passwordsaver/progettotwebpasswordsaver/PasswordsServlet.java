@@ -5,12 +5,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.constants.Regex;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
-import passwordsaver.progettotwebpasswordsaver.model.PasswordDB;
-import passwordsaver.progettotwebpasswordsaver.model.PasswordManagerDB;
+import passwordsaver.progettotwebpasswordsaver.model.*;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
-import passwordsaver.progettotwebpasswordsaver.model.ServiceManagerDB;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.util.Map;
 
 @WebServlet(name = "Passwords-Servlet", urlPatterns = {
         Routes.PASSWORDS,
+        Routes.PASSWORDS_GETPASSWORD,
         Routes.PASSWORDS_ADDPASSWORD,
         Routes.PASSWORDS_UPDATEPASSWORD,
         Routes.PASSWORDS_DELETEPASSWORD
@@ -44,6 +44,31 @@ public class PasswordsServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(passwords));
+        } else if(request.getServletPath().equals(Routes.PASSWORDS_GETPASSWORD)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
+            boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idPassword")) {
+                int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
+
+                if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                } else {
+                    PasswordDB pwd = PasswordManagerDB.getManager().getPassword(idPwd);
+
+                    if(pwd.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of password of another user.");
+                    }
+
+                    out.println(gson.toJson(pwd));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id Password must be provided.");
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

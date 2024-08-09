@@ -51,10 +51,10 @@ public class UserManagerDB {
         return u;
     }
 
-    public UserDB getUserByUsername(String username) {
+    public UserDB getUserByUsername(String username, boolean limited) {
         UserDB u = null;
         try (Connection conn = persistence.getConnection()) {
-            u = UserDB.loadUserByUsername(username, conn, true);
+            u = UserDB.loadUserByUsername(username, conn, true, limited);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUserByUsername: " + ex.getMessage());
         }
@@ -77,7 +77,7 @@ public class UserManagerDB {
         boolean isAdmin = false;
 
         try (Connection conn = persistence.getConnection()) {
-            UserDB u = UserDB.loadUserByUsername(username, conn, true);
+            UserDB u = UserDB.loadUserByUsername(username, conn, true, true);
             isAdmin = u.getIdUserType() == Config.adminIdUserType;
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - userExists: "  + ex.getMessage());
@@ -104,7 +104,7 @@ public class UserManagerDB {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            UserDB user = UserDB.loadUserByUsername(username, conn, false);
+            UserDB user = UserDB.loadUserByUsername(username, conn, false, true);
             // returns true only if the user exists and is not the one provided
             ret = user != null && user.getIdUser() != idUser;
         } catch (SQLException ex) {

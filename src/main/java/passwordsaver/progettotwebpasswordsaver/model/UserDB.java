@@ -110,9 +110,15 @@ public class UserDB {
         return u;
     }
 
-    public static UserDB loadUserByUsername(String username, Connection conn, boolean validityCheck) throws SQLException {
+    public static UserDB loadUserByUsername(String username, Connection conn, boolean validityCheck, boolean limited) throws SQLException {
         UserDB u = null;
-        String sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE Username = ?";
+        String sql = "";
+
+        if(limited)
+            sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE Username = ?";
+        else
+            sql = "SELECT * FROM Users WHERE Username = ?";
+
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
@@ -121,7 +127,7 @@ public class UserDB {
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
-                u = fromResultSet(rs, true);
+                u = fromResultSet(rs, limited);
             }
         }
 

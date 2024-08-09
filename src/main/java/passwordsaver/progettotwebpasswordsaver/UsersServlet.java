@@ -53,7 +53,7 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
-            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username);
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
 
@@ -216,7 +216,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id User is required.");
             } else if(!UserManagerDB.getManager().userExists(u.getIdUser())) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
-            } else if(UserManagerDB.getManager().getUserByUsername(username).getIdUser() != u.getIdUser()) {
+            } else if(UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email is required.");
@@ -279,7 +279,7 @@ public class UsersServlet extends HttpServlet {
         if (request.getServletPath().equals(Routes.USERS_DELETEUSER)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
-            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username);
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
 

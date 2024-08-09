@@ -83,7 +83,7 @@ public class PasswordDB {
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
-        int idUser = UserDB.loadUserByUsername(username, conn, true).getIdUser();
+        int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idUser);
@@ -122,7 +122,8 @@ public class PasswordDB {
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             // before adding the parameters, we have to retrieve the idUser from the username
             // and to encrypt the password! To encrypt the password we have to recover the secretkey and the IV
-            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername);
+            // NOTE: we have to pass limited=false because we need to read from the db the key and the IV!
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername, false);
 
             try {
                 this.password = Base64.getEncoder().encodeToString(
@@ -182,7 +183,8 @@ public class PasswordDB {
             // before adding the parameters, we have to retrieve the idUser from the username
             // and to encrypt the password! To encrypt the password we have to recover the secretkey
             // and the initialization vector
-            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername);
+            // NOTE: we have to pass limited=false because we need to read from the db the key and the IV!
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername, false);
 
             try {
                 this.password = Base64.getEncoder().encodeToString(

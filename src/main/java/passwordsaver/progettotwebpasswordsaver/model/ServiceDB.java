@@ -57,7 +57,7 @@ public class ServiceDB {
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
-        int idUser = UserDB.loadUserByUsername(username, conn, true).getIdUser();
+        int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idUser);

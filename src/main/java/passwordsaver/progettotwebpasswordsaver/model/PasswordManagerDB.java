@@ -46,7 +46,7 @@ public class PasswordManagerDB {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            int idUser = UserManagerDB.getManager().getUserByUsername(username).getIdUser();
+            int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
             ret = PasswordDB.loadPassword(idPwd, conn, true).getIdUser() == idUser;
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - userIsOwnerOfPassword: "  + ex.getMessage());
