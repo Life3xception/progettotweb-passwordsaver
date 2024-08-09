@@ -1,10 +1,13 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
+import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class ServiceDB {
     private int idService;
@@ -86,5 +89,52 @@ public class ServiceDB {
         }
 
         return s;
+    }
+
+    public static boolean findIfNameExists(String name, int idUser, Connection conn) throws SQLException {
+        boolean ret = false;
+        String sql = "SELECT COUNT(*) FROM Services WHERE UPPER(Name) = ? AND IdUser = ?";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setString(1, name.toUpperCase());
+            st.setInt(2, idUser);
+            ResultSet rs = st.executeQuery();
+            if(rs.next()) {
+                ret = rs.getInt(1) > 0;
+            }
+        }
+
+        return ret;
+    }
+
+    public int saveAsNew(String loggedUsername, Connection conn) throws SQLException {
+        int ret = -1; // -1 means an error occurred during saving
+        String sql = "INSERT INTO Services (Name, IdServiceType, IdUser) VALUES (?, ?, ?)";
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            // before adding the parameters, we have to retrieve the idUser from the username
+            int idUser = UserManagerDB.getManager().getUserByUsername(loggedUsername, true).getIdUser();
+
+            // now we can add the parameters to the statement
+            st.setString(1, name);
+            st.setInt(2, idServiceType);
+            st.setInt(3, idUser);
+
+            if (st.executeUpdate() > 0) {
+                // The ID that was generated is maintained in the server on a per-connection basis.
+                // This means that the value returned by the function to a given client is the first
+                // AUTO_INCREMENT value generated for most recent statement affecting an AUTO_INCREMENT
+                // column by that client.
+                // So the value returned by LAST_INSERT_ID() is per user and is unaffected by other
+                // queries that might be running on the server from other users.
+                ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()");
+                if (rs.next()) {
+                    idService = rs.getInt(1);
+                    ret = idService;
+                }
+            }
+        }
+
+        return ret;
     }
 }

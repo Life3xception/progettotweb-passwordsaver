@@ -19,6 +19,8 @@ public class ServiceManagerDB {
         return manager;
     }
 
+    /***** SERVICE METHODS *****/
+
     public ArrayList<ServiceDB> getAllServices(String username) {
         ArrayList<ServiceDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
@@ -64,5 +66,44 @@ public class ServiceManagerDB {
         }
 
         return ret;
+    }
+
+    public boolean checkIfServiceNameExists(String name, String username) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
+            ret = ServiceDB.findIfNameExists(name, idUser, conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - checkIfServiceNameExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public int addNewService(ServiceDB service, String username) {
+        int ret = -1;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = service.saveAsNew(username, conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - addNewService: " + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    /***** SERVICETYPES METHODS *****/
+
+    public ServiceTypeDB getServiceType(int idServiceType) {
+        ServiceTypeDB st = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            st = ServiceTypeDB.loadServiceType(idServiceType, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getServiceType: " + ex.getMessage());
+        }
+
+        return st;
     }
 }

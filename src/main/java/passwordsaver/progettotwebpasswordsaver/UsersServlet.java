@@ -220,7 +220,7 @@ public class UsersServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
-            } else if(!u.getEmail().isEmpty() && !u.getEmail().matches(Regex.EMAIL_PATTERN)) {
+            } else if(!u.getEmail().matches(Regex.EMAIL_PATTERN)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
