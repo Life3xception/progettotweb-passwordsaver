@@ -1,6 +1,6 @@
 package passwordsaver.progettotwebpasswordsaver.login;
 
-import passwordsaver.progettotwebpasswordsaver.constants.Routes;
+import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ public class AuthFilter extends HttpFilter {
         }
 
         // check if the route requested is the login (doesn't require to be logged in)
-        if (req.getServletPath().equals(Routes.LOGIN)) {
+        if (req.getServletPath().equals(Apis.LOGIN)) {
             chain.doFilter(req, res);
             return;
         }

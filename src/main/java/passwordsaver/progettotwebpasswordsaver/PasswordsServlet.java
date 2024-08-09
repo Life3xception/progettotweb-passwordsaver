@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Routes;
+import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.model.*;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 
@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @WebServlet(name = "Passwords-Servlet", urlPatterns = {
-        Routes.PASSWORDS,
-        Routes.PASSWORDS_GETPASSWORD,
-        Routes.PASSWORDS_ADDPASSWORD,
-        Routes.PASSWORDS_UPDATEPASSWORD,
-        Routes.PASSWORDS_DELETEPASSWORD
+        Apis.PASSWORDS,
+        Apis.PASSWORDS_GETPASSWORD,
+        Apis.PASSWORDS_ADDPASSWORD,
+        Apis.PASSWORDS_UPDATEPASSWORD,
+        Apis.PASSWORDS_DELETEPASSWORD
 })
 public class PasswordsServlet extends HttpServlet {
     private Gson gson;
@@ -29,7 +29,7 @@ public class PasswordsServlet extends HttpServlet {
     public void init() { gson = new Gson(); }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.PASSWORDS)) {
+        if(request.getServletPath().equals(Apis.PASSWORDS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -43,7 +43,7 @@ public class PasswordsServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(passwords));
-        } else if(request.getServletPath().equals(Routes.PASSWORDS_GETPASSWORD)) {
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETPASSWORD)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -74,7 +74,7 @@ public class PasswordsServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.PASSWORDS_ADDPASSWORD)) {
+        if(request.getServletPath().equals(Apis.PASSWORDS_ADDPASSWORD)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -117,7 +117,7 @@ public class PasswordsServlet extends HttpServlet {
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.PASSWORDS_UPDATEPASSWORD)) {
+        if(request.getServletPath().equals(Apis.PASSWORDS_UPDATEPASSWORD)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -155,7 +155,7 @@ public class PasswordsServlet extends HttpServlet {
     }
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.PASSWORDS_DELETEPASSWORD)) {
+        if(request.getServletPath().equals(Apis.PASSWORDS_DELETEPASSWORD)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
 

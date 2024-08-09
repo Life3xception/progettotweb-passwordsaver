@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Routes;
+import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import jakarta.servlet.annotation.WebServlet;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
@@ -17,16 +17,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @WebServlet(name = "Users-Servlet", urlPatterns = {
-        Routes.USERS,
-        Routes.USERS_GETUSER,
-        Routes.USERS_ADDUSER,
-        Routes.USERS_UPDATEUSER,
-        Routes.USERS_DELETEUSER,
-        Routes.USERTYPES,
-        Routes.USERTYPES_GETUSERTYPE,
-        Routes.USERTYPES_ADDUSERTYPE,
-        Routes.USERTYPES_UPDATEUSERTYPE,
-        Routes.USERTYPES_DELETEUSERTYPE
+        Apis.USERS,
+        Apis.USERS_GETUSER,
+        Apis.USERS_ADDUSER,
+        Apis.USERS_UPDATEUSER,
+        Apis.USERS_DELETEUSER,
+        Apis.USERTYPES,
+        Apis.USERTYPES_GETUSERTYPE,
+        Apis.USERTYPES_ADDUSERTYPE,
+        Apis.USERTYPES_UPDATEUSERTYPE,
+        Apis.USERTYPES_DELETEUSERTYPE
 })
 public class UsersServlet extends HttpServlet {
     private Gson gson;
@@ -34,7 +34,7 @@ public class UsersServlet extends HttpServlet {
     public void init() { gson = new Gson(); }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.USERS)) {
+        if(request.getServletPath().equals(Apis.USERS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -48,7 +48,7 @@ public class UsersServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(users));
-        } else if(request.getServletPath().equals(Routes.USERS_GETUSER)) {
+        } else if(request.getServletPath().equals(Apis.USERS_GETUSER)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -73,7 +73,7 @@ public class UsersServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
             }
-        } else if(request.getServletPath().equals(Routes.USERTYPES)) {
+        } else if(request.getServletPath().equals(Apis.USERTYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -87,7 +87,7 @@ public class UsersServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(userTypes));
-        } else if(request.getServletPath().equals(Routes.USERTYPES_GETUSERTYPE)) {
+        } else if(request.getServletPath().equals(Apis.USERTYPES_GETUSERTYPE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -116,7 +116,7 @@ public class UsersServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.USERS_ADDUSER)) {
+        if(request.getServletPath().equals(Apis.USERS_ADDUSER)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -162,7 +162,7 @@ public class UsersServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } else if(request.getServletPath().equals(Routes.USERTYPES_ADDUSERTYPE)) {
+        } else if(request.getServletPath().equals(Apis.USERTYPES_ADDUSERTYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -198,7 +198,7 @@ public class UsersServlet extends HttpServlet {
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.USERS_UPDATEUSER)) {
+        if(request.getServletPath().equals(Apis.USERS_UPDATEUSER)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -243,7 +243,7 @@ public class UsersServlet extends HttpServlet {
                     // it will be the client to manage the redirect to login page
                 }
             }
-        } else if(request.getServletPath().equals(Routes.USERTYPES_UPDATEUSERTYPE)) {
+        } else if(request.getServletPath().equals(Apis.USERTYPES_UPDATEUSERTYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -275,7 +275,7 @@ public class UsersServlet extends HttpServlet {
     }
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getServletPath().equals(Routes.USERS_DELETEUSER)) {
+        if (request.getServletPath().equals(Apis.USERS_DELETEUSER)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
@@ -300,7 +300,7 @@ public class UsersServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
             }
-        } else if(request.getServletPath().equals(Routes.USERTYPES_DELETEUSERTYPE)) {
+        } else if(request.getServletPath().equals(Apis.USERTYPES_DELETEUSERTYPE)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
 

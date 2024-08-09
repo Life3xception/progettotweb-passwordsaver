@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
-import passwordsaver.progettotwebpasswordsaver.constants.Routes;
+import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
 
@@ -17,16 +17,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @WebServlet(name = "Services-Servlet", urlPatterns = {
-        Routes.SERVICES,
-        Routes.SERVICES_GETSERVICE,
-        Routes.SERVICES_ADDSERVICE,
-        Routes.SERVICES_UPDATESERVICE,
-        Routes.SERVICES_DELETESERVICE,
-        Routes.SERVICETYPES,
-        Routes.SERVICETYPES_GETSERVICETYPE,
-        Routes.SERVICETYPES_ADDSERVICETYPE,
-        Routes.SERVICETYPES_UPDATESERVICETYPE,
-        Routes.SERVICETYPES_DELETESERVICETYPE
+        Apis.SERVICES,
+        Apis.SERVICES_GETSERVICE,
+        Apis.SERVICES_ADDSERVICE,
+        Apis.SERVICES_UPDATESERVICE,
+        Apis.SERVICES_DELETESERVICE,
+        Apis.SERVICETYPES,
+        Apis.SERVICETYPES_GETSERVICETYPE,
+        Apis.SERVICETYPES_ADDSERVICETYPE,
+        Apis.SERVICETYPES_UPDATESERVICETYPE,
+        Apis.SERVICETYPES_DELETESERVICETYPE
 })
 public class ServicesServlet extends HttpServlet {
     private Gson gson;
@@ -34,7 +34,7 @@ public class ServicesServlet extends HttpServlet {
     public void init() { gson = new Gson(); }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getServletPath().equals(Routes.SERVICES)) {
+        if (request.getServletPath().equals(Apis.SERVICES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -48,7 +48,7 @@ public class ServicesServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(services));
-        } else if(request.getServletPath().equals(Routes.SERVICES_GETSERVICE)) {
+        } else if(request.getServletPath().equals(Apis.SERVICES_GETSERVICE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -73,7 +73,7 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
-        } else if(request.getServletPath().equals(Routes.SERVICETYPES)) {
+        } else if(request.getServletPath().equals(Apis.SERVICETYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -87,7 +87,7 @@ public class ServicesServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(serviceTypes));
-        } else if(request.getServletPath().equals(Routes.SERVICETYPES_GETSERVICETYPE)) {
+        } else if(request.getServletPath().equals(Apis.SERVICETYPES_GETSERVICETYPE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -116,7 +116,7 @@ public class ServicesServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getServletPath().equals(Routes.SERVICES_ADDSERVICE)) {
+        if (request.getServletPath().equals(Apis.SERVICES_ADDSERVICE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -151,7 +151,7 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } else if(request.getServletPath().equals(Routes.SERVICETYPES_ADDSERVICETYPE)) {
+        } else if(request.getServletPath().equals(Apis.SERVICETYPES_ADDSERVICETYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -187,7 +187,7 @@ public class ServicesServlet extends HttpServlet {
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (request.getServletPath().equals(Routes.SERVICES_UPDATESERVICE)) {
+        if (request.getServletPath().equals(Apis.SERVICES_UPDATESERVICE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
@@ -218,7 +218,7 @@ public class ServicesServlet extends HttpServlet {
             } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } else if(request.getServletPath().equals(Routes.SERVICETYPES_UPDATESERVICETYPE)) {
+        } else if(request.getServletPath().equals(Apis.SERVICETYPES_UPDATESERVICETYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request.getSession());
@@ -250,7 +250,7 @@ public class ServicesServlet extends HttpServlet {
     }
 
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if(request.getServletPath().equals(Routes.SERVICES_DELETESERVICE)) {
+        if(request.getServletPath().equals(Apis.SERVICES_DELETESERVICE)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
 
@@ -270,7 +270,7 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
-        } else if(request.getServletPath().equals(Routes.SERVICETYPES_DELETESERVICETYPE)) {
+        } else if(request.getServletPath().equals(Apis.SERVICETYPES_DELETESERVICETYPE)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request.getSession());
 
