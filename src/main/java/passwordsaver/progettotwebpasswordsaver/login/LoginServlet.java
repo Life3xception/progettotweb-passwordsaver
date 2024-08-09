@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Routes;
-import passwordsaver.progettotwebpasswordsaver.db.PoolingPersistenceManager;
 import passwordsaver.progettotwebpasswordsaver.model.LoginManagerDB;
 
 import java.io.BufferedReader;

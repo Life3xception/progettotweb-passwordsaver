@@ -1,7 +1,5 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
 
 import java.sql.Connection;
