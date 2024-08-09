@@ -23,4 +23,9 @@ public class Routes {
     public static final String SERVICES_ADDSERVICE = "/services/addservice";
     public static final String SERVICES_UPDATESERVICE = "/services/updateservice";
     public static final String SERVICES_DELETESERVICE = "/services/deleteservice";
+    public static final String SERVICETYPES = "/servicetypes";
+    public static final String SERVICETYPES_GETSERVICETYPE = "/servicetypes/getservicetype";
+    public static final String SERVICETYPES_ADDSERVICETYPE = "/servicetypes/addservicetype";
+    public static final String SERVICETYPES_UPDATESERVICETYPE = "/servicetypes/updateservicetype";
+    public static final String SERVICETYPES_DELETESERVICETYPE = "/servicetypes/deleteservicetype";
 }

@@ -22,6 +22,11 @@ import java.util.Map;
         Routes.SERVICES_ADDSERVICE,
         Routes.SERVICES_UPDATESERVICE,
         Routes.SERVICES_DELETESERVICE,
+        Routes.SERVICETYPES,
+        Routes.SERVICETYPES_GETSERVICETYPE,
+        Routes.SERVICETYPES_ADDSERVICETYPE,
+        Routes.SERVICETYPES_UPDATESERVICETYPE,
+        Routes.SERVICETYPES_DELETESERVICETYPE
 })
 public class ServicesServlet extends HttpServlet {
     private Gson gson;
@@ -68,6 +73,43 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
+        } else if(request.getServletPath().equals(Routes.SERVICETYPES)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            // retrieving all the servicetypes
+            ArrayList<ServiceTypeDB> serviceTypes = ServiceManagerDB.getManager().getAllServiceTypes();
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(serviceTypes));
+        } else if(request.getServletPath().equals(Routes.SERVICETYPES_GETSERVICETYPE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idServiceType")) {
+                int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
+
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                } else {
+                    ServiceTypeDB serviceType = ServiceManagerDB.getManager().getServiceType(idServiceType);
+                    out.println(gson.toJson(serviceType));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idServiceType must be provided.");
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -109,6 +151,36 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+        } else if(request.getServletPath().equals(Routes.SERVICETYPES_ADDSERVICETYPE)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the ServiceTypeDB class, so we perform the mapping
+            // using the Gson library
+            ServiceTypeDB st = gson.fromJson(in, ServiceTypeDB.class);
+
+            // first we check if the user is admin
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(st == null) { // input validation
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(st.getName() == null || st.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+            } else if(ServiceManagerDB.getManager().checkIfServiceTypeNameExists(st.getName(), 0)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type already exists.");
+            } else if(ServiceManagerDB.getManager().addNewServiceType(st) > 0) {
+                // retrieving the servicetype inserted to return it to as response
+                st = ServiceManagerDB.getManager().getServiceType(st.getIdServiceType());
+                if(st != null)
+                    out.println(gson.toJson(st));
+                else
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the service type after inserting it.");
+            } else {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -146,6 +218,32 @@ public class ServicesServlet extends HttpServlet {
             } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+        } else if(request.getServletPath().equals(Routes.SERVICETYPES_UPDATESERVICETYPE)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // in the body of the request we expect to have the data
+            // corresponding to the ServiceTypeDB class, so we perform the mapping
+            // using the Gson library
+            ServiceTypeDB st = gson.fromJson(in, ServiceTypeDB.class);
+
+            // first we check if the user is admin
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(st == null) { // input validation
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(st.getIdServiceType() == 0) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
+            } else if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(st.getIdServiceType())) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+            } else if(st.getName() == null || st.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+            } else if(ServiceManagerDB.getManager().checkIfServiceTypeNameExists(st.getName(), st.getIdServiceType())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type name already used.");
+            } else if(!ServiceManagerDB.getManager().updateServiceType(st)) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -171,6 +269,27 @@ public class ServicesServlet extends HttpServlet {
                 }
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+            }
+        } else if(request.getServletPath().equals(Routes.SERVICETYPES_DELETESERVICETYPE)) {
+            response.setContentType("application/json");
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // only admin users can access this API
+            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idServiceType")) {
+                int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
+
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                }  else if(!ServiceManagerDB.getManager().deleteServiceType(idServiceType)) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idServiceType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

@@ -121,6 +121,18 @@ public class ServiceManagerDB {
 
     /***** SERVICETYPES METHODS *****/
 
+    public ArrayList<ServiceTypeDB> getAllServiceTypes() {
+        ArrayList<ServiceTypeDB> sts = new ArrayList<>();
+
+        try (Connection conn = persistence.getConnection()) {
+            sts = ServiceTypeDB.loadAllServiceTypes(conn, true);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getAllServiceTypes: " + ex.getMessage());
+        }
+
+        return sts;
+    }
+
     public ServiceTypeDB getServiceType(int idServiceType) {
         ServiceTypeDB st = null;
 
@@ -131,5 +143,67 @@ public class ServiceManagerDB {
         }
 
         return st;
+    }
+
+    public boolean checkIfServiceTypeExists(int idServiceType) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = ServiceTypeDB.loadServiceType(idServiceType, conn, true) != null;
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - checkIfServiceTypeExists: " + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean checkIfServiceTypeNameExists(String name, int idServiceType) {
+        boolean ret = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = ServiceTypeDB.findIfNameExists(name, idServiceType, conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - checkIfServiceTypeNameExists: "  + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public int addNewServiceType(ServiceTypeDB st) {
+        int ret = -1;
+
+        try (Connection conn = persistence.getConnection()) {
+            ret = st.saveAsNew(conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - addNewServiceType: " + ex.getMessage());
+        }
+
+        return ret;
+    }
+
+    public boolean updateServiceType(ServiceTypeDB st) {
+        boolean updated = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            updated = st.saveUpdate(conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - updateServiceType: " + ex.getMessage());
+        }
+
+        return updated;
+    }
+
+    public boolean deleteServiceType(int idServiceType) {
+        boolean deleted = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ServiceTypeDB st = ServiceTypeDB.loadServiceType(idServiceType, conn, true);
+            if(st != null)
+                deleted = st.delete(conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - deleteServiceType: " + ex.getMessage());
+        }
+
+        return deleted;
     }
 }

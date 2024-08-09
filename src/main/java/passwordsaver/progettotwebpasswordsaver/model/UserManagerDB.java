@@ -154,7 +154,6 @@ public class UserManagerDB {
     }
 
     /***** USERTYPES METHODS *****/
-    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllUsers
     public ArrayList<UserTypeDB> getAllUserTypes() {
         ArrayList<UserTypeDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
