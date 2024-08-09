@@ -6,3 +6,6 @@ Login with the credentials and then in deploy section open the File Explorer and
 the `target` folder created by maven.
 
 Clicking on the webapp name will bring to the project's initial page.
+
+If using JetBrains IntelliJ IDEA as IDE, it's simpler to use the Smart Tomcat Plugin to deploy the app directly
+from the IDE. Setup is easy, just add the path to your Tomcat installation folder and then it's ready to go!
