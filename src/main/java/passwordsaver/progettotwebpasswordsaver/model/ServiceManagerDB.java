@@ -105,6 +105,20 @@ public class ServiceManagerDB {
         return updated;
     }
 
+    public boolean deleteService(int idService) {
+        boolean deleted = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            ServiceDB service = ServiceDB.loadService(idService, conn, true);
+            if(service != null)
+                deleted = service.delete(conn);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - updateService: " + ex.getMessage());
+        }
+
+        return deleted;
+    }
+
     /***** SERVICETYPES METHODS *****/
 
     public ServiceTypeDB getServiceType(int idServiceType) {

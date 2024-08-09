@@ -21,6 +21,7 @@ import java.util.Map;
         Routes.SERVICES_GETSERVICE,
         Routes.SERVICES_ADDSERVICE,
         Routes.SERVICES_UPDATESERVICE,
+        Routes.SERVICES_DELETESERVICE,
 })
 public class ServicesServlet extends HttpServlet {
     private Gson gson;
@@ -144,6 +145,32 @@ public class ServicesServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type doesn't exist.");
             } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(request.getServletPath().equals(Routes.SERVICES_DELETESERVICE)) {
+            response.setContentType("application/json");
+            String username = LoginService.getCurrentLogin(request.getSession());
+
+            // retrieving of the parameters coming from the querystring
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idService")) {
+                int idService = Integer.parseInt(pars.get("idService")[0]);
+
+                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username)) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+                } else if(!ServiceManagerDB.getManager().deleteService(idService)) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

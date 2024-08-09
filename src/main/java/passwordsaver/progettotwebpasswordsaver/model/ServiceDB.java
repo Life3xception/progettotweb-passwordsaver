@@ -149,6 +149,19 @@ public class ServiceDB {
             st.setInt(3, idService);
             ret = st.executeUpdate() > 0;
         }
+
+        return ret;
+    }
+
+    public boolean delete(Connection conn) throws SQLException {
+        boolean ret = false;
+        String sql = "UPDATE Services SET Validity = FALSE WHERE IdService = ? AND Validity = TRUE";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idService);
+            ret = st.executeUpdate() > 0;
+        }
+
         return ret;
     }
 }
