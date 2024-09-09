@@ -38,16 +38,17 @@ public class LoginServlet extends HttpServlet {
         if(request.getServletPath().equals(Apis.LOGIN)) {
             // return the login status
             operation = "status";
-            username = LoginService.getCurrentLogin(request.getSession());
-            if(!username.isEmpty()) {
+            username = LoginService.getCurrentLogin(request);
+            if(username != null) {
                 success = true;
                 error = false;
             } else {
-                errorMessage = "No user logged in.";
+                errorMessage = "Not logged in.";
             }
-        } else if (request.getServletPath().equals(Apis.LOGOUT)) {
-            operation = "logout";
-            username = LoginService.getCurrentLogin(request.getSession());
+        } else if (request.getServletPath().equals(Apis.LOGOUT)) { // FIXME: to remove!!
+            // non serve più, perché il fe elimina il token dalla cache quando fa logout, lato be finché non scade è valido
+            /*operation = "logout";
+            username = LoginService.getCurrentLogin(request);
 
             // check if user is logged in
             if(!username.isEmpty()) {
@@ -62,7 +63,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 username = "";
                 errorMessage = "User is not logged in.";
-            }
+            }*/
         }
 
         // creation of response JsonObject
@@ -88,7 +89,7 @@ public class LoginServlet extends HttpServlet {
 
             // retrieve information from the JsonObject
             String username = loginObject.get("username").getAsString();
-            String previous = LoginService.getCurrentLogin(request.getSession());
+            //String previous = LoginService.getCurrentLogin(request.getSession());
 
             // preparing the object for the response
             JsonObject result = new JsonObject();
@@ -96,26 +97,28 @@ public class LoginServlet extends HttpServlet {
             boolean success = false;
             boolean error = true;
             String errorMessage = "";
+            String token = "";
 
-            // check if a user is already logged in
-            if(!previous.isEmpty() && !previous.equals(username)) {
+            // check if a user is already logged in (if null, no JWT in request)
+            if(LoginService.getCurrentLogin(request) != null) {
                 errorMessage = "A user is already logged in. Log out before.";
             } else {
                 String password = loginObject.get("password").getAsString();
                 // check if password is valid
                 if(LoginManagerDB.getManager().validateCredentials(username, password)) {
                     // if no user was logged in perform log in
-                    if(previous.isEmpty()) {
+                    /*if(previous.isEmpty()) {
                         if(!LoginService.doLogIn(request.getSession(), username)) {
                             errorMessage = "Failed to log in the user.";
                         }
-                    }
+                    }*/
+                    token = JwtUtil.createToken(username);
 
                     // if no error occurred previously
-                    if(errorMessage.isEmpty()) {
+                    //if(errorMessage.isEmpty()) {
                         success = true;
                         error = false;
-                    }
+                    //}
                 } else {
                     errorMessage = "Invalid credentials.";
                 }
@@ -127,6 +130,7 @@ public class LoginServlet extends HttpServlet {
             result.addProperty("success", success);
             result.addProperty("error", error);
             result.addProperty("errorMessage", errorMessage);
+            result.addProperty("token", token);
 
             // return of response object
             response.getWriter().println(result);

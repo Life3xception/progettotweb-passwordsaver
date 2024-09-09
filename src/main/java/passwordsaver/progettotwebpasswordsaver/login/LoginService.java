@@ -1,5 +1,6 @@
 package passwordsaver.progettotwebpasswordsaver.login;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 public class LoginService {
@@ -9,9 +10,21 @@ public class LoginService {
      *  Returns the username of the logged in user for the passed session
      *  or empty string if no user is logged in
      */
-    public static String getCurrentLogin(HttpSession session) {
+    /*public static String getCurrentLogin(HttpSession session) {
         if (session.getAttribute(SESSION_USER_KEY) == null) return "";
         return (String) session.getAttribute(SESSION_USER_KEY);
+    }*/
+
+    public static String getCurrentLogin(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+
+        if(header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);  // Remove "Bearer " prefix
+
+            return JwtUtil.verifyToken(token);
+        }
+
+        return null;
     }
 
     /*

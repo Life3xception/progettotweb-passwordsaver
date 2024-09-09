@@ -37,7 +37,7 @@ public class ServicesServlet extends HttpServlet {
         if (request.getServletPath().equals(Apis.SERVICES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // TODO: potrebbe servire per richiesta servizi per tipo servizio
             // retrieving the parameters from the querystring as a key-value Map
@@ -51,7 +51,7 @@ public class ServicesServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.SERVICES_GETSERVICE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
@@ -76,7 +76,7 @@ public class ServicesServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.SERVICETYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
@@ -90,7 +90,7 @@ public class ServicesServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_GETSERVICETYPE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
@@ -120,7 +120,7 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceDB class, so we perform the mapping
@@ -155,7 +155,7 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceTypeDB class, so we perform the mapping
@@ -191,7 +191,7 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceDB class, so we perform the mapping
@@ -221,7 +221,7 @@ public class ServicesServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_UPDATESERVICETYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceTypeDB class, so we perform the mapping
@@ -252,7 +252,7 @@ public class ServicesServlet extends HttpServlet {
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(request.getServletPath().equals(Apis.SERVICES_DELETESERVICE)) {
             response.setContentType("application/json");
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // retrieving of the parameters coming from the querystring
             Map<String, String[]> pars = request.getParameterMap();
@@ -272,7 +272,7 @@ public class ServicesServlet extends HttpServlet {
             }
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_DELETESERVICETYPE)) {
             response.setContentType("application/json");
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))

@@ -16,7 +16,7 @@ public class AuthFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         // check if the user is logged in
-        if (!LoginService.getCurrentLogin(req.getSession()).isEmpty()) {
+        if (LoginService.getCurrentLogin(req) != null) {
             chain.doFilter(req, res);
             return;
         }
@@ -31,6 +31,5 @@ public class AuthFilter extends HttpFilter {
         // we return 401 and STOP the chain filter (otherwise we get errors,
         // because we already send an error in the response!!!)
         res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        //chain.doFilter(req, res);
     }
 }

@@ -37,7 +37,7 @@ public class UsersServlet extends HttpServlet {
         if(request.getServletPath().equals(Apis.USERS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
@@ -51,7 +51,7 @@ public class UsersServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.USERS_GETUSER)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
@@ -76,7 +76,7 @@ public class UsersServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.USERTYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
@@ -90,7 +90,7 @@ public class UsersServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.USERTYPES_GETUSERTYPE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
@@ -120,7 +120,7 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserDB class, so we perform the mapping
@@ -166,7 +166,7 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserTypeDB class, so we perform the mapping
@@ -201,7 +201,7 @@ public class UsersServlet extends HttpServlet {
         if(request.getServletPath().equals(Apis.USERS_UPDATEUSER)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserDB class, so we perform the mapping
@@ -246,7 +246,7 @@ public class UsersServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.USERTYPES_UPDATEUSERTYPE)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserTypeDB class, so we perform the mapping
@@ -277,7 +277,7 @@ public class UsersServlet extends HttpServlet {
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (request.getServletPath().equals(Apis.USERS_DELETEUSER)) {
             response.setContentType("application/json");
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
@@ -302,7 +302,7 @@ public class UsersServlet extends HttpServlet {
             }
         } else if(request.getServletPath().equals(Apis.USERTYPES_DELETEUSERTYPE)) {
             response.setContentType("application/json");
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // only admin users can access this API
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))

@@ -16,7 +16,7 @@ public class CorsFilter extends HttpFilter {
 
         String origin = request.getHeader("Origin");
 
-        if (!origin.startsWith("http://localhost/") && !origin.startsWith("http://localhost:"))
+        if (origin != null && !origin.startsWith("http://localhost/") && !origin.startsWith("http://localhost:"))
             chain.doFilter(request, response);
 
         // Authorize (allow) all domains to consume the content

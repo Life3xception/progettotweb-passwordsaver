@@ -32,7 +32,7 @@ public class PasswordsServlet extends HttpServlet {
         if(request.getServletPath().equals(Apis.PASSWORDS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // TODO: potrebbe servire per richiesta password per tipo servizio
             // retrieving the parameters from the querystring as a key-value Map
@@ -46,7 +46,7 @@ public class PasswordsServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETPASSWORD)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
             boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
             Map<String, String[]> pars = request.getParameterMap();
@@ -78,7 +78,7 @@ public class PasswordsServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the PasswordDB class, so we perform the mapping
@@ -120,7 +120,7 @@ public class PasswordsServlet extends HttpServlet {
         if(request.getServletPath().equals(Apis.PASSWORDS_UPDATEPASSWORD)) {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // in the body of the request we expect to have the data
             // corresponding to the PasswordDB class, so we perform the mapping
@@ -157,7 +157,7 @@ public class PasswordsServlet extends HttpServlet {
     public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if(request.getServletPath().equals(Apis.PASSWORDS_DELETEPASSWORD)) {
             response.setContentType("application/json");
-            String username = LoginService.getCurrentLogin(request.getSession());
+            String username = LoginService.getCurrentLogin(request);
 
             // retrieving of the parameters coming from the querystring
             Map<String, String[]> pars = request.getParameterMap();
