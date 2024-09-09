@@ -60,13 +60,15 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(login).subscribe({
       next: (response) => {
+        this.authService.setSession({username: response.username, token: response.token});
         this.messageService.add({ key: 'loginToast',
           severity: response.success ? 'success' : 'error',
           summary: response.success ? 'Login Successful' : 'Login Error',
           detail: response.errorMessage
         });
 
-        // TODO: redirect 
+        // uso window.location.href e non router.navigate perché mi serve che venga ricaricata la pagina
+        setTimeout(() => window.location.href = '/home', 1500);
       },
       error: (err) => this.messageService.add({ key: 'loginToast',
           severity: 'error',
