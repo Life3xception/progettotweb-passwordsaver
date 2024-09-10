@@ -60,6 +60,7 @@ CREATE TABLE Passwords (
     IdUser INT NOT NULL,
     IdService INT NOT NULL,
     PassPhrase VARCHAR(200) NOT NULL,
+    IsStarred BOOLEAN DEFAULT FALSE,
     Validity BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (IdPassword),
     CONSTRAINT FK_Passwords_Users FOREIGN KEY (IdUser) REFERENCES `Users`(IdUser),

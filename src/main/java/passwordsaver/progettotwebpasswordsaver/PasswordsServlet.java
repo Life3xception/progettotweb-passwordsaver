@@ -19,6 +19,7 @@ import java.util.Map;
 @WebServlet(name = "Passwords-Servlet", urlPatterns = {
         Apis.PASSWORDS,
         Apis.PASSWORDS_GETPASSWORD,
+        Apis.PASSWORDS_GETSTARREDPASSWORD,
         Apis.PASSWORDS_ADDPASSWORD,
         Apis.PASSWORDS_UPDATEPASSWORD,
         Apis.PASSWORDS_DELETEPASSWORD
@@ -68,6 +69,16 @@ public class PasswordsServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
             }
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORD)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // retrieving all the valid passwords for the user
+            ArrayList<PasswordDB> passwords = PasswordManagerDB.getManager().getAllStarredPasswords(username);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(passwords));
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

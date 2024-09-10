@@ -11,7 +11,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String SECRET = "PasswordSaverSecretKey"; // FIXME: needs to be moved in a secret place
-    private static final long EXPIRATION_TIME = 1000*30; // 30 minutes
+    private static final long EXPIRATION_TIME = 1000*60*30; // 30 minutes
     //86400000; // 1 day in milliseconds
 
     public static String createToken(String username) {
