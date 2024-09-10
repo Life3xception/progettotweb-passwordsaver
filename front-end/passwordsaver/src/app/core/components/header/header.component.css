@@ -1,0 +1,51 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.menubar-container {
+    height: 100%;
+    width: 100%;
+    padding: 1em 0.5em;
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* .user-details-container {
+    padding: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.menuitem {
+    height: 100%;
+    padding: 0.75em 0.5em;
+    margin: 0 1em;
+    border-radius: 10px;
+    font-weight: bold;
+    color: blue;
+    font-size: 1.1em;
+}
+
+.menuitem:hover {
+    background-color: rgb(114, 192, 243);
+}
+
+.menuitem:hover > a {
+    color: white;
+}
+
+.menuitem > a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.menuitem-active {
+    background-color: rgb(114, 192, 243);
+    color: white !important;
+}

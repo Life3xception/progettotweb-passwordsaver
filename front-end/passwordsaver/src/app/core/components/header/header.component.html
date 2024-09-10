@@ -1,0 +1,10 @@
+<div class="header">
+    <div class="menubar-container">
+        <div class="menuitem" [ngClass]="isSelected(item) ? 'menuitem-active' : ''" *ngFor="let item of menuItems">
+            <a (click)="handleClick(item)">
+                <!-- <span [class]="item.icon"></span> -->
+                <span class="ml-2">{{ item.text }}</span>
+            </a>
+        </div>
+    </div> 
+</div>
