@@ -14,8 +14,8 @@ INSERT INTO Services(Name, IdServiceType, IdUser) VALUES
 ("Prova Email", 3, 1),
 ("Prova User", 2, 2);
 
-INSERT INTO Passwords(Password, Email, Username, IdUser, IdService, PassPhrase) VALUES
-("Pwd App 1", "admin@admin.it", "admin", 1, 1, ""),
-("Pwd App 2", "admin@admin.it", "admin", 1, 1, ""),
-("Pwd Website", "admin@admin.it", "admin", 1, 2, ""),
-("Pwd Email", "admin@admin.it", "admin", 1, 3, "");
+INSERT INTO Passwords(Password, Email, Username, IdUser, IdService, PassPhrase, IsStarred) VALUES
+("password 1", "Pwd App 1", "admin@admin.it", "admin", 1, 1, "", 0),
+("password 2", "Pwd App 2", "admin@admin.it", "admin", 1, 1, "", 1),
+("password 3", "Pwd Website", "admin@admin.it", "admin", 1, 2, "", 1),
+("password 4", "Pwd Email", "admin@admin.it", "admin", 1, 3, "", 0);

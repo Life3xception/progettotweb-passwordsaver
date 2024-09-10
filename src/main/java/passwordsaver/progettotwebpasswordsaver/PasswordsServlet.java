@@ -99,6 +99,8 @@ public class PasswordsServlet extends HttpServlet {
             // input validation
             if(p == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+            } else if(p.getName() == null || p.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {
@@ -147,6 +149,8 @@ public class PasswordsServlet extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
             } else if(!PasswordManagerDB.getManager().userIsOwnerOfPassword(p.getIdPassword(), username)) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
+            } else if(p.getName() == null || p.getName().isEmpty()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {

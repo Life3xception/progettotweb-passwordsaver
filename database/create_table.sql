@@ -54,6 +54,7 @@ CREATE TABLE Services (
 
 CREATE TABLE Passwords (
     IdPassword INT NOT NULL AUTO_INCREMENT,
+    Name VARCHAR(50) NOT NULL,
     Password VARCHAR(75) NOT NULL, -- CONTROLLARE Lunghezza Password criptate con Bcrypt
     Email VARCHAR(100) NOT NULL,
     Username VARCHAR(100) NOT NULL,

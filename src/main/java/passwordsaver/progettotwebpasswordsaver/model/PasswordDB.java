@@ -11,6 +11,7 @@ import java.util.Base64;
 
 public class PasswordDB {
     private int idPassword;
+    private String name;
     private String password;
     private String email;
     private String username;
@@ -20,8 +21,9 @@ public class PasswordDB {
     private boolean isStarred;
     private boolean validity;
 
-    public PasswordDB(int idPassword, String password, String email, String username, int idUser, int idService, String passPhrase, boolean isStarred, boolean validity) {
+    public PasswordDB(int idPassword, String name, String password, String email, String username, int idUser, int idService, String passPhrase, boolean isStarred, boolean validity) {
         this.idPassword = idPassword;
+        this.name = name;
         this.password = password;
         this.email = email;
         this.username = username;
@@ -36,9 +38,9 @@ public class PasswordDB {
         return idPassword;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getName() { return name; }
+
+    public String getPassword() { return password; }
 
     public String getEmail() {
         return email;
@@ -69,6 +71,7 @@ public class PasswordDB {
     private static PasswordDB fromResultSet(ResultSet rs) throws SQLException {
         return new PasswordDB(
                 rs.getInt("IdPassword"),
+                rs.getString("Name"),
                 rs.getString("Password"),
                 rs.getString("Email"),
                 rs.getString("Username"),
@@ -76,8 +79,7 @@ public class PasswordDB {
                 rs.getInt("IdService"),
                 rs.getString("PassPhrase"),
                 rs.getBoolean("IsStarred"),
-                rs.getBoolean("Validity")
-        );
+                rs.getBoolean("Validity"));
     }
 
     public static ArrayList<PasswordDB> loadAllPasswords(String username, Connection conn, boolean validityCheck) throws SQLException {
@@ -139,8 +141,8 @@ public class PasswordDB {
 
     public int saveAsNew(String loggedUsername, Connection conn) throws SQLException {
         int ret = -1; // -1 means an error occurred during saving
-        String sql = "INSERT INTO Passwords (Password, Email, Username, IdUser, IdService, PassPhrase, IsStarred) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Passwords (Name, Password, Email, Username, IdUser, IdService, PassPhrase, IsStarred) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             // before adding the parameters, we have to retrieve the idUser from the username
@@ -165,13 +167,14 @@ public class PasswordDB {
             }
 
             // now we can add the parameters to the statement
-            st.setString(1, password);
-            st.setString(2, email);
-            st.setString(3, username);
-            st.setInt(4, idUser);
-            st.setInt(5, idService);
-            st.setString(6, passPhrase); // TODO: needs to be validated?
-            st.setBoolean(7, isStarred);
+            st.setString(1, name);
+            st.setString(2, password);
+            st.setString(3, email);
+            st.setString(4, username);
+            st.setInt(5, idUser);
+            st.setInt(6, idService);
+            st.setString(7, passPhrase); // TODO: needs to be validated?
+            st.setBoolean(8, isStarred);
 
             if (st.executeUpdate() > 0) {
                 // The ID that was generated is maintained in the server on a per-connection basis.
@@ -195,6 +198,7 @@ public class PasswordDB {
         boolean ret = false;
         String sql = """
                     UPDATE Passwords SET
+                    Name = ?,
                     Password = ?,
                     Email = ?,
                     Username = ?,
@@ -227,13 +231,14 @@ public class PasswordDB {
                 return ret;
             }
 
-            st.setString(1, password);
-            st.setString(2, email);
-            st.setString(3, username);
-            st.setInt(4, idService);
-            st.setString(5, passPhrase);
-            st.setBoolean(6, isStarred);
-            st.setInt(7, idPassword);
+            st.setString(1, name);
+            st.setString(2, password);
+            st.setString(3, email);
+            st.setString(4, username);
+            st.setInt(5, idService);
+            st.setString(6, passPhrase);
+            st.setBoolean(7, isStarred);
+            st.setInt(8, idPassword);
             ret = st.executeUpdate() > 0;
         }
         return ret;
