@@ -102,16 +102,21 @@ public class PasswordDB {
         return ret;
     }
 
-    public static ArrayList<PasswordDB> loadAllStarredPasswords(String username, Connection conn, boolean validityCheck) throws SQLException {
+    public static ArrayList<PasswordDB> loadAllStarredPasswords(String username, Connection conn, boolean validityCheck, int limit) throws SQLException {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         String sql = "SELECT * FROM Passwords WHERE IsStarred = TRUE AND IdUser = ?";
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
+        if(limit != 0)
+            sql += " ORDER BY IdPassword LIMIT ?";
+
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setInt(1, idUser);
+            if(limit != 0)
+                st.setInt(2, limit);
             ResultSet rs = st.executeQuery();
 
             while (rs.next()) {

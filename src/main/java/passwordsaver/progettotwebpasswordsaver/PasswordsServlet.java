@@ -74,8 +74,16 @@ public class PasswordsServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
 
-            // retrieving all the valid passwords for the user
-            ArrayList<PasswordDB> passwords = PasswordManagerDB.getManager().getAllStarredPasswords(username);
+            // retrieving of the parameters coming from the querystring
+            Map<String, String[]> pars = request.getParameterMap();
+            int limit = 0;
+
+            if(pars.containsKey("limit")) {
+                limit = Integer.parseInt(pars.get("limit")[0]);
+            }
+
+            // retrieving all (or limited) valid starred passwords for the user
+            ArrayList<PasswordDB> passwords = PasswordManagerDB.getManager().getAllStarredPasswords(username, limit);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(passwords));

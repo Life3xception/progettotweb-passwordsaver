@@ -31,10 +31,10 @@ public class PasswordManagerDB {
     }
 
     // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllPasswords
-    public ArrayList<PasswordDB> getAllStarredPasswords(String username) {
+    public ArrayList<PasswordDB> getAllStarredPasswords(String username, int limit) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = PasswordDB.loadAllStarredPasswords(username, conn, true);
+            ret = PasswordDB.loadAllStarredPasswords(username, conn, true, limit);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllPasswords: " + ex.getMessage());
         }
