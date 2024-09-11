@@ -4,6 +4,10 @@ import { AuthGuardService } from './shared/services/auth-guard.service';
 
 const routes: Routes = [
   {
+    path: 'login',
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
+  },
+  {
     path: '',
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
     canActivate: [AuthGuardService]
@@ -15,8 +19,9 @@ const routes: Routes = [
     canActivate: [AuthGuardService]
   },
   {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
+    path: 'passwords',
+    loadChildren: () => import('./pages/passwords/passwords.module').then(m => m.PasswordsModule),
+    canActivate: [AuthGuardService]
   }
 ];
 

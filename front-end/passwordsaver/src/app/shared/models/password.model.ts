@@ -8,5 +8,6 @@ export class Password {
     idService!: number;
     passPhrase!: string;
     isStarred!: boolean;
-    validiy!: boolean;
+    validity!: boolean;
+    showed: boolean = false;
 }
