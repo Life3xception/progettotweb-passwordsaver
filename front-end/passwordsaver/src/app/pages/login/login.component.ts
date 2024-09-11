@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { environment } from '../../environment/environment';
 import { Login } from '../../shared/models/login.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { MessageService } from 'primeng/api';
+import { ErrorHandlerService } from '../../shared/services/error-handler.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,8 @@ export class LoginComponent implements OnInit {
   
   constructor(private formBuilder: FormBuilder,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private errorHandlerService: ErrorHandlerService
   ) { }
 
   ngOnInit(): void {
@@ -60,7 +61,6 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(login).subscribe({
       next: (response) => {
-        this.authService.setSession({username: response.username, token: response.token});
         this.messageService.add({ key: 'loginToast',
           severity: response.success ? 'success' : 'error',
           summary: response.success ? 'Login Successful' : 'Login Error',
@@ -68,13 +68,12 @@ export class LoginComponent implements OnInit {
         });
 
         // uso window.location.href e non router.navigate perché mi serve che venga ricaricata la pagina
-        setTimeout(() => window.location.href = '/home', 1500);
+        if(response.success) {
+          this.authService.setSession({username: response.username, token: response.token});
+          setTimeout(() => window.location.href = '/home', 1000);
+        }
       },
-      error: (err) => this.messageService.add({ key: 'loginToast',
-          severity: 'error',
-          summary: 'Login Error',
-          detail: err.errorMessage
-        })
+      error: (err) => this.errorHandlerService.handle(err, undefined, 'loginToast')
     });
   }
 }

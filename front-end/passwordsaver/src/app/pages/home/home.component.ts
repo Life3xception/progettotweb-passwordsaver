@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PasswordsService } from '../../shared/services/passwords.service';
 import { Password } from '../../shared/models/password.model';
+import { ErrorHandlerService } from '../../shared/services/error-handler.service';
 
 @Component({
   selector: 'app-home',
@@ -11,14 +12,16 @@ export class HomeComponent implements OnInit {
   starred: Password[] | undefined;
   showedStarredPwds = 3;
 
-  constructor(private passwordsService: PasswordsService) { }
+  constructor(private passwordsService: PasswordsService,
+    private errorHandlerService: ErrorHandlerService
+  ) { }
 
   ngOnInit(): void {
     this.passwordsService.getStarredPasswords(this.showedStarredPwds).subscribe({
       next: (passwords) => {
         this.starred = passwords;
       },
-      error: (err) => console.log(err) // TODO: mettere errorhandler comune che in caso di 401/403 mandi a login!!!!!!
+      error: (err) => this.errorHandlerService.handle(err, undefined, 'homeToast') 
     });
   }
 }
