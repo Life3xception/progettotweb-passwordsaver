@@ -31,6 +31,17 @@ public class PasswordManagerDB {
     }
 
     // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
+    public ArrayList<DetailedPasswordDB> getAllDetailedPasswords(String username) {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedPasswordDB.loadAllPasswords(username, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - getAllDetailedPasswords: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
     public ArrayList<PasswordDB> getAllStarredPasswords(String username, int limit) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
@@ -56,9 +67,21 @@ public class PasswordManagerDB {
         PasswordDB p = null;
 
         try (Connection conn = persistence.getConnection()) {
-            p = PasswordDB.loadPassword(idPwd, conn, true);
-        } catch (SQLException ex) {
+            p = PasswordDB.loadPassword(idPwd, conn, true, false);
+        } catch (Exception ex) {
             System.out.println("PasswordManagerDB - getPassword: " + ex.getMessage());
+        }
+
+        return p;
+    }
+
+    public PasswordDB getDecodedPassword(int idPwd) {
+        PasswordDB p = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            p = PasswordDB.loadPassword(idPwd, conn, true, true);
+        } catch (Exception ex) {
+            System.out.println("PasswordManagerDB - getDecodedPassword: " + ex.getMessage());
         }
 
         return p;
@@ -69,8 +92,8 @@ public class PasswordManagerDB {
 
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
-            ret = PasswordDB.loadPassword(idPwd, conn, true).getIdUser() == idUser;
-        } catch (SQLException ex) {
+            ret = PasswordDB.loadPassword(idPwd, conn, true, false).getIdUser() == idUser;
+        } catch (Exception ex) {
             System.out.println("PasswordManagerDB - userIsOwnerOfPassword: "  + ex.getMessage());
         }
 
@@ -81,8 +104,8 @@ public class PasswordManagerDB {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = PasswordDB.loadPassword(idPwd, conn, true) != null;
-        } catch (SQLException ex) {
+            ret = PasswordDB.loadPassword(idPwd, conn, true, false) != null;
+        } catch (Exception ex) {
             System.out.println("PasswordManagerDB - passwordExists: "  + ex.getMessage());
         }
 
@@ -117,10 +140,10 @@ public class PasswordManagerDB {
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {
-            PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn, true);
+            PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn, true, false);
             if(pwd != null)
                 deleted = pwd.delete(conn);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             System.out.println("PasswordManagerDB - deletePassword: " + ex.getMessage());
         }
 

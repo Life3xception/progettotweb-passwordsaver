@@ -127,7 +127,7 @@ public class PasswordDB {
         return ret;
     }
 
-    public static PasswordDB loadPassword(int idPwd, Connection conn, boolean validityCheck) throws SQLException {
+    public static PasswordDB loadPassword(int idPwd, Connection conn, boolean validityCheck, boolean needsDecoding) throws Exception {
         PasswordDB p = null;
         String sql = "SELECT * FROM Passwords WHERE IdPassword = ?";
         if(validityCheck)
@@ -139,6 +139,16 @@ public class PasswordDB {
             if (rs.next()) {
                 p = fromResultSet(rs);
             }
+        }
+
+        if(p != null && needsDecoding) {
+                UserDB owner = UserDB.loadUser(p.getIdUser(), conn, true, false);
+
+            p.password = Base64.getEncoder().encodeToString(
+                    AesEncoder.do_AESDecryption(Base64.getDecoder().decode(p.password),
+                            AesEncoder.getSecretKeyFromByteArray(Base64.getDecoder().decode(owner.getEncodedSecretKey())),
+                            Base64.getDecoder().decode(owner.getInitializationVector())
+                    ).getBytes());
         }
 
         return p;

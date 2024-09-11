@@ -19,6 +19,8 @@ import java.util.Map;
 @WebServlet(name = "Passwords-Servlet", urlPatterns = {
         Apis.PASSWORDS,
         Apis.PASSWORDS_GETPASSWORD,
+        Apis.PASSWORDS_GETDECODEDPASSWORD,
+        Apis.PASSWORDS_GETDETAILEDPASSWORDS,
         Apis.PASSWORDS_GETSTARREDPASSWORDS,
         Apis.PASSWORDS_GETDETAILEDSTARREDPASSWORDS,
         Apis.PASSWORDS_ADDPASSWORD,
@@ -70,6 +72,45 @@ public class PasswordsServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
             }
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDECODEDPASSWORD)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
+
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idPassword")) {
+                int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
+
+                if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                } else {
+                    PasswordDB pwd = PasswordManagerDB.getManager().getDecodedPassword(idPwd);
+
+                    if(pwd.getIdUser() != loggedUser.getIdUser()) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of password of another user.");
+                    }
+
+                    out.println(gson.toJson(pwd));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+            }
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDETAILEDPASSWORDS)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // TODO: potrebbe servire per richiesta password per tipo servizio
+            // retrieving the parameters from the querystring as a key-value Map
+            // Map<String, String[]> params = request.getParameterMap();
+
+            // retrieving all the valid passwords for the user
+            ArrayList<DetailedPasswordDB> passwords = PasswordManagerDB.getManager().getAllDetailedPasswords(username);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(passwords));
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORDS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();

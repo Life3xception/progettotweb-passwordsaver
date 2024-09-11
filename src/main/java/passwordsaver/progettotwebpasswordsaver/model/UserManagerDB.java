@@ -44,7 +44,7 @@ public class UserManagerDB {
         // this is the try-with-resources, it allows to autoclose the resources
         // specified in () if they implement the AutoClosable interface
         try (Connection conn = persistence.getConnection()) {
-            u = UserDB.loadUser(idUser, conn, true);
+            u = UserDB.loadUser(idUser, conn, true, true);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUser: " + ex.getMessage());
         }
@@ -65,7 +65,7 @@ public class UserManagerDB {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = UserDB.loadUser(idUser, conn, true) != null;
+            ret = UserDB.loadUser(idUser, conn, true, true) != null;
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - userExists: "  + ex.getMessage());
         }
@@ -143,7 +143,7 @@ public class UserManagerDB {
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {
-            UserDB user = UserDB.loadUser(idUser, conn, true);
+            UserDB user = UserDB.loadUser(idUser, conn, true, true);
             if(user != null)
                 deleted = user.delete(conn);
         } catch (SQLException ex) {
