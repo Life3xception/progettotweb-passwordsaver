@@ -1,7 +1,7 @@
-main {
-    width: 100%;
-}
-
-.content {
+main,
+.content, 
+.content > router-outlet,
+.header-wrapper 
+{
     width: 100%;
 }

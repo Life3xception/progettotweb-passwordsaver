@@ -1,0 +1,31 @@
+.main {
+    /* width: 95%; */
+    /* tolto width perché allarga troppo l'elemento e fa apparire la scrollbar orizzontale*/
+    height: 100%;
+    margin: 2em;
+}
+
+.main h2 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.section {
+    margin-bottom: 1.5em;
+    width: 100%;
+}
+
+.starred-card {
+    /* border: 1px solid #645f5f;
+    border-radius: 10px;
+    margin: 0.8em; */
+    width: 16em;
+    /* height: 4em; */
+    padding: 1em 0.5em;
+    margin: 1em;
+    border: 1px solid rgba(0, 0, 0, 0.176);
+    display: flex;
+    flex-direction: column;
+    /* box-sizing: border-box; */
+    border-radius: 6px;
+}

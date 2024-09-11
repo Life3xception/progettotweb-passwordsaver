@@ -11,6 +11,7 @@ import { SharedModule } from './shared/shared.module';
 import { PagesModule } from './pages/pages.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MessageService } from 'primeng/api';
+import { httpInterceptorsProvider } from './shared/utils/http-interceptors-provider';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { MessageService } from 'primeng/api';
   providers: [
     MessageService,
     provideAnimationsAsync(),
-    importProvidersFrom(HttpClientModule)
+    importProvidersFrom(HttpClientModule),
+    httpInterceptorsProvider
   ],
   bootstrap: [AppComponent]
 })

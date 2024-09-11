@@ -10,6 +10,7 @@ export const BeMainApis = {
 
 export const BeApis = {
     getpassword: `${BeMainApis.passwords}/getpassword`,
+    getstarredpasswords: `${BeMainApis.passwords}/getstarredpasswords`,
     addpassword: `${BeMainApis.passwords}/addpassword`,
     updatepassword: `${BeMainApis.passwords}/updatepassword`,
     deletepassword: `${BeMainApis.passwords}/deletepassword`,

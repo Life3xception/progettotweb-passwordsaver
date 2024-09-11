@@ -1,1 +1,17 @@
-<p>home works!</p>
+<div class="main">
+    <div class="section starred">
+        <h2>Preferiti</h2>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="starred-card col-md-3" *ngFor="let item of starred">
+                    <h4 class="h4">{{item.name}}</h4>
+                    <span class="font-bold">{{item.username}}</span>
+                    <span>{{item.password}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section apps">
+        <h2>App più usate</h2>
+    </div>
+</div>
