@@ -19,7 +19,8 @@ import java.util.Map;
 @WebServlet(name = "Passwords-Servlet", urlPatterns = {
         Apis.PASSWORDS,
         Apis.PASSWORDS_GETPASSWORD,
-        Apis.PASSWORDS_GETSTARREDPASSWORD,
+        Apis.PASSWORDS_GETSTARREDPASSWORDS,
+        Apis.PASSWORDS_GETDETAILEDSTARREDPASSWORDS,
         Apis.PASSWORDS_ADDPASSWORD,
         Apis.PASSWORDS_UPDATEPASSWORD,
         Apis.PASSWORDS_DELETEPASSWORD
@@ -69,7 +70,7 @@ public class PasswordsServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
             }
-        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORD)) {
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORDS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
@@ -84,6 +85,24 @@ public class PasswordsServlet extends HttpServlet {
 
             // retrieving all (or limited) valid starred passwords for the user
             ArrayList<PasswordDB> passwords = PasswordManagerDB.getManager().getAllStarredPasswords(username, limit);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(passwords));
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDETAILEDSTARREDPASSWORDS)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // retrieving of the parameters coming from the querystring
+            Map<String, String[]> pars = request.getParameterMap();
+            int limit = 0;
+
+            if(pars.containsKey("limit")) {
+                limit = Integer.parseInt(pars.get("limit")[0]);
+            }
+
+            // retrieving all (or limited) valid starred passwords for the user
+            ArrayList<DetailedPasswordDB> passwords = PasswordManagerDB.getManager().getAllDetailedStarredPasswords(username, limit);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(passwords));

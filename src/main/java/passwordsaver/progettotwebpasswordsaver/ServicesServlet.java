@@ -19,6 +19,7 @@ import java.util.Map;
 @WebServlet(name = "Services-Servlet", urlPatterns = {
         Apis.SERVICES,
         Apis.SERVICES_GETSERVICE,
+        Apis.SERVICES_GETMOSTUSEDSERVICESBYUSER,
         Apis.SERVICES_ADDSERVICE,
         Apis.SERVICES_UPDATESERVICE,
         Apis.SERVICES_DELETESERVICE,
@@ -73,6 +74,24 @@ public class ServicesServlet extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
             }
+        } else if(request.getServletPath().equals(Apis.SERVICES_GETMOSTUSEDSERVICESBYUSER)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // retrieving of the parameters coming from the querystring
+            Map<String, String[]> pars = request.getParameterMap();
+            int limit = 0;
+
+            if(pars.containsKey("limit")) {
+                limit = Integer.parseInt(pars.get("limit")[0]);
+            }
+
+            // retrieving most used services for the user
+            ArrayList<ServiceDB> services = ServiceManagerDB.getManager().getMostUsedServicesByUser(username, limit);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(services));
         } else if(request.getServletPath().equals(Apis.SERVICETYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();

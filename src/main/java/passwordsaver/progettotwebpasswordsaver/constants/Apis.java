@@ -5,7 +5,8 @@ public class Apis {
     public static final String LOGOUT = "/logout";
     public static final String PASSWORDS = "/passwords";
     public static final String PASSWORDS_GETPASSWORD = PASSWORDS + "/getpassword";
-    public static final String PASSWORDS_GETSTARREDPASSWORD = PASSWORDS + "/getstarredpasswords";
+    public static final String PASSWORDS_GETSTARREDPASSWORDS = PASSWORDS + "/getstarredpasswords";
+    public static final String PASSWORDS_GETDETAILEDSTARREDPASSWORDS = PASSWORDS + "/getdetailedstarredpasswords";
     public static final String PASSWORDS_ADDPASSWORD = PASSWORDS + "/addpassword";
     public static final String PASSWORDS_UPDATEPASSWORD = PASSWORDS + "/updatepassword";
     public static final String PASSWORDS_DELETEPASSWORD = PASSWORDS + "/deletepassword";
@@ -21,6 +22,7 @@ public class Apis {
     public static final String USERTYPES_DELETEUSERTYPE = USERTYPES + "/deleteusertype";
     public static final String SERVICES = "/services";
     public static final String SERVICES_GETSERVICE = SERVICES + "/getservice";
+    public static final String SERVICES_GETMOSTUSEDSERVICESBYUSER = SERVICES + "/getmostusedservicesbyuser";
     public static final String SERVICES_ADDSERVICE = SERVICES + "/addservice";
     public static final String SERVICES_UPDATESERVICE = SERVICES + "/updateservice";
     public static final String SERVICES_DELETESERVICE = SERVICES + "/deleteservice";

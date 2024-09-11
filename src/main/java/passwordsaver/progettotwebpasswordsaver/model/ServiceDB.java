@@ -71,6 +71,42 @@ public class ServiceDB {
         return ret;
     }
 
+    public static ArrayList<ServiceDB> loadMostUsedServicesByUser(String username, Connection conn, boolean validityCheck, int limit) throws SQLException {
+        ArrayList<ServiceDB> ret = new ArrayList<>();
+        String sql = """
+                    SELECT S.*\s
+                    FROM Services AS S INNER JOIN (
+                        SELECT IdService, COUNT(*) AS PwdByService
+                        FROM Passwords
+                        WHERE IdUser = ?
+                        GROUP BY IdService
+                        ORDER BY PwdByService DESC
+                    ) AS Temp\s
+                    ON S.IdService = Temp.IdService
+                """;
+        if(validityCheck)
+            sql += " WHERE Validity = TRUE";
+
+        if(limit != 0)
+            sql += " LIMIT ?";
+
+        int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            if(limit != 0)
+                st.setInt(2, limit);
+
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                ret.add(fromResultSet(rs));
+            }
+        }
+
+        return ret;
+    }
+
     public static ServiceDB loadService(int idService, Connection conn, boolean validityCheck) throws SQLException {
         ServiceDB s = null;
         String sql = "SELECT * FROM Services WHERE IdService = ?";

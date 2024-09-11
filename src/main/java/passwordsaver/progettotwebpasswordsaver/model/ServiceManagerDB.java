@@ -31,6 +31,16 @@ public class ServiceManagerDB {
         return ret;
     }
 
+    public ArrayList<ServiceDB> getMostUsedServicesByUser(String username, int limit) {
+        ArrayList<ServiceDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = ServiceDB.loadMostUsedServicesByUser(username, conn, true, limit);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getMostUsedServicesByUser: " + ex.getMessage());
+        }
+        return ret;
+    }
+
     public ServiceDB getService(int idService) {
         ServiceDB s = null;
 

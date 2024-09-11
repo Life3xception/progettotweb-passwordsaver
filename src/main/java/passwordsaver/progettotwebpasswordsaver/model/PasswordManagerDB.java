@@ -19,7 +19,7 @@ public class PasswordManagerDB {
         return manager;
     }
 
-    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllPasswords
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
     public ArrayList<PasswordDB> getAllPasswords(String username) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
@@ -30,13 +30,24 @@ public class PasswordManagerDB {
         return ret;
     }
 
-    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllPasswords
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
     public ArrayList<PasswordDB> getAllStarredPasswords(String username, int limit) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = PasswordDB.loadAllStarredPasswords(username, conn, true, limit);
         } catch (SQLException ex) {
-            System.out.println("PasswordManagerDB - getAllPasswords: " + ex.getMessage());
+            System.out.println("PasswordManagerDB - getAllStarredPasswords: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
+    public ArrayList<DetailedPasswordDB> getAllDetailedStarredPasswords(String username, int limit) {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedPasswordDB.loadAllStarredPasswords(username, conn, true, limit);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - getAllDetailedStarredPasswords: " + ex.getMessage());
         }
         return ret;
     }
