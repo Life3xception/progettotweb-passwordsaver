@@ -11,6 +11,7 @@ export const BeMainApis = {
 export const BeApis = {
     getpassword: `${BeMainApis.passwords}/getpassword`,
     getstarredpasswords: `${BeMainApis.passwords}/getstarredpasswords`,
+    getdetailedstarredpasswords: `${BeMainApis.passwords}/getdetailedstarredpasswords`,
     addpassword: `${BeMainApis.passwords}/addpassword`,
     updatepassword: `${BeMainApis.passwords}/updatepassword`,
     deletepassword: `${BeMainApis.passwords}/deletepassword`,
@@ -23,6 +24,7 @@ export const BeApis = {
     updateusertype: `${BeMainApis.usertypes}/updateusertype`,
     deleteusertype: `${BeMainApis.usertypes}/deleteusertype`,
     getservice: `${BeMainApis.services}/getservice`,
+    getmostusedservicesbyuser: `${BeMainApis.services}/getmostusedservicesbyuser`,
     addservice: `${BeMainApis.services}/addservice`,
     updateservice: `${BeMainApis.services}/updateservice`,
     deleteservice: `${BeMainApis.services}/deleteservice`,

@@ -1,21 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Service } from '../models/service.model';
 import { environment } from '../../environment/environment';
 import { BeApis } from '../../environment/BeServlets';
-import { DetailedPassword } from '../models/detailed-password.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PasswordsService {
+export class ServicesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getDetailedStarredPasswords(limit: number): Observable<DetailedPassword[]> {
-    let url = `${environment.apiEndpoint}/${BeApis.getdetailedstarredpasswords}`;
+  getMostUsedServicesByUser(limit: number): Observable<Service[]> {
+    let url = `${environment.apiEndpoint}/${BeApis.getmostusedservicesbyuser}`;
     if(limit != 0)
       url += `?limit=${limit}`;
-    return this.httpClient.get<DetailedPassword[]>(url);
+    return this.httpClient.get<Service[]>(url);
   }
 }

@@ -4,15 +4,29 @@
         <h2>Preferiti</h2>
         <div class="col-md-12">
             <div class="row">
-                <div class="starred-card col-md-3" *ngFor="let item of starred">
+                <div (click)="getPasswordDetail(item)" class="starred-card col-md-3" *ngFor="let item of starred">
                     <h4 class="h4">{{item.name}}</h4>
-                    <span class="font-bold">{{item.username}}</span>
-                    <span>{{item.password}}</span>
+                    <span>{{item.username}}</span>
+                    <span>{{item.serviceName}}</span>
                 </div>
             </div>
         </div>
+        <div class="see-more">
+            <button type="button" class="btn btn-primary" (click)="seeMore('starred')">Vedi altre ...</button>
+        </div>
     </div>
-    <div class="section apps">
-        <h2>App più usate</h2>
+    <div class="section services">
+        <h2>Servizi più usati</h2>
+        <div class="col-md-12">
+            <div class="row">
+                <div (click)="getPasswordsByService(service)" class="service-card col-md-3" *ngFor="let service of usedServices">
+                    <h4 class="h4">{{service.name}}</h4>
+                    <span>Clicca per vedere le password</span>
+                </div>
+            </div>
+        </div>
+        <div class="see-more">
+            <button type="button" class="btn btn-primary" (click)="seeMore('services')">Vedi altri ...</button>
+        </div>
     </div>
 </div>
