@@ -22,6 +22,11 @@ const routes: Routes = [
     path: 'passwords',
     loadChildren: () => import('./pages/passwords/passwords.module').then(m => m.PasswordsModule),
     canActivate: [AuthGuardService]
+  },
+  {
+    path: 'passwords/:specificView/:value',
+    loadChildren: () => import('./pages/passwords/passwords.module').then(m => m.PasswordsModule),
+    canActivate: [AuthGuardService]
   }
 ];
 

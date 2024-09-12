@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DetailedPassword } from '../../shared/models/detailed-password.model';
 import { PasswordsService } from '../../shared/services/passwords.service';
 import { ErrorHandlerService } from '../../shared/services/error-handler.service';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-passwords',
@@ -10,12 +12,49 @@ import { ErrorHandlerService } from '../../shared/services/error-handler.service
 })
 export class PasswordsComponent implements OnInit {
   passwords: DetailedPassword[] | undefined;
+  selectedIdService: number | undefined;
+  selectedIdPassword: number | undefined;
+  showOnlyStarred: boolean = false;
 
   constructor(private passwordsService: PasswordsService,
     private errorHandlerService: ErrorHandlerService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private messageService: MessageService
   ) { }
 
   ngOnInit(): void {
+    this.route.params.subscribe((params: Params) => {
+      this.selectedIdPassword = 0;
+      this.selectedIdService = 0;
+      this.showOnlyStarred = false;
+
+      if(params['specificView'] && params['value']) { // può essere service=id oppure password=id
+        const view = params['specificView'];
+        const value = params['value'];
+        if(view === 'service')
+          this.selectedIdService = parseInt(value);
+        else if(view === 'password')
+          this.selectedIdPassword = parseInt(value);
+        else if(view === 'starred')
+          this.showOnlyStarred = value === '1';
+        else {
+          this.messageService.add({ 
+              key: 'passwordsToast',
+              severity: 'error',
+              summary: 'Page Error',
+              detail: 'Invalid parameter, could not load page'
+          });
+          setTimeout(() => this.router.navigate(['home']), 500);
+        }
+      }
+
+      // console.log(this.selectedIdPassword);
+      // console.log(this.selectedIdService);
+      // console.log(this.showOnlyStarred);
+    });
+
+
     this.passwordsService.getDetailedPasswords().subscribe({
       next: (pass) => {
         this.passwords = pass;

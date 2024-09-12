@@ -4,6 +4,7 @@ import { ErrorHandlerService } from '../../shared/services/error-handler.service
 import { DetailedPassword } from '../../shared/models/detailed-password.model';
 import { ServicesService } from '../../shared/services/services.service';
 import { Service } from '../../shared/models/service.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private passwordsService: PasswordsService,
     private servicesService: ServicesService,
-    private errorHandlerService: ErrorHandlerService
+    private errorHandlerService: ErrorHandlerService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -38,20 +40,21 @@ export class HomeComponent implements OnInit {
   }
 
   getPasswordDetail(pwd: DetailedPassword): void {
-    // TODO: implementare router navigation a pagina dettaglio password
-    //this.router.navigate(['getpassword']) // qualcosa di simile
-    console.log(`GET PASSWORD DETAIL ID: ${pwd.idPassword}`);
+    // router navigation a pagina dettaglio password
+    this.router.navigate(['passwords', 'password', pwd.idPassword]);
   }
 
   getPasswordsByService(service: Service): void {
-    // TODO: implementare router navigation a lista password visualizzate per servizio
-    //this.router.navigate(['getpasswordsbyservice']) // qualcosa di simile
-    console.log(`GET SERVICE DETAIL ID: ${service.idService}`);
+    // router navigation a lista password visualizzate per servizio
+    this.router.navigate(['passwords', 'service', service.idService]);
   }
 
   seeMore(section: string): void {
     // TODO: implementare redirect a lista pwd starred se section == 'starred', 
     // invece se è 'services' allora andare a lista servizi usati da utente
-    console.log(`SEE MORE ${section}`);
+    if(section === 'starred') 
+      this.router.navigate(['passwords', 'starred', '1']);
+    else 
+      console.log(`SEE MORE ${section}`);
   }
 }
