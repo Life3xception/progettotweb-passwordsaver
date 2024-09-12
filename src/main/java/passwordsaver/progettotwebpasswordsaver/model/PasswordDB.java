@@ -164,6 +164,7 @@ public class PasswordDB {
             // and to encrypt the password! To encrypt the password we have to recover the secretkey and the IV
             // NOTE: we have to pass limited=false because we need to read from the db the key and the IV!
             UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(loggedUsername, false);
+            idUser = loggedUser.getIdUser(); // va settato giusto!
 
             try {
                 this.password = Base64.getEncoder().encodeToString(

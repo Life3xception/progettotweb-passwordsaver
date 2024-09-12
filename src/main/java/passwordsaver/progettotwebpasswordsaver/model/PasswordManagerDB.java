@@ -86,6 +86,18 @@ public class PasswordManagerDB {
         return p;
     }
 
+    public DetailedPasswordDB getDetailedPassword(int idPwd) {
+        DetailedPasswordDB p = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            p = DetailedPasswordDB.loadPassword(idPwd, conn, true);
+        } catch (Exception ex) {
+            System.out.println("PasswordManagerDB - getDetailedPassword: " + ex.getMessage());
+        }
+
+        return p;
+    }
+
     public PasswordDB getDecodedPassword(int idPwd) {
         PasswordDB p = null;
 

@@ -5,6 +5,7 @@ public class Apis {
     public static final String LOGOUT = "/logout";
     public static final String PASSWORDS = "/passwords";
     public static final String PASSWORDS_GETPASSWORD = PASSWORDS + "/getpassword";
+    public static final String PASSWORDS_GETDETAILEDPASSWORD = PASSWORDS + "/getdetailedpassword";
     public static final String PASSWORDS_GETDECODEDPASSWORD = PASSWORDS + "/getdecodedpassword";
     public static final String PASSWORDS_GETDETAILEDPASSWORDS = PASSWORDS + "/getdetailedpasswords";
     public static final String PASSWORDS_GETDETAILEDPASSWORDSBYSERVICE = PASSWORDS + "/getdetailedpasswordsbyservice";
