@@ -13,6 +13,7 @@ export const BeApis = {
     getdecodedpassword: `${BeMainApis.passwords}/getdecodedpassword`,
     getstarredpasswords: `${BeMainApis.passwords}/getstarredpasswords`,
     getdetailedpasswords: `${BeMainApis.passwords}/getdetailedpasswords`,
+    getdetailedpasswordsbyservice: `${BeMainApis.passwords}/getdetailedpasswordsbyservice`,
     getdetailedstarredpasswords: `${BeMainApis.passwords}/getdetailedstarredpasswords`,
     addpassword: `${BeMainApis.passwords}/addpassword`,
     updatepassword: `${BeMainApis.passwords}/updatepassword`,

@@ -30,6 +30,11 @@ export class PasswordsService {
     return this.httpClient.get<DetailedPassword[]>(url);
   }
 
+  getDetailedPasswordsByService(idService: number): Observable<DetailedPassword[]> {
+    let url = `${environment.apiEndpoint}/${BeApis.getdetailedpasswordsbyservice}?idService=${idService}`;
+    return this.httpClient.get<DetailedPassword[]>(url);
+  }
+
   getDetailedStarredPasswords(limit: number): Observable<DetailedPassword[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedstarredpasswords}`;
     if(limit != 0)

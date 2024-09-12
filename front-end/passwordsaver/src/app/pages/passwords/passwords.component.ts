@@ -52,14 +52,31 @@ export class PasswordsComponent implements OnInit {
       // console.log(this.selectedIdPassword);
       // console.log(this.selectedIdService);
       // console.log(this.showOnlyStarred);
-    });
 
+      if(this.selectedIdPassword != 0) {
 
-    this.passwordsService.getDetailedPasswords().subscribe({
-      next: (pass) => {
-        this.passwords = pass;
-      },
-      error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+      } else if(this.selectedIdService != 0) {
+        this.passwordsService.getDetailedPasswordsByService(this.selectedIdService).subscribe({
+          next: (pass) => {
+            this.passwords = pass;
+          },
+          error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+        });
+      } else if(this.showOnlyStarred) {
+        this.passwordsService.getDetailedStarredPasswords(0).subscribe({
+          next: (pass) => {
+            this.passwords = pass;
+          },
+          error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+        });
+      } else {
+        this.passwordsService.getDetailedPasswords().subscribe({
+          next: (pass) => {
+            this.passwords = pass;
+          },
+          error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+        }); 
+      }
     });
   }
 
