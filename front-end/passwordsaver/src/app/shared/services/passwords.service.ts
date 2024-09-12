@@ -30,6 +30,11 @@ export class PasswordsService {
     return this.httpClient.get<DetailedPassword[]>(url);
   }
 
+  getDetailedPassword(idPassword: number): Observable<DetailedPassword> {
+    let url = `${environment.apiEndpoint}/${BeApis.getdetailedpassword}?idPassword=${idPassword}`;
+    return this.httpClient.get<DetailedPassword>(url);
+  }
+
   getDetailedPasswordsByService(idService: number): Observable<DetailedPassword[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedpasswordsbyservice}?idService=${idService}`;
     return this.httpClient.get<DetailedPassword[]>(url);
@@ -45,5 +50,10 @@ export class PasswordsService {
   getDecodedPassword(idPwd: number): Observable<Password> {
     let url = `${environment.apiEndpoint}/${BeApis.getdecodedpassword}?idPassword=${idPwd}`;
     return this.httpClient.get<Password>(url); // FIXME: in questo modo la password viaggia in chiaro, molto male!!!
+  }
+
+  addPassword(pwd: Password): Observable<Password> {
+    let url = `${environment.apiEndpoint}/${BeApis.addpassword}`;
+    return this.httpClient.post<Password>(url, pwd);
   }
 }

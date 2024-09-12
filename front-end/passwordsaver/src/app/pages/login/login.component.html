@@ -12,7 +12,10 @@
                 class="form-control" 
                 formControlName="username" 
                 id="username" 
-                [ngClass]="!loginForm.controls['username'].valid && loginForm.controls['username'].dirty ? 'is-invalid' : 'is-valid'"
+                [ngClass]="loginForm.controls['username'].value != '' ? 
+                                    !loginForm.controls['username'].valid && loginForm.controls['username'].dirty ? 
+                                        'is-invalid' : 'is-valid' 
+                                    : ''"
                 required>
             <small class="validation-error" *ngIf="!loginForm.controls['username'].valid && loginForm.controls['username'].dirty">
                 Please insert the username.
@@ -26,7 +29,10 @@
                 class="form-control" 
                 formControlName="password"
                 id="password" 
-                [ngClass]="!loginForm.controls['password'].valid && loginForm.controls['password'].dirty ? 'is-invalid' : 'is-valid'"
+                [ngClass]="loginForm.controls['password'].value != '' ? 
+                                    !loginForm.controls['password'].valid && loginForm.controls['password'].dirty ? 
+                                        'is-invalid' : 'is-valid' 
+                                    : ''"
                 required>
             <small class="validation-error" *ngIf="!loginForm.controls['password'].valid && loginForm.controls['password'].dirty">
                 Please insert the password.

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PasswordsComponent } from './passwords.component';
 import { PasswordsRoutingModule } from './passwords-routing.module';
 import { ToastModule } from 'primeng/toast';
+import { NewPasswordModule } from './new-password/new-password.module';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { ToastModule } from 'primeng/toast';
   imports: [
     CommonModule,
     PasswordsRoutingModule,
-    ToastModule
+    ToastModule,
+    NewPasswordModule
   ]
 })
 export class PasswordsModule { }

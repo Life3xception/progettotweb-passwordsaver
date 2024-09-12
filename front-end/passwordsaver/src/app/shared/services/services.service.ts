@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Service } from '../models/service.model';
 import { environment } from '../../environment/environment';
-import { BeApis } from '../../environment/BeServlets';
+import { BeApis, BeMainApis } from '../../environment/BeServlets';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,11 @@ import { BeApis } from '../../environment/BeServlets';
 export class ServicesService {
 
   constructor(private httpClient: HttpClient) { }
+
+  getServices(): Observable<Service[]> {
+    let url = `${environment.apiEndpoint}/${BeMainApis.services}`;
+    return this.httpClient.get<Service[]>(url);
+  }
 
   getMostUsedServicesByUser(limit: number): Observable<Service[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getmostusedservicesbyuser}`;

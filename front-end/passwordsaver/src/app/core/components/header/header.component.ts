@@ -23,8 +23,8 @@ export class HeaderComponent implements OnInit {
       url: 'passwords'
     },
     {
-      text: 'Nuova Password',
-      url: 'new-password'
+      text: 'Lista Servizi',
+      url: 'services'
     }
   ];
   selectedMenuItem: MenuItem | undefined;

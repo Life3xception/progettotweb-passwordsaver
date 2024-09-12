@@ -15,6 +15,7 @@ export class PasswordsComponent implements OnInit {
   selectedIdService: number | undefined;
   selectedIdPassword: number | undefined;
   showOnlyStarred: boolean = false;
+  pageTitle: string = 'Lista delle Password';
 
   constructor(private passwordsService: PasswordsService,
     private errorHandlerService: ErrorHandlerService,
@@ -28,16 +29,23 @@ export class PasswordsComponent implements OnInit {
       this.selectedIdPassword = 0;
       this.selectedIdService = 0;
       this.showOnlyStarred = false;
+      this.pageTitle = 'Lista delle Password';
 
       if(params['specificView'] && params['value']) { // può essere service=id oppure password=id
         const view = params['specificView'];
         const value = params['value'];
-        if(view === 'service')
+        if(view === 'service') {
           this.selectedIdService = parseInt(value);
-        else if(view === 'password')
+          this.pageTitle = 'Lista Password per Servizio';
+        }
+        else if(view === 'password') {
           this.selectedIdPassword = parseInt(value);
-        else if(view === 'starred')
+          this.pageTitle = 'Dettaglio Password';
+        }
+        else if(view === 'starred') {
           this.showOnlyStarred = value === '1';
+          this.pageTitle = 'Lista Password Preferite';
+        }
         else {
           this.messageService.add({ 
               key: 'passwordsToast',
@@ -49,12 +57,13 @@ export class PasswordsComponent implements OnInit {
         }
       }
 
-      // console.log(this.selectedIdPassword);
-      // console.log(this.selectedIdService);
-      // console.log(this.showOnlyStarred);
-
       if(this.selectedIdPassword != 0) {
-
+        this.passwordsService.getDetailedPassword(this.selectedIdPassword).subscribe({
+          next: (pass) => {
+            this.passwords = [pass];
+          },
+          error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+        });
       } else if(this.selectedIdService != 0) {
         this.passwordsService.getDetailedPasswordsByService(this.selectedIdService).subscribe({
           next: (pass) => {
@@ -78,6 +87,10 @@ export class PasswordsComponent implements OnInit {
         }); 
       }
     });
+  }
+
+  goToNewPassword(): void {
+    this.router.navigate(['passwords', 'new-password']);
   }
 
   showPassword(pwd: DetailedPassword): void {
