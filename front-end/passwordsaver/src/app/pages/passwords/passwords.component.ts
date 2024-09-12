@@ -4,6 +4,8 @@ import { PasswordsService } from '../../shared/services/passwords.service';
 import { ErrorHandlerService } from '../../shared/services/error-handler.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { Service } from '../../shared/models/service.model';
+import { ServicesService } from '../../shared/services/services.service';
 
 @Component({
   selector: 'app-passwords',
@@ -16,15 +18,24 @@ export class PasswordsComponent implements OnInit {
   selectedIdPassword: number | undefined;
   showOnlyStarred: boolean = false;
   pageTitle: string = 'Lista delle Password';
+  services: Service[] | undefined;
 
   constructor(private passwordsService: PasswordsService,
     private errorHandlerService: ErrorHandlerService,
     private router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private servicesService: ServicesService
   ) { }
 
   ngOnInit(): void {
+    this.servicesService.getServices().subscribe({
+      next: (services) => {
+        this.services = services;
+      },
+      error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+    });
+
     this.route.params.subscribe((params: Params) => {
       this.selectedIdPassword = 0;
       this.selectedIdService = 0;
@@ -93,6 +104,20 @@ export class PasswordsComponent implements OnInit {
     this.router.navigate(['passwords', 'new-password']);
   }
 
+  showStarred(): void {
+    if(!this.showOnlyStarred)
+      this.router.navigate(['passwords', 'starred', '1']);
+    else
+      this.router.navigate(['passwords']);
+  }
+
+  showSelectedService(idService: string): void {
+    if(idService !== '0')
+      this.router.navigate(['passwords', 'service', idService]);
+    else
+    this.router.navigate(['passwords']);
+  }
+
   showPassword(pwd: DetailedPassword): void {
     if(!pwd.showed) {
       if(this.passwordsService.isEncoded(pwd)) {
@@ -110,5 +135,13 @@ export class PasswordsComponent implements OnInit {
     } else {
       pwd.showed = false;
     }
+  }
+
+  modifyPassword(pwd: DetailedPassword): void {
+    console.log("MODIFY"); // TODO
+  }
+  
+  deletePassword(pwd: DetailedPassword): void {
+    console.log("DELETE"); // TODO
   }
 }

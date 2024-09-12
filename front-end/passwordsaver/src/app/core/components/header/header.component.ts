@@ -42,8 +42,8 @@ export class HeaderComponent implements OnInit {
         // ad ogni cambiamento di route, cancelliamo il selectedItem
         this.selectedMenuItem = undefined;
 
-        // impostiamo come selezionato il menuitem corrispondente alla url, se esiste
-        this.selectedMenuItem = this.menuItems.find((x: MenuItem) => x.url === event.url.slice(1));
+        // impostiamo come selezionato il menuitem con proprietà url contenuta nell'url della route, se esiste
+        this.selectedMenuItem = this.menuItems.find((x: MenuItem) => event.url.slice(1).includes(x.url));
 
         // nel caso non abbiamo trovato il menuitem e la url è /, allora settiamo attivo home
         if(!this.selectedMenuItem && event.url === '/')
