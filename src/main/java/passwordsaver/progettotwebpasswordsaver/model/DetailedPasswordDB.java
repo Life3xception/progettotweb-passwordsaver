@@ -112,6 +112,31 @@ public class DetailedPasswordDB {
         return ret;
     }
 
+    public static ArrayList<DetailedPasswordDB> loadAllPasswordsByService(String username, Connection conn, boolean validityCheck, int idService) throws SQLException {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        String sql = """
+                SELECT P.*, S.Name AS ServiceName
+                FROM Passwords AS P INNER JOIN Services AS S ON P.IdService = S.IdService
+                WHERE P.IdUser = ? AND P.IdService = ?
+            """;
+        if(validityCheck)
+            sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
+
+        int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            st.setInt(2, idService);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                ret.add(fromResultSet(rs));
+            }
+        }
+
+        return ret;
+    }
+
     public static ArrayList<DetailedPasswordDB> loadAllStarredPasswords(String username, Connection conn, boolean validityCheck, int limit) throws SQLException {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         String sql = """

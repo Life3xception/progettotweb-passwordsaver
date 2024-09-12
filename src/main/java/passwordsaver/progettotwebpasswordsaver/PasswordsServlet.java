@@ -21,6 +21,7 @@ import java.util.Map;
         Apis.PASSWORDS_GETPASSWORD,
         Apis.PASSWORDS_GETDECODEDPASSWORD,
         Apis.PASSWORDS_GETDETAILEDPASSWORDS,
+        Apis.PASSWORDS_GETDETAILEDPASSWORDSBYSERVICE,
         Apis.PASSWORDS_GETSTARREDPASSWORDS,
         Apis.PASSWORDS_GETDETAILEDSTARREDPASSWORDS,
         Apis.PASSWORDS_ADDPASSWORD,
@@ -111,6 +112,29 @@ public class PasswordsServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(passwords));
+        } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDETAILEDPASSWORDSBYSERVICE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // retrieving the parameters from the querystring as a key-value Map
+            Map<String, String[]> params = request.getParameterMap();
+
+            if(params.containsKey("idService")) {
+                int idService = Integer.parseInt(params.get("idService")[0]);
+
+                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                } else {
+                    // retrieving all the valid passwords by service for the user
+                    ArrayList<DetailedPasswordDB> passwords = PasswordManagerDB.getManager().getAllDetailedPasswordsByService(username, idService);
+
+                    // returning the arraylist as an array of JsonObject using the Gson library
+                    out.println(gson.toJson(passwords));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+            }
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORDS)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();

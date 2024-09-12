@@ -42,6 +42,17 @@ public class PasswordManagerDB {
     }
 
     // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
+    public ArrayList<DetailedPasswordDB> getAllDetailedPasswordsByService(String username, int idService) {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedPasswordDB.loadAllPasswordsByService(username, conn, true, idService);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - getAllDetailedPasswordsByService: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
     public ArrayList<PasswordDB> getAllStarredPasswords(String username, int limit) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
