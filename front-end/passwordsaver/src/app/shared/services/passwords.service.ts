@@ -66,4 +66,9 @@ export class PasswordsService {
     let url = `${environment.apiEndpoint}/${BeApis.updatepassword}`;
     return this.httpClient.put(url, pwd);
   }
+
+  deletePassword(idPassword: number): Observable<any> {
+    let url = `${environment.apiEndpoint}/${BeApis.deletepassword}?idPassword=${idPassword}`;
+    return this.httpClient.delete<Password>(url);
+  }
 }

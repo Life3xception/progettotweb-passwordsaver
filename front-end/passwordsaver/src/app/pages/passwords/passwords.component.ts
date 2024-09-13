@@ -19,6 +19,7 @@ export class PasswordsComponent implements OnInit {
   showOnlyStarred: boolean = false;
   pageTitle: string = 'Lista delle Password';
   services: Service[] | undefined;
+  pwdToDelete: DetailedPassword | undefined;
 
   constructor(private passwordsService: PasswordsService,
     private errorHandlerService: ErrorHandlerService,
@@ -140,8 +141,31 @@ export class PasswordsComponent implements OnInit {
   modifyPassword(pwd: DetailedPassword): void {
     this.router.navigate(['passwords', 'modify-password', pwd.idPassword]);
   }
-  
+
   deletePassword(pwd: DetailedPassword): void {
-    console.log("DELETE"); // TODO
+    this.pwdToDelete = pwd;
+  }
+  
+  confirmDeletePassword(): void {
+    if(this.pwdToDelete !== undefined) {
+      this.passwordsService.deletePassword(this.pwdToDelete.idPassword).subscribe({
+        next: () => {
+          this.messageService.add({ key: 'passwordsToast',
+            severity: 'success',
+            summary: 'Successo',
+            detail: 'Password eliminata con successo'
+          });
+          
+          if(this.selectedIdPassword != 0) {
+            // eravamo in pagina dettaglio password, dobbiamo tornare alla lista password
+            setTimeout(() => window.location.href = 'passwords', 500);
+          } else  {
+            // eravamo in pagina password by service/ password preferite / lista password, dobbiamo ricaricare la pagina
+            setTimeout(() => window.location.reload(), 500);
+          }
+        },
+        error: (err) => this.errorHandlerService.handle(err, undefined, 'passwordsToast')
+      });
+    }
   }
 }
