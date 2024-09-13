@@ -91,8 +91,8 @@ export class NewPasswordComponent implements OnInit {
       next: (response) => {
         this.messageService.add({ key: 'newPasswordToast',
           severity: 'success',
-          summary: 'Success',
-          detail: 'Password added successfully!'
+          summary: 'Successo',
+          detail: 'Password aggiunta con successo!'
         });
 
         setTimeout(() => this.router.navigate(['passwords', 'password', response.idPassword]), 1000);

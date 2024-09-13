@@ -61,8 +61,8 @@ export class PasswordsComponent implements OnInit {
           this.messageService.add({ 
               key: 'passwordsToast',
               severity: 'error',
-              summary: 'Page Error',
-              detail: 'Invalid parameter, could not load page'
+              summary: 'Errore di Pagina',
+              detail: 'Parametro non valido, impossibile caricare la pagina'
           });
           setTimeout(() => this.router.navigate(['home']), 500);
         }
@@ -138,7 +138,7 @@ export class PasswordsComponent implements OnInit {
   }
 
   modifyPassword(pwd: DetailedPassword): void {
-    console.log("MODIFY"); // TODO
+    this.router.navigate(['passwords', 'modify-password', pwd.idPassword]);
   }
   
   deletePassword(pwd: DetailedPassword): void {

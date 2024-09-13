@@ -5,6 +5,7 @@ import { PasswordsRoutingModule } from './passwords-routing.module';
 import { ToastModule } from 'primeng/toast';
 import { NewPasswordModule } from './new-password/new-password.module';
 import { MatIconModule } from '@angular/material/icon';
+import { ModifyPasswordModule } from './modify-password/modify-password.module';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
     PasswordsRoutingModule,
     ToastModule,
     NewPasswordModule,
-    MatIconModule
+    MatIconModule,
+    ModifyPasswordModule
   ]
 })
 export class PasswordsModule { }

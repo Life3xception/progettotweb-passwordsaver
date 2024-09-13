@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         this.messageService.add({ key: 'loginToast',
           severity: response.success ? 'success' : 'error',
-          summary: response.success ? 'Login Successful' : 'Login Error',
+          summary: response.success ? 'Login Effettuato' : 'Errore nel Login',
           detail: response.errorMessage
         });
 

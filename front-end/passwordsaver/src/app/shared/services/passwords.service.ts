@@ -25,6 +25,11 @@ export class PasswordsService {
     pwd.password = this.base64Decoder.decode(pwd.password);
   }
 
+  getPassword(idPwd: number): Observable<Password> {
+    let url = `${environment.apiEndpoint}/${BeApis.getpassword}?idPassword=${idPwd}`;
+    return this.httpClient.get<Password>(url);
+  }
+
   getDetailedPasswords(): Observable<DetailedPassword[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedpasswords}`;
     return this.httpClient.get<DetailedPassword[]>(url);
@@ -55,5 +60,10 @@ export class PasswordsService {
   addPassword(pwd: Password): Observable<Password> {
     let url = `${environment.apiEndpoint}/${BeApis.addpassword}`;
     return this.httpClient.post<Password>(url, pwd);
+  }
+
+  modifyPassword(pwd: Password): Observable<any> {
+    let url = `${environment.apiEndpoint}/${BeApis.updatepassword}`;
+    return this.httpClient.put(url, pwd);
   }
 }
