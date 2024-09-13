@@ -116,7 +116,7 @@ export class PasswordsComponent implements OnInit {
     if(idService !== '0')
       this.router.navigate(['passwords', 'service', idService]);
     else
-    this.router.navigate(['passwords']);
+      this.router.navigate(['passwords']);
   }
 
   showPassword(pwd: DetailedPassword): void {

@@ -3,22 +3,23 @@ import { CommonModule } from '@angular/common';
 import { PasswordsComponent } from './passwords.component';
 import { PasswordsRoutingModule } from './passwords-routing.module';
 import { ToastModule } from 'primeng/toast';
-import { NewPasswordModule } from './new-password/new-password.module';
 import { MatIconModule } from '@angular/material/icon';
-import { ModifyPasswordModule } from './modify-password/modify-password.module';
-
+import { ModifyPasswordComponent } from './modify-password/modify-password.component';
+import { NewPasswordComponent } from './new-password/new-password.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    PasswordsComponent
+    PasswordsComponent,
+    NewPasswordComponent,
+    ModifyPasswordComponent
   ],
   imports: [
     CommonModule,
     PasswordsRoutingModule,
     ToastModule,
-    NewPasswordModule,
     MatIconModule,
-    ModifyPasswordModule
+    ReactiveFormsModule
   ]
 })
 export class PasswordsModule { }

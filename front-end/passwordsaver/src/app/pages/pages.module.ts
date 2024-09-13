@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LoginModule } from './login/login.module';
 import { HomeModule } from './home/home.module';
 import { PasswordsModule } from './passwords/passwords.module';
+import { ServicesModule } from './services/services.module';
 
 
 
@@ -13,7 +14,8 @@ import { PasswordsModule } from './passwords/passwords.module';
     CommonModule,
     LoginModule,
     HomeModule,
-    PasswordsModule
+    PasswordsModule,
+    ServicesModule
   ]
 })
 export class PagesModule { }

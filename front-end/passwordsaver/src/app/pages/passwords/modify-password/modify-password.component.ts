@@ -106,7 +106,7 @@ export class ModifyPasswordComponent implements OnInit {
     this.currentPwd.isStarred = this.modifyPwdForm.controls['isStarred'].value;
     this.currentPwd.idService = parseInt(this.modifyPwdForm.controls['service'].value);
 
-    this.passwordsService.modifyPassword(this.currentPwd).subscribe({
+    this.passwordsService.updatePassword(this.currentPwd).subscribe({
       next: () => {
         this.messageService.add({ key: 'modifyPasswordToast',
           severity: 'success',

@@ -62,7 +62,7 @@ export class PasswordsService {
     return this.httpClient.post<Password>(url, pwd);
   }
 
-  modifyPassword(pwd: Password): Observable<any> {
+  updatePassword(pwd: Password): Observable<any> {
     let url = `${environment.apiEndpoint}/${BeApis.updatepassword}`;
     return this.httpClient.put(url, pwd);
   }

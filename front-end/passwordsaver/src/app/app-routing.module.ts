@@ -27,7 +27,17 @@ const routes: Routes = [
     path: 'passwords/:specificView/:value',
     loadChildren: () => import('./pages/passwords/passwords.module').then(m => m.PasswordsModule),
     canActivate: [AuthGuardService]
-  }
+  },
+  {
+    path: 'services',
+    loadChildren: () => import('./pages/services/services.module').then(m => m.ServicesModule),
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'services/:specificView/:value',
+    loadChildren: () => import('./pages/services/services.module').then(m => m.ServicesModule),
+    canActivate: [AuthGuardService]
+  },
 ];
 
 @NgModule({

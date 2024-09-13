@@ -1,0 +1,17 @@
+.main {
+    width: 100%;
+}
+
+.modify-service-form > h2 {
+    text-align: center;
+    font-weight: bold;
+} 
+
+.modify-service-form > form {
+    width: 100%;
+} 
+
+.validation-error {
+    color: red;
+    font-size: small;
+}

@@ -1,0 +1,46 @@
+<p-toast key="modifyServiceToast"></p-toast>
+<div class="main">
+    <div class="col-md-8 offset-2 mt-5 modify-service-form">
+        <h2 class="h2 mb-4">Modifica Servizio</h2>
+        <form *ngIf="modifyServiceForm !== undefined" [formGroup]="modifyServiceForm" class="needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
+            <div class="row g-3">
+                <div class="col-md-4 offset-4">
+                    <label for="name" class="form-label">Nome</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="name" 
+                        id="name" 
+                        [ngClass]="modifyServiceForm.controls['name'].value != '' ? 
+                                    !modifyServiceForm.controls['name'].valid && modifyServiceForm.controls['name'].dirty ? 
+                                        'is-invalid' : 'is-valid' 
+                                    : ''"
+                        required>
+                    <small class="validation-error" *ngIf="!modifyServiceForm.controls['name'].valid && modifyServiceForm.controls['name'].dirty">
+                        Inserire il nome del servizio.
+                    </small>
+                </div>
+                <div class="col-md-4 offset-4">
+                    <label for="serviceType" class="form-label">Tipo di Servizio:</label>
+                    <select 
+                        id="serviceType"
+                        formControlName="serviceType"
+                        class="form-select"
+                        [ngClass]="modifyServiceForm.controls['serviceType'].value != '0' ? 
+                                    !modifyServiceForm.controls['serviceType'].valid && modifyServiceForm.controls['serviceType'].dirty ? 
+                                        'is-invalid' : 'is-valid' 
+                                    : ''"
+                        required>
+                        <option value="{{st.idServiceType}}" *ngFor="let st of serviceTypes">{{st.name}}</option>
+                    </select>
+                    <small class="validation-error" *ngIf="modifyServiceForm.controls['serviceType'].value == '0' && modifyServiceForm.controls['serviceType'].dirty">
+                        Selezionare un tipo di servizio.
+                    </small>
+                </div>
+                <div class="col-4 offset-4 text-center">
+                    <button class="btn btn-primary" type="submit" (click)="onSubmit($event)">Salva</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
