@@ -43,6 +43,8 @@ public class UserTypeDB {
         if(validityCheck)
             sql += " WHERE Validity = TRUE";
 
+        sql += "\nORDER BY Name";
+
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             ResultSet rs = st.executeQuery();
 

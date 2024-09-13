@@ -20,6 +20,9 @@ import java.util.Map;
         Apis.SERVICES,
         Apis.SERVICES_GETSERVICE,
         Apis.SERVICES_GETMOSTUSEDSERVICESBYUSER,
+        Apis.SERVICES_GETDETAILEDSERVICES,
+        Apis.SERVICES_GETDETAILEDSERVICESBYSERVICETYPE,
+        Apis.SERVICES_GETDETAILEDSERVICE,
         Apis.SERVICES_ADDSERVICE,
         Apis.SERVICES_UPDATESERVICE,
         Apis.SERVICES_DELETESERVICE,
@@ -49,6 +52,41 @@ public class ServicesServlet extends HttpServlet {
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(services));
+        } else if(request.getServletPath().equals(Apis.SERVICES_GETDETAILEDSERVICES)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            // TODO: potrebbe servire per richiesta servizi per tipo servizio
+            // retrieving the parameters from the querystring as a key-value Map
+            // Map<String, String[]> params = request.getParameterMap();
+
+            // retrieving all the valid services for the user
+            ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServices(username);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(services));
+        } else if(request.getServletPath().equals(Apis.SERVICES_GETDETAILEDSERVICESBYSERVICETYPE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idServiceType")) {
+                int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
+
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                } else {
+                    // retrieving all the valid detailed services for the user by service type
+                    ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServicesByServiceType(username, idServiceType);
+
+                    // returning the arraylist as an array of JsonObject using the Gson library
+                    out.println(gson.toJson(services));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+            }
         } else if(request.getServletPath().equals(Apis.SERVICES_GETSERVICE)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
@@ -64,6 +102,31 @@ public class ServicesServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
                 } else {
                     ServiceDB service = ServiceManagerDB.getManager().getService(idService);
+
+                    if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of service of another user.");
+                    }
+
+                    out.println(gson.toJson(service));
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+            }
+        } else if(request.getServletPath().equals(Apis.SERVICES_GETDETAILEDSERVICE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
+            boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idService")) {
+                int idService = Integer.parseInt(pars.get("idService")[0]);
+
+                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                } else {
+                    DetailedServiceDB service = ServiceManagerDB.getManager().getDetailedService(idService);
 
                     if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of service of another user.");

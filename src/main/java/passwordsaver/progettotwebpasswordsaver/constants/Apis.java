@@ -27,6 +27,9 @@ public class Apis {
     public static final String SERVICES = "/services";
     public static final String SERVICES_GETSERVICE = SERVICES + "/getservice";
     public static final String SERVICES_GETMOSTUSEDSERVICESBYUSER = SERVICES + "/getmostusedservicesbyuser";
+    public static final String SERVICES_GETDETAILEDSERVICES = SERVICES + "/getdetailedservices";
+    public static final String SERVICES_GETDETAILEDSERVICESBYSERVICETYPE = SERVICES + "/getdetailedservicesbyservicetype";
+    public static final String SERVICES_GETDETAILEDSERVICE = SERVICES + "/getdetailedservice";
     public static final String SERVICES_ADDSERVICE = SERVICES + "/addservice";
     public static final String SERVICES_UPDATESERVICE = SERVICES + "/updateservice";
     public static final String SERVICES_DELETESERVICE = SERVICES + "/deleteservice";

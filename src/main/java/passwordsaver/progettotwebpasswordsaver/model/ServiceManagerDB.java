@@ -31,6 +31,26 @@ public class ServiceManagerDB {
         return ret;
     }
 
+    public ArrayList<DetailedServiceDB> getAllDetailedServices(String username) {
+        ArrayList<DetailedServiceDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedServiceDB.loadAllServices(username, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getAllDetailedServices: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    public ArrayList<DetailedServiceDB> getAllDetailedServicesByServiceType(String username, int idServiceType) {
+        ArrayList<DetailedServiceDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedServiceDB.loadAllServicesByServiceType(username, conn, true, idServiceType);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getAllDetailedServicesByServiceType: " + ex.getMessage());
+        }
+        return ret;
+    }
+
     public ArrayList<ServiceDB> getMostUsedServicesByUser(String username, int limit) {
         ArrayList<ServiceDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
@@ -48,6 +68,18 @@ public class ServiceManagerDB {
             s = ServiceDB.loadService(idService, conn, true);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getService: "  + ex.getMessage());
+        }
+
+        return s;
+    }
+
+    public DetailedServiceDB getDetailedService(int idService) {
+        DetailedServiceDB s = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            s = DetailedServiceDB.loadService(idService, conn, true);
+        } catch (SQLException ex) {
+            System.out.println("ServiceManagerDB - getDetailedService: "  + ex.getMessage());
         }
 
         return s;

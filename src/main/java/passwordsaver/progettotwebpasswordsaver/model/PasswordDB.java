@@ -88,6 +88,8 @@ public class PasswordDB {
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
+        sql += "\nORDER BY Name";
+
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
@@ -108,8 +110,10 @@ public class PasswordDB {
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
+        sql += "\nORDER BY Name";
+
         if(limit != 0)
-            sql += " ORDER BY IdPassword LIMIT ?";
+            sql += "\nLIMIT ?";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 

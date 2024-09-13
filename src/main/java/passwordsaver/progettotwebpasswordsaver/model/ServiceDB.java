@@ -57,6 +57,8 @@ public class ServiceDB {
         if(validityCheck)
             sql += " AND Validity = TRUE";
 
+        sql += "\nORDER BY Name";
+
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
@@ -86,12 +88,13 @@ public class ServiceDB {
         sql += """                  
             \tGROUP BY IdService
             \tHAVING PwdByService > 0
-            \tORDER BY PwdByService DESC
             ) AS Temp
                 ON S.IdService = Temp.IdService""";
 
         if(validityCheck)
             sql += "\nWHERE Validity = TRUE";
+
+        sql += "\nORDER BY Temp.PwdByService DESC";
 
         if(limit != 0)
             sql += "\nLIMIT ?";

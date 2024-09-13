@@ -85,18 +85,20 @@ public class DetailedPasswordDB {
                 rs.getInt("IdService"),
                 rs.getString("ServiceName"),
                 rs.getString("PassPhrase"),
-                rs.getBoolean("IsStarred"), rs.getBoolean("Validity"));
+                rs.getBoolean("IsStarred"),
+                rs.getBoolean("Validity"));
     }
 
     public static ArrayList<DetailedPasswordDB> loadAllPasswords(String username, Connection conn, boolean validityCheck) throws SQLException {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         String sql = """
-                SELECT P.*, S.Name AS ServiceName
-                FROM Passwords AS P INNER JOIN Services AS S ON P.IdService = S.IdService
-                WHERE P.IdUser = ?
-            """;
+            SELECT P.*, S.Name AS ServiceName
+            FROM Passwords AS P INNER JOIN Services AS S ON P.IdService = S.IdService
+            WHERE P.IdUser = ?""";
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
+
+        sql += "\nORDER BY P.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
@@ -121,6 +123,8 @@ public class DetailedPasswordDB {
             """;
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
+
+        sql += "\nORDER BY P.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
@@ -147,8 +151,10 @@ public class DetailedPasswordDB {
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
 
+        sql += "\nORDER BY P.Name";
+
         if(limit != 0)
-            sql += " ORDER BY P.IdPassword LIMIT ?";
+            sql += "\nLIMIT ?";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
