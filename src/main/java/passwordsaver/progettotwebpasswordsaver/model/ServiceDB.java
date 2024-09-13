@@ -74,21 +74,27 @@ public class ServiceDB {
     public static ArrayList<ServiceDB> loadMostUsedServicesByUser(String username, Connection conn, boolean validityCheck, int limit) throws SQLException {
         ArrayList<ServiceDB> ret = new ArrayList<>();
         String sql = """
-                    SELECT S.*\s
-                    FROM Services AS S INNER JOIN (
-                        SELECT IdService, COUNT(*) AS PwdByService
-                        FROM Passwords
-                        WHERE IdUser = ?
-                        GROUP BY IdService
-                        ORDER BY PwdByService DESC
-                    ) AS Temp\s
-                    ON S.IdService = Temp.IdService
-                """;
+                    SELECT S.*
+                    FROM Services AS S
+                    INNER JOIN (
+                    \tSELECT IdService, COUNT(*) AS PwdByService
+                    \tFROM Passwords
+                    \tWHERE IdUser = ?""";
         if(validityCheck)
-            sql += " WHERE Validity = TRUE";
+            sql += " AND Validity = TRUE\n";
+
+        sql += """                  
+            \tGROUP BY IdService
+            \tHAVING PwdByService > 0
+            \tORDER BY PwdByService DESC
+            ) AS Temp
+                ON S.IdService = Temp.IdService""";
+
+        if(validityCheck)
+            sql += "\nWHERE Validity = TRUE";
 
         if(limit != 0)
-            sql += " LIMIT ?";
+            sql += "\nLIMIT ?";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
