@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { AuthService } from '../../../shared/services/auth.service';
 
 // Custom TS type that represents a menu item
 type MenuItem = {
@@ -29,7 +30,9 @@ export class HeaderComponent implements OnInit {
   ];
   selectedMenuItem: MenuItem | undefined;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     // events è uno stream observable per gli eventi del router
@@ -60,5 +63,9 @@ export class HeaderComponent implements OnInit {
 
   isSelected(item: MenuItem): boolean {
     return item === this.selectedMenuItem;
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

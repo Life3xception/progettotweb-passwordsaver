@@ -15,12 +15,17 @@
     justify-content: flex-start;
 }
 
-/* .user-details-container {
-    padding: 0.5em;
+.user-profile {
+    padding: 1em;
     display: flex;
     justify-content: center;
     align-items: center;
-} */
+}
+
+.user-profile > button {
+    font-weight: bold;
+    padding: 0.75em;
+}
 
 .menuitem {
     height: 100%;

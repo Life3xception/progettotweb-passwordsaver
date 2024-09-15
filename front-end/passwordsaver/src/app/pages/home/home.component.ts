@@ -50,11 +50,11 @@ export class HomeComponent implements OnInit {
   }
 
   seeMore(section: string): void {
-    // TODO: implementare redirect a lista pwd starred se section == 'starred', 
-    // invece se è 'services' allora andare a lista servizi usati da utente
+    // redirect a lista pwd starred se section == 'starred', 
+    // invece se è 'services' allora a lista servizi usati da utente
     if(section === 'starred') 
       this.router.navigate(['passwords', 'starred', '1']);
-    else 
-      console.log(`SEE MORE ${section}`);
+    else if(section == 'services')
+      this.router.navigate(['services']);
   }
 }

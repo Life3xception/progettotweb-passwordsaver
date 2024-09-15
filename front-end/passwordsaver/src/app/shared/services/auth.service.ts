@@ -54,6 +54,8 @@ export class AuthService {
     this.localStorageService.remove(environment.accessTokenName);
     // e rimuviamo i dati di login
     this.localStorageService.remove(environment.loginDataName);
+    // e mandiamo alla pagina di login
+    window.location.href = 'login';
   }
 
   isAuthenticated(): boolean {
