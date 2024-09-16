@@ -25,11 +25,18 @@ export class ErrorHandlerService {
       } else if(error.status === 403) {
         // reindirizziamo alla pagina home
         setTimeout(() => this.router.navigate(['home']), 1000);
+      } else if(error.error && error.error.error && toastKey) {
+        this.messageService.add({key: toastKey,
+            severity: 'error',
+            summary: error.error.error,
+            detail: error.error.message,
+            sticky: true
+          });
       } else if(error.status && toastKey) {
         this.messageService.add({key: toastKey,
             severity: 'error',
-            summary: 'Error',
-            detail: `Error ${error.status}: ${error.statusText}`,
+            summary: `Error ${error.status}`,
+            detail: `${error.statusText}`,
             sticky: true
           });
       } else {

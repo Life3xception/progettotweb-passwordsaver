@@ -9,6 +9,7 @@ import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.model.*;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
+import passwordsaver.progettotwebpasswordsaver.utils.JsonErrorResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -86,7 +87,8 @@ public class PasswordsServlet extends HttpServlet {
                 int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
 
                 if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                    //response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting password", "Password not found");
                 } else {
                     DetailedPasswordDB pwd = PasswordManagerDB.getManager().getDetailedPassword(idPwd);
 
