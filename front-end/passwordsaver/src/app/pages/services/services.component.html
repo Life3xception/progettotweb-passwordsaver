@@ -28,7 +28,7 @@
                 <button type="button" class="btn btn-success" (click)="goToNewService()">Aggiungi Servizio</button>
             </div>
         </div>
-        <p *ngIf="services?.length == 0">Nessuna servizio presente per il tipo di servizio selezionato</p>
+        <p *ngIf="services?.length == 0">Nessun servizio presente per il tipo di servizio selezionato</p>
         <table class="table table-striped table-bordered" *ngIf="services?.length != 0">
             <thead>
                 <tr>
@@ -40,7 +40,7 @@
             <tbody>
                 <tr *ngFor="let serv of services">
                     <td class="name-col">{{serv.name}}</td>
-                    <td class="service-name-col">{{serv.serviceTypeName}}</td>
+                    <td class="servicetype-name-col">{{serv.serviceTypeName}}</td>
                     <td class="actions-col">
                         <button type="button" class="btn btn-primary" (click)="modifyService(serv)"><mat-icon class="field-icon" svgIcon="edit"></mat-icon></button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="deleteService(serv)"><mat-icon class="field-icon" svgIcon="delete"></mat-icon></button>

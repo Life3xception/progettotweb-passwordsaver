@@ -1,0 +1,37 @@
+.main {
+    width: 100%;
+}
+/* 
+.new-user-form {
+    margin-top: 6em;
+    padding: 5em 1em;
+    display: flex;
+    /* flex-direction: column; */
+    /*align-items: center;
+    border: 2px solid rgb(51, 47, 47);
+    border-radius: 25px;
+    background-color: #fffff9;
+} */
+
+/* it takes only the childs of .new-user-form, not every child element */
+/* .new-user-form > * {
+    margin: 1.5em;
+} */
+
+.new-user-form > h2 {
+    text-align: center;
+    font-weight: bold;
+} 
+
+.new-user-form > form {
+    width: 100%;
+} 
+
+.validation-error {
+    color: red;
+    font-size: small;
+}
+
+.validity-input {
+    margin-left: 1em;
+}

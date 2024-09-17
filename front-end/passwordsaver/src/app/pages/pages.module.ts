@@ -5,6 +5,7 @@ import { HomeModule } from './home/home.module';
 import { PasswordsModule } from './passwords/passwords.module';
 import { ServicesModule } from './services/services.module';
 import { ServicetypesModule } from './servicetypes/servicetypes.module';
+import { UsersModule } from './users/users.module';
 
 
 
@@ -17,7 +18,8 @@ import { ServicetypesModule } from './servicetypes/servicetypes.module';
     HomeModule,
     PasswordsModule,
     ServicesModule,
-    ServicetypesModule
+    ServicetypesModule,
+    UsersModule
   ]
 })
 export class PagesModule { }

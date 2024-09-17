@@ -32,6 +32,10 @@ export class HeaderComponent implements OnInit {
     {
       text: 'Lista Tipi di Servizo',
       url: 'servicetypes'
+    },
+    {
+      text: 'Lista Utenti',
+      url: 'users'
     }
   ];
   selectedMenuItem: MenuItem | undefined;

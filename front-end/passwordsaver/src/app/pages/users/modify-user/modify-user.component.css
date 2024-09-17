@@ -1,0 +1,21 @@
+.main {
+    width: 100%;
+}
+
+.modify-user-form > h2 {
+    text-align: center;
+    font-weight: bold;
+} 
+
+.modify-user-form > form {
+    width: 100%;
+} 
+
+.validation-error {
+    color: red;
+    font-size: small;
+}
+
+.validity-input {
+    margin-left: 1em;
+}

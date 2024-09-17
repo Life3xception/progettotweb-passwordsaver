@@ -49,6 +49,16 @@ const routes: Routes = [
     loadChildren: () => import('./pages/servicetypes/servicetypes.module').then(m => m.ServicetypesModule),
     canActivate: [AuthGuardService, AdminGuardService]
   },
+  {
+    path: 'users',
+    loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule),
+    canActivate: [AuthGuardService, AdminGuardService]
+  },
+  {
+    path: 'users/:specificView/:value',
+    loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule),
+    canActivate: [AuthGuardService, AdminGuardService]
+  },
 ];
 
 @NgModule({
