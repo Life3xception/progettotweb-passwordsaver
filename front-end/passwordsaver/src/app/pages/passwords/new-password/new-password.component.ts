@@ -41,7 +41,7 @@ export class NewPasswordComponent implements OnInit {
       'email': new FormControl(''),
       'passPhrase': new FormControl(''),
       'isStarred': new FormControl(false),
-      'service': new FormControl('0', Validators.required),
+      'service': new FormControl('', Validators.required),
     });
 
     this.newPwdForm.get('email')?.valueChanges.subscribe(val => {

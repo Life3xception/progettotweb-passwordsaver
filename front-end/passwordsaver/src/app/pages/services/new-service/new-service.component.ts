@@ -35,7 +35,7 @@ export class NewServiceComponent implements OnInit {
 
     this.newServiceForm = this.formBuilder.group({
       'name': new FormControl('', Validators.required),
-      'serviceType': new FormControl('0', Validators.required),
+      'serviceType': new FormControl('', Validators.required),
     });
   }
 

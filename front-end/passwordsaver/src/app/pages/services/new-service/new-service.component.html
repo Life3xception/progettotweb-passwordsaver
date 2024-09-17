@@ -26,20 +26,20 @@
                         id="serviceType"
                         formControlName="serviceType"
                         class="form-select"
-                        [ngClass]="newServiceForm.controls['serviceType'].value != '0' ? 
+                        [ngClass]="newServiceForm.controls['serviceType'].value != '' ? 
                                     !newServiceForm.controls['serviceType'].valid && newServiceForm.controls['serviceType'].dirty ? 
                                         'is-invalid' : 'is-valid' 
                                     : ''"
                         required>
-                        <option selected value="0">-</option>
+                        <option selected value="">-</option>
                         <option value="{{st.idServiceType}}" *ngFor="let st of servicesTypes">{{st.name}}</option>
                     </select>
-                    <small class="validation-error" *ngIf="newServiceForm.controls['serviceType'].value == '0' && newServiceForm.controls['serviceType'].dirty">
+                    <small class="validation-error" *ngIf="newServiceForm.controls['serviceType'].value == '' && newServiceForm.controls['serviceType'].dirty">
                         Selezionare un tipo di servizio.
                     </small>
                 </div>
                 <div class="col-4 offset-4 text-center">
-                    <button class="btn btn-primary" type="submit" (click)="onSubmit($event)">Aggiungi Servizio</button>
+                    <button class="btn btn-primary" type="submit" [disabled]="!newServiceForm.valid" (click)="onSubmit($event)">Aggiungi Servizio</button>
                 </div>
             </div>
         </form>
