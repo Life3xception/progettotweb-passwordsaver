@@ -6,6 +6,7 @@ import { PasswordsModule } from './passwords/passwords.module';
 import { ServicesModule } from './services/services.module';
 import { ServicetypesModule } from './servicetypes/servicetypes.module';
 import { UsersModule } from './users/users.module';
+import { UsertypesModule } from './usertypes/usertypes.module';
 
 
 
@@ -19,7 +20,8 @@ import { UsersModule } from './users/users.module';
     PasswordsModule,
     ServicesModule,
     ServicetypesModule,
-    UsersModule
+    UsersModule,
+    UsertypesModule
   ]
 })
 export class PagesModule { }

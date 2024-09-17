@@ -48,15 +48,15 @@ export class ServicetypesComponent implements OnInit {
 
       if(this.selectedIdServiceType != 0) {
         this.serviceTypesService.getServiceType(this.selectedIdServiceType).subscribe({
-          next: (serv) => {
-            this.serviceTypes = [serv];
+          next: (sType) => {
+            this.serviceTypes = [sType];
           },
           error: (err) => this.errorHandlerService.handle(err, undefined, 'serviceTypeToast')
         });
       } else {
         this.serviceTypesService.getServiceTypes().subscribe({
-          next: (services) => {
-            this.serviceTypes = services;
+          next: (servTypes) => {
+            this.serviceTypes = servTypes;
           },
           error: (err) => this.errorHandlerService.handle(err, undefined, 'serviceTypeToast')
         }); 

@@ -30,12 +30,16 @@ export class HeaderComponent implements OnInit {
   ];
   menuItemsAdmin: MenuItem[] = [
     {
-      text: 'Lista Tipi di Servizo',
+      text: 'Lista Tipi di Servizi',
       url: 'servicetypes'
     },
     {
       text: 'Lista Utenti',
       url: 'users'
+    },
+    {
+      text: 'Lista Tipi di Utenti',
+      url: 'usertypes'
     }
   ];
   selectedMenuItem: MenuItem | undefined;
