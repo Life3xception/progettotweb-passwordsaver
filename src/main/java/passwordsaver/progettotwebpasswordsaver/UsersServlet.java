@@ -9,6 +9,7 @@ import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import jakarta.servlet.annotation.WebServlet;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
+import passwordsaver.progettotwebpasswordsaver.utils.JsonErrorResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,18 +61,18 @@ public class UsersServlet extends HttpServlet {
                 int idUser = Integer.parseInt(pars.get("idUser")[0]);
 
                 if(!UserManagerDB.getManager().userExists(idUser)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user", "User not found.");
                 } else {
                     UserDB user = UserManagerDB.getManager().getUser(idUser);
 
                     if(user.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting user", "Could not get data of another user.");
                     }
 
                     out.println(gson.toJson(user));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting user", "idUser must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.USERTYPES)) {
             response.setContentType("application/json");
@@ -102,13 +103,13 @@ public class UsersServlet extends HttpServlet {
                 int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
 
                 if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user type", "User Type not found.");
                 } else {
                     UserTypeDB userType = UserManagerDB.getManager().getUserType(idUserType);
                     out.println(gson.toJson(userType));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUserType must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting user type", "idUserType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -131,34 +132,34 @@ public class UsersServlet extends HttpServlet {
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(u == null) { // input validation
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Empty request body.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter email is required.");
             } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Email address already used with another account.");
             } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter username is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter username is required.");
             } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Username already used.");
             } else if(u.getPassword() == null || u.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter password is required.");
             } else if(!u.getPassword().matches(Config.PASSWORD_PATTERN)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password must be from 8 to 50 " +
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Password must be from 8 to 50 " +
                         "characters long and contain at least one lowercase letter, at least one uppercase letter," +
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "User type doesn't exist.");
             } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
                 // retrieving the user inserted to return it to as response
                 u = UserManagerDB.getManager().getUser(u.getIdUser());
                 if(u != null)
                     out.println(gson.toJson(u));
                 else
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the user after inserting it.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error adding user", "Error retrieving the user after inserting it.");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -177,18 +178,18 @@ public class UsersServlet extends HttpServlet {
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(ut == null) { // input validation
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "Empty request body.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), 0)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type already exists.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "User type already exists.");
             } else if(UserManagerDB.getManager().addNewUserType(ut) > 0) {
                 // retrieving the usertype inserted to return it to as response
                 ut = UserManagerDB.getManager().getUserType(ut.getIdUserType());
                 if(ut != null)
                     out.println(gson.toJson(ut));
                 else
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the user type after inserting it.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error adding user type", "Error retrieving the user type after inserting it.");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -210,34 +211,34 @@ public class UsersServlet extends HttpServlet {
 
             // input validation
             if(u == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Empty request body.");
             } else if(u.getIdUser() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUser is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter idUser is required.");
             } else if(!UserManagerDB.getManager().userExists(u.getIdUser())) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating user", "User not found.");
             } else if(UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not update data of another user.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error updating user", "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter email is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter email is required.");
             } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Invalid email address.");
             } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Email address already used with another account.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Email address already used with another account.");
             } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter username is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter username is required.");
             } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Username already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Username already used.");
             } else if(u.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "User type doesn't exist.");
             } else if(!UserManagerDB.getManager().updateUser(u)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
                 // the update was successful, if the username has changed
                 if(!username.equals(u.getUsername())) {
                     // we need to perform logout
-                    if(!LoginService.doLogOut(request.getSession(), username)) {
+                    if(!LoginService.doLogOut(request.getSession(), username)) {  //FIXME: qui la logica è cambiata!!!
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     }
                     // it will be the client to manage the redirect to login page
@@ -257,15 +258,15 @@ public class UsersServlet extends HttpServlet {
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(ut == null) { // input validation
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Empty request body.");
             } else if(ut.getIdUserType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idUserType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(ut.getIdUserType())) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating user type", "User Type not found.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), ut.getIdUserType())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User type name already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "User type name already used.");
             } else if(!UserManagerDB.getManager().updateUserType(ut)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -286,9 +287,9 @@ public class UsersServlet extends HttpServlet {
                 int idUser = Integer.parseInt(pars.get("idUser")[0]);
 
                 if(!UserManagerDB.getManager().userExists(idUser)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user", "User not found.");
                 } else if(UserManagerDB.getManager().getUser(idUser).getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not delete another user.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error deleting user", "Could not delete another user.");
                 } else if(!UserManagerDB.getManager().deleteUser(idUser)) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
@@ -298,7 +299,7 @@ public class UsersServlet extends HttpServlet {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUser must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting user", "idUser must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.USERTYPES_DELETEUSERTYPE)) {
             response.setContentType("application/json");
@@ -314,12 +315,12 @@ public class UsersServlet extends HttpServlet {
                 int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
 
                 if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "User Type not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user type", "User Type not found.");
                 }  else if(!UserManagerDB.getManager().deleteUserType(idUserType)) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idUserType must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting user type", "idUserType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

@@ -9,6 +9,7 @@ import passwordsaver.progettotwebpasswordsaver.constants.Config;
 import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
+import passwordsaver.progettotwebpasswordsaver.utils.JsonErrorResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class ServicesServlet extends HttpServlet {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
                 if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting services by service type", "Service Type not found.");
                 } else {
                     // retrieving all the valid detailed services for the user by service type
                     ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServicesByServiceType(username, idServiceType);
@@ -85,7 +86,7 @@ public class ServicesServlet extends HttpServlet {
                     out.println(gson.toJson(services));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting services by service type", "idServiceType must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.SERVICES_GETSERVICE)) {
             response.setContentType("application/json");
@@ -99,18 +100,18 @@ public class ServicesServlet extends HttpServlet {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
                 if(!ServiceManagerDB.getManager().serviceExists(idService)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service", "Service not found.");
                 } else {
                     ServiceDB service = ServiceManagerDB.getManager().getService(idService);
 
                     if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of service of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting service", "Could not get data of service of another user.");
                     }
 
                     out.println(gson.toJson(service));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting service", "idService must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.SERVICES_GETDETAILEDSERVICE)) {
             response.setContentType("application/json");
@@ -124,18 +125,18 @@ public class ServicesServlet extends HttpServlet {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
                 if(!ServiceManagerDB.getManager().serviceExists(idService)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service", "Service not found.");
                 } else {
                     DetailedServiceDB service = ServiceManagerDB.getManager().getDetailedService(idService);
 
                     if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of service of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting service", "Could not get data of service of another user.");
                     }
 
                     out.println(gson.toJson(service));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting service", "idService must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.SERVICES_GETMOSTUSEDSERVICESBYUSER)) {
             response.setContentType("application/json");
@@ -184,13 +185,13 @@ public class ServicesServlet extends HttpServlet {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
                 if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service type", "Service Type not found.");
                 } else {
                     ServiceTypeDB serviceType = ServiceManagerDB.getManager().getServiceType(idServiceType);
                     out.println(gson.toJson(serviceType));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idServiceType must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting service type", "idServiceType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -211,15 +212,15 @@ public class ServicesServlet extends HttpServlet {
 
             // input validation
             if(s == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Empty request body.");
             } else if(s.getName() == null || s.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Parameter name is required.");
             } else if(ServiceManagerDB.getManager().checkIfServiceNameExists(s.getName(), 0, username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service name already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Service name already used.");
             } else if(s.getIdServiceType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Parameter idServiceType is required.");
             } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType()) == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Service Type doesn't exist.");
             } else if(ServiceManagerDB.getManager().addNewService(s, username) > 0) {
                 // adding the new service, we need to pass the username because
                 // we need to retrieve the user's id
@@ -229,7 +230,7 @@ public class ServicesServlet extends HttpServlet {
                 if(s != null)
                     out.println(gson.toJson(s));
                 else
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the service after inserting it");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error adding service", "Error retrieving the service after inserting it");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -248,18 +249,18 @@ public class ServicesServlet extends HttpServlet {
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(st == null) { // input validation
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service type", "Empty request body.");
             } else if(st.getName() == null || st.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service type", "Parameter name is required.");
             } else if(ServiceManagerDB.getManager().checkIfServiceTypeNameExists(st.getName(), 0)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type already exists.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service type", "Service Type already exists.");
             } else if(ServiceManagerDB.getManager().addNewServiceType(st) > 0) {
                 // retrieving the servicetype inserted to return it to as response
                 st = ServiceManagerDB.getManager().getServiceType(st.getIdServiceType());
                 if(st != null)
                     out.println(gson.toJson(st));
                 else
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the service type after inserting it.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error adding service type", "Error retrieving the service type after inserting it.");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -282,21 +283,21 @@ public class ServicesServlet extends HttpServlet {
 
             // input validation
             if(s == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Empty request body.");
             } else if(s.getIdService() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idService is required.");
             } else if(!ServiceManagerDB.getManager().serviceExists(s.getIdService())) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating service", "Service not found.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(s.getIdService(), username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "User is not owner of service.");
             } else if(s.getName() == null || s.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter name is required.");
             } else if(ServiceManagerDB.getManager().checkIfServiceNameExists(s.getName(), s.getIdService(), username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service name already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Service name already used.");
             } else if(s.getIdServiceType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idServiceType is required.");
             } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType()) == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Service Type doesn't exist.");
             } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -314,15 +315,15 @@ public class ServicesServlet extends HttpServlet {
             if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(st == null) { // input validation
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Empty request body.");
             } else if(st.getIdServiceType() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idServiceType is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Parameter idServiceType is required.");
             } else if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(st.getIdServiceType())) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating service type", "Service Type not found.");
             } else if(st.getName() == null || st.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Parameter name is required.");
             } else if(ServiceManagerDB.getManager().checkIfServiceTypeNameExists(st.getName(), st.getIdServiceType())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service Type name already used.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Service Type name already used.");
             } else if(!ServiceManagerDB.getManager().updateServiceType(st)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -343,14 +344,14 @@ public class ServicesServlet extends HttpServlet {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
                 if(!ServiceManagerDB.getManager().serviceExists(idService)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service", "Service not found.");
                 } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username)) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service", "User is not owner of service.");
                 } else if(!ServiceManagerDB.getManager().deleteService(idService)) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service", "idService must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_DELETESERVICETYPE)) {
             response.setContentType("application/json");
@@ -366,12 +367,12 @@ public class ServicesServlet extends HttpServlet {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
                 if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service Type not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service type", "Service Type not found.");
                 }  else if(!ServiceManagerDB.getManager().deleteServiceType(idServiceType)) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idServiceType must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service type", "idServiceType must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);

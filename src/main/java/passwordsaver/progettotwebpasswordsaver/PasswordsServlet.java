@@ -62,18 +62,18 @@ public class PasswordsServlet extends HttpServlet {
                 int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
 
                 if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting password", "Password not found");
                 } else {
                     PasswordDB pwd = PasswordManagerDB.getManager().getPassword(idPwd);
 
                     if(pwd.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of password of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting password", "Could not get data of password of another user.");
                     }
 
                     out.println(gson.toJson(pwd));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting password", "idPassword must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDETAILEDPASSWORD)) {
             response.setContentType("application/json");
@@ -87,19 +87,18 @@ public class PasswordsServlet extends HttpServlet {
                 int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
 
                 if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
-                    //response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting password", "Password not found");
                 } else {
                     DetailedPasswordDB pwd = PasswordManagerDB.getManager().getDetailedPassword(idPwd);
 
                     if(pwd.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of password of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting password", "Could not get data of password of another user.");
                     }
 
                     out.println(gson.toJson(pwd));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting password", "idPassword must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDECODEDPASSWORD)) {
             response.setContentType("application/json");
@@ -113,18 +112,18 @@ public class PasswordsServlet extends HttpServlet {
                 int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
 
                 if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting decoded password", "Password not found.");
                 } else {
                     PasswordDB pwd = PasswordManagerDB.getManager().getDecodedPassword(idPwd);
 
                     if(pwd.getIdUser() != loggedUser.getIdUser()) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Could not get data of password of another user.");
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting password", "Could not get data of password of another user.");
                     }
 
                     out.println(gson.toJson(pwd));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting decoded password", "idPassword must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETDETAILEDPASSWORDS)) {
             response.setContentType("application/json");
@@ -152,7 +151,7 @@ public class PasswordsServlet extends HttpServlet {
                 int idService = Integer.parseInt(params.get("idService")[0]);
 
                 if(!ServiceManagerDB.getManager().serviceExists(idService)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting passwords by service", "Service not found.");
                 } else {
                     // retrieving all the valid passwords by service for the user
                     ArrayList<DetailedPasswordDB> passwords = PasswordManagerDB.getManager().getAllDetailedPasswordsByService(username, idService);
@@ -161,7 +160,7 @@ public class PasswordsServlet extends HttpServlet {
                     out.println(gson.toJson(passwords));
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idService must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting passwords by service", "idService must be provided.");
             }
         } else if(request.getServletPath().equals(Apis.PASSWORDS_GETSTARREDPASSWORDS)) {
             response.setContentType("application/json");
@@ -218,19 +217,19 @@ public class PasswordsServlet extends HttpServlet {
 
             // input validation
             if(p == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Empty request body.");
             } else if(p.getName() == null || p.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Parameter name is required.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Invalid email address.");
             } else if(p.getIdService() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "User is not owner of service.");
             } else if(PasswordManagerDB.getManager().addNewPassword(p, username) > 0) {
                 // adding the new password, we need to pass the username because
                 // we need to retrieve the user's id
@@ -240,7 +239,7 @@ public class PasswordsServlet extends HttpServlet {
                 if(p != null)
                     out.println(gson.toJson(p));
                 else
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Error retrieving the password after inserting it");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error adding password", "Error retrieving the password after inserting it");
             } else {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -262,25 +261,25 @@ public class PasswordsServlet extends HttpServlet {
 
             // input validation
             if(p == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Empty request body.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Empty request body.");
             } else if(p.getIdPassword() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idPassword is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter idPassword is required.");
             } else if(!PasswordManagerDB.getManager().passwordExists(p.getIdPassword())) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating password", "Password not found.");
             } else if(!PasswordManagerDB.getManager().userIsOwnerOfPassword(p.getIdPassword(), username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "User is not owner of password.");
             } else if(p.getName() == null || p.getName().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter name is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter name is required.");
             } else if(p.getPassword() == null || p.getPassword().isEmpty()) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter password is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter password is required.");
             } else if(!p.getEmail().isEmpty() && !p.getEmail().matches(Config.EMAIL_PATTERN)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid email address.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Invalid email address.");
             } else if(p.getIdService() == 0) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter idService is required.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service doesn't exist.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of service.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "User is not owner of service.");
             } else if(!PasswordManagerDB.getManager().updatePassword(p, username)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
@@ -301,14 +300,14 @@ public class PasswordsServlet extends HttpServlet {
                 int idPwd = Integer.parseInt(pars.get("idPassword")[0]);
 
                 if(!PasswordManagerDB.getManager().passwordExists(idPwd)) {
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND, "Password not found.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting password", "Password not found.");
                 } else if(!PasswordManagerDB.getManager().userIsOwnerOfPassword(idPwd, username)) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User is not owner of password.");
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting password", "User is not owner of password.");
                 } else if(!PasswordManagerDB.getManager().deletePassword(idPwd)) {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "idPassword must be provided.");
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting password", "idPassword must be provided.");
             }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
