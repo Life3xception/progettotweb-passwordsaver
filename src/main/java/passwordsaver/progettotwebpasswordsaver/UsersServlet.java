@@ -19,7 +19,10 @@ import java.util.Map;
 
 @WebServlet(name = "Users-Servlet", urlPatterns = {
         Apis.USERS,
+        Apis.USERS_GETDETAILEDUSERS,
+        Apis.USERS_GETDETAILEDUSERSBYUSERTYPE,
         Apis.USERS_GETUSER,
+        Apis.USERS_GETDETAILEDUSER,
         Apis.USERS_GETUSERTYPEOFUSER,
         Apis.USERS_ADDUSER,
         Apis.USERS_UPDATEUSER,
@@ -40,16 +43,54 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+            if (!isAdmin)
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             // retrieving all the users
-            ArrayList<UserDB> users = UserManagerDB.getManager().getAllUsers();
+            ArrayList<UserDB> users = UserManagerDB.getManager().getAllUsers(isAdmin);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(users));
+        } else if(request.getServletPath().equals(Apis.USERS_GETDETAILEDUSERS)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
+
+            // only admin users can access this API
+            if(!isAdmin)
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+            // retrieving all the users
+            ArrayList<DetailedUserDB> users = UserManagerDB.getManager().getAllDetailedUsers(isAdmin);
+
+            // returning the arraylist as an array of JsonObject using the Gson library
+            out.println(gson.toJson(users));
+        } else if(request.getServletPath().equals(Apis.USERS_GETDETAILEDUSERSBYUSERTYPE)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
+            Map<String, String[]> pars = request.getParameterMap();
+
+            // only admin users can access this API
+            if(!isAdmin) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else if(pars.containsKey("idUserType")) {
+                int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
+
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user", "User Type not found.");
+                } else {
+                    ArrayList<DetailedUserDB> users = UserManagerDB.getManager().getAllDetailedUsersByUserType(idUserType, isAdmin);
+                    out.println(gson.toJson(users));
+                }
+            } else {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting user", "idUserType must be provided.");
+            }
         } else if(request.getServletPath().equals(Apis.USERS_GETUSER)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
@@ -61,10 +102,35 @@ public class UsersServlet extends HttpServlet {
             if(pars.containsKey("idUser")) {
                 int idUser = Integer.parseInt(pars.get("idUser")[0]);
 
-                if(!UserManagerDB.getManager().userExists(idUser)) {
+                if(!UserManagerDB.getManager().userExists(idUser, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user", "User not found.");
                 } else {
-                    UserDB user = UserManagerDB.getManager().getUser(idUser);
+                    UserDB user = UserManagerDB.getManager().getUser(idUser, isAdmin);
+
+                    if(user.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting user", "Could not get data of another user.");
+                    }
+
+                    out.println(gson.toJson(user));
+                }
+            } else {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting user", "idUser must be provided.");
+            }
+        } else if(request.getServletPath().equals(Apis.USERS_GETDETAILEDUSER)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+            UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
+            boolean isAdmin = loggedUser.getIdUserType() == Config.adminIdUserType;
+            Map<String, String[]> pars = request.getParameterMap();
+
+            if(pars.containsKey("idUser")) {
+                int idUser = Integer.parseInt(pars.get("idUser")[0]);
+
+                if(!UserManagerDB.getManager().userExists(idUser, isAdmin)) {
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user", "User not found.");
+                } else {
+                    DetailedUserDB user = UserManagerDB.getManager().getDetailedUser(idUser, isAdmin);
 
                     if(user.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                         JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting user", "Could not get data of another user.");
@@ -130,6 +196,7 @@ public class UsersServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserDB class, so we perform the mapping
@@ -137,7 +204,7 @@ public class UsersServlet extends HttpServlet {
             UserDB u = gson.fromJson(in, UserDB.class);
 
             // first we check if the user is admin
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+            if(!isAdmin) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(u == null) { // input validation
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Empty request body.");
@@ -163,7 +230,7 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "User type doesn't exist.");
             } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
                 // retrieving the user inserted to return it to as response
-                u = UserManagerDB.getManager().getUser(u.getIdUser());
+                u = UserManagerDB.getManager().getUser(u.getIdUser(), isAdmin);
                 if(u != null)
                     out.println(gson.toJson(u));
                 else
@@ -211,6 +278,7 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserDB class, so we perform the mapping
@@ -222,9 +290,9 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Empty request body.");
             } else if(u.getIdUser() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter idUser is required.");
-            } else if(!UserManagerDB.getManager().userExists(u.getIdUser())) {
+            } else if(!UserManagerDB.getManager().userExists(u.getIdUser(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating user", "User not found.");
-            } else if(UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
+            } else if(!isAdmin && UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error updating user", "Could not update data of another user.");
             } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter email is required.");
@@ -240,7 +308,7 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "User type doesn't exist.");
-            } else if(!UserManagerDB.getManager().updateUser(u)) {
+            } else if(!UserManagerDB.getManager().updateUser(u, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
                 // the update was successful, if the username has changed
@@ -294,9 +362,9 @@ public class UsersServlet extends HttpServlet {
             if(pars.containsKey("idUser")) {
                 int idUser = Integer.parseInt(pars.get("idUser")[0]);
 
-                if(!UserManagerDB.getManager().userExists(idUser)) {
+                if(!UserManagerDB.getManager().userExists(idUser, false)) { // se un utente è già eliminato, non ha senso eliminarlo!
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user", "User not found.");
-                } else if(UserManagerDB.getManager().getUser(idUser).getIdUser() != loggedUser.getIdUser() && !isAdmin) {
+                } else if(UserManagerDB.getManager().getUser(idUser, isAdmin).getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error deleting user", "Could not delete another user.");
                 } else if(!UserManagerDB.getManager().deleteUser(idUser)) { // TODO: devo eliminare anche tutte le password e tutti i services dell'utente
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

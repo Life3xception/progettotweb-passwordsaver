@@ -62,9 +62,8 @@ public class DetailedServiceDB {
         String sql = """
                 SELECT S.*, ST.Name as ServiceTypeName
                 FROM Services AS S INNER JOIN ServiceTypes AS ST
-                    ON S.IdServiceType = ST.IdServiceType
-                WHERE S.IdUser = ?
-                """;
+                \tON S.IdServiceType = ST.IdServiceType
+                WHERE S.IdUser = ?""";
         if(validityCheck)
             sql += " AND S.Validity = TRUE AND ST.Validity = TRUE";
 
@@ -89,9 +88,8 @@ public class DetailedServiceDB {
         String sql = """
                 SELECT S.*, ST.Name as ServiceTypeName
                 FROM Services AS S INNER JOIN ServiceTypes AS ST
-                    ON S.IdServiceType = ST.IdServiceType
-                WHERE S.IdUser = ? AND S.IdServiceType = ?
-                """;
+                \tON S.IdServiceType = ST.IdServiceType
+                WHERE S.IdUser = ? AND S.IdServiceType = ?""";
         if(validityCheck)
             sql += " AND S.Validity = TRUE AND ST.Validity = TRUE";
 
@@ -117,9 +115,8 @@ public class DetailedServiceDB {
         String sql = """
             SELECT S.*, ST.Name as ServiceTypeName
             FROM Services AS S INNER JOIN ServiceTypes AS ST
-                ON S.IdServiceType = ST.IdServiceType
-            WHERE S.IdService = ?
-            """;
+            \tON S.IdServiceType = ST.IdServiceType
+            WHERE S.IdService = ?""";
         if (validityCheck)
             sql += " AND S.Validity = TRUE AND ST.Validity = TRUE";
 

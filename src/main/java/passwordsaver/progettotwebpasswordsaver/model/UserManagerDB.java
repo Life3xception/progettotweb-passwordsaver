@@ -27,26 +27,56 @@ public class UserManagerDB {
     }
 
     /***** USERS METHODS *****/
-
-    // TODO: eventually, if useful, add isAdmin parameter to method and use it in loadAllUsers
-    public ArrayList<UserDB> getAllUsers() {
+    public ArrayList<UserDB> getAllUsers(boolean isAdmin) {
         ArrayList<UserDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = UserDB.loadAllUsers(conn, true);
+            ret = UserDB.loadAllUsers(conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getAllUsers: " + ex.getMessage());
         }
         return ret;
     }
 
-    public UserDB getUser(int idUser) {
+    public ArrayList<DetailedUserDB> getAllDetailedUsers(boolean isAdmin) {
+        ArrayList<DetailedUserDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedUserDB.loadAllUsers(conn, !isAdmin);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getAllDetailedUsers: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    public ArrayList<DetailedUserDB> getAllDetailedUsersByUserType(int idUserType, boolean isAdmin) {
+        ArrayList<DetailedUserDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedUserDB.loadAllUsersByUserType(conn, !isAdmin, idUserType);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getAllDetailedUsersByUserType: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    public UserDB getUser(int idUser, boolean isAdmin) {
         UserDB u = null;
         // this is the try-with-resources, it allows to autoclose the resources
         // specified in () if they implement the AutoClosable interface
         try (Connection conn = persistence.getConnection()) {
-            u = UserDB.loadUser(idUser, conn, true, true);
+            u = UserDB.loadUser(idUser, conn, !isAdmin, true);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUser: " + ex.getMessage());
+        }
+        return u;
+    }
+
+    public DetailedUserDB getDetailedUser(int idUser, boolean isAdmin) {
+        DetailedUserDB u = null;
+        // this is the try-with-resources, it allows to autoclose the resources
+        // specified in () if they implement the AutoClosable interface
+        try (Connection conn = persistence.getConnection()) {
+            u = DetailedUserDB.loadUser(idUser, conn, !isAdmin, true);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getDetailedUser: " + ex.getMessage());
         }
         return u;
     }
@@ -74,11 +104,11 @@ public class UserManagerDB {
         return res;
     }
 
-    public boolean userExists(int idUser) {
+    public boolean userExists(int idUser, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = UserDB.loadUser(idUser, conn, true, true) != null;
+            ret = UserDB.loadUser(idUser, conn, !isAdmin, true) != null;
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - userExists: "  + ex.getMessage());
         }
@@ -140,11 +170,11 @@ public class UserManagerDB {
         return ret;
     }
 
-    public boolean updateUser(UserDB user) {
+    public boolean updateUser(UserDB user, boolean isAdmin) {
         boolean updated = false;
 
         try (Connection conn = persistence.getConnection()) {
-            updated = user.saveUpdate(conn, bcryptEncoder);
+            updated = user.saveUpdate(conn, bcryptEncoder, isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - updateUser: " + ex.getMessage());
         }

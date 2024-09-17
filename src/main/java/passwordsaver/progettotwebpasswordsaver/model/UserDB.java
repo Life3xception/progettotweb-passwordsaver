@@ -211,40 +211,58 @@ public class UserDB {
         return ret; // means an error occurred during saving
     }
 
-    public boolean saveUpdate(Connection conn, BCryptPasswordEncoder encoder) throws SQLException {
+    public boolean saveUpdate(Connection conn, BCryptPasswordEncoder encoder, boolean isAdmin) throws SQLException {
         boolean ret = false;
-        String sql = """
-            UPDATE Users SET
-            Email = ?,
-            Username = ?,
-            IdUserType = ?
-            WHERE IdUser = ? AND Validity = TRUE
-        """;
+        String sql = "";
 
-        try(PreparedStatement st = conn.prepareStatement(sql)) {
-            // TODO: cambiamento password va fatto in apposito metodo
+        if(isAdmin) {
+            sql = """
+                UPDATE Users SET
+                Email = ?,
+                Username = ?,
+                IdUserType = ?,
+                Validity = ?
+                WHERE IdUser = ?""";
 
-            st.setString(1, email);
-            st.setString(2, username);
-            //st.setInt(3, idUserType); // FIXME: il cambiamento va permesso solo se l'utente è admin!
+            try(PreparedStatement st = conn.prepareStatement(sql)) {
+                // TODO: cambiamento password va fatto in apposito metodo
 
-            /*try {
-                // FIXME: il cambiamento va permesso solo se l'utente è admin!
-                //  meglio se fatto in un metodo apposito!
-                //encodedSecretKey = Base64.getEncoder().encodeToString(AesEncoder.createAESKey().getEncoded());
-                //st.setString(4, encodedSecretKey);
+                st.setString(1, email);
+                st.setString(2, username);
+                st.setInt(3, idUserType);
+                st.setBoolean(4, validity); // TODO: se validity cambia, bisogna eliminare anche pwd e service dell'utente
 
-                // FIXME: il cambiamento va permesso solo se l'utente è admin!
-                //  meglio se fatto in un metodo apposito!
-                //initializationVector = Base64.getEncoder().encodeToString(AesEncoder.createInitializationVector());
-                //st.setString(5, initializationVector);
-            } catch (Exception ex) {
-                System.out.println("UserDB - saveUpdate: " + ex.getMessage());
-                return false;
-            }*/
+                /*try {
+                    // FIXME: il cambiamento va permesso solo se l'utente è admin!
+                    // meglio se fatto in un metodo apposito!
+                    //encodedSecretKey = Base64.getEncoder().encodeToString(AesEncoder.createAESKey().getEncoded());
+                    //st.setString(4, encodedSecretKey);
 
-            st.setInt(4, idUser);
-            ret = st.executeUpdate() > 0;
+                    // FIXME: il cambiamento va permesso solo se l'utente è admin!
+                    //  meglio se fatto in un metodo apposito!
+                    //initializationVector = Base64.getEncoder().encodeToString(AesEncoder.createInitializationVector());
+                    //st.setString(5, initializationVector);
+                } catch (Exception ex) {
+                    System.out.println("UserDB - saveUpdate: " + ex.getMessage());
+                    return false;
+                }*/
+
+                st.setInt(5, idUser);
+                ret = st.executeUpdate() > 0;
+            }
+        } else {
+            sql = """
+                UPDATE Users SET
+                Email = ?,
+                Username = ?
+                WHERE IdUser = ?""";
+
+            try(PreparedStatement st = conn.prepareStatement(sql)) {
+                st.setString(1, email);
+                st.setString(2, username);
+                st.setInt(3, idUser);
+                ret = st.executeUpdate() > 0;
+            }
         }
 
         return ret;
