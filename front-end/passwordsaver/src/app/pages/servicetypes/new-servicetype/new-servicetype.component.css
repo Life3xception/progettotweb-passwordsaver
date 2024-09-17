@@ -2,7 +2,7 @@
     width: 100%;
 }
 /* 
-.new-password-form {
+.new-servicetype-form {
     margin-top: 6em;
     padding: 5em 1em;
     display: flex;
@@ -13,17 +13,17 @@
     background-color: #fffff9;
 } */
 
-/* it takes only the childs of .new-password-form, not every child element */
-/* .new-password-form > * {
+/* it takes only the childs of .new-servicetype-form, not every child element */
+/* .new-servicetype-form > * {
     margin: 1.5em;
 } */
 
-.new-password-form > h2 {
+.new-servicetype-form > h2 {
     text-align: center;
     font-weight: bold;
 } 
 
-.new-password-form > form {
+.new-servicetype-form > form {
     width: 100%;
 } 
 
@@ -32,6 +32,6 @@
     font-size: small;
 }
 
-.isStarred-input {
+.validity-input {
     margin-left: 1em;
 }

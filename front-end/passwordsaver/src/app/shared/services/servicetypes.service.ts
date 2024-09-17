@@ -16,4 +16,24 @@ export class ServicetypesService {
     let url = `${environment.apiEndpoint}/${BeMainApis.servicetypes}`;
     return this.httpClient.get<ServiceTypeI[]>(url);
   }
+
+  getServiceType(idServType: number): Observable<ServiceTypeI> {
+    let url = `${environment.apiEndpoint}/${BeApis.getservicetype}?idServiceType=${idServType}`;
+    return this.httpClient.get<ServiceTypeI>(url);
+  }
+
+  addServiceType(servType: ServiceTypeI): Observable<ServiceTypeI> {
+    let url = `${environment.apiEndpoint}/${BeApis.addservicetype}`;
+    return this.httpClient.post<ServiceTypeI>(url, servType);
+  }
+
+  updateServiceType(servType: ServiceTypeI): Observable<ServiceTypeI> {
+    let url = `${environment.apiEndpoint}/${BeApis.updateservicetype}`;
+    return this.httpClient.put<ServiceTypeI>(url, servType);
+  }
+
+  deleteServiceType(idServType: number): Observable<any> {
+    let url = `${environment.apiEndpoint}/${BeApis.deleteservicetype}?idServiceType=${idServType}`;
+    return this.httpClient.delete(url);
+  }
 }

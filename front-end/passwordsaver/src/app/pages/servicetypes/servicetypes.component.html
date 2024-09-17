@@ -1,0 +1,48 @@
+<p-toast key="serviceTypesToast"></p-toast>
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Elimina Tipo di Servizio</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Sei sicuro di voler eliminare il tipo di servizio "{{serviceTypeToDelete == undefined ? '' : serviceTypeToDelete.name}}"?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="confirmDeleteServiceType()">Elimina</button>
+            </div>
+        </div>
+    </div>
+  </div>
+<div class="main">
+    <div class="col-md-10 offset-1 mt-5">
+        <div class="table-caption">
+            <h2 class="h2 mb-4">{{pageTitle}}</h2>
+            <div class="page-functionalities">
+                <button type="button" class="btn btn-success" (click)="goToNewServiceType()">Aggiungi Tipo di Servizio</button>
+            </div>
+        </div>
+        <p *ngIf="serviceTypes?.length == 0">Nessuna tipo di servizio presente.</p>
+        <table class="table table-striped table-bordered" *ngIf="serviceTypes?.length != 0">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Validità</th>
+                    <th scope="col">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let servType of serviceTypes">
+                    <td class="name-col">{{servType.name}}</td>
+                    <td class="validity-col"><input class="form-check-input" [id]="'validity-' + servType.idServiceType" type="checkbox" [disabled]="true" [checked]="servType.validity"/></td>
+                    <td class="actions-col">
+                        <button type="button" class="btn btn-primary" (click)="modifyServiceType(servType)"><mat-icon class="field-icon" svgIcon="edit"></mat-icon></button>
+                        <button *ngIf="servType.validity" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="deleteServiceType(servType)"><mat-icon class="field-icon" svgIcon="delete"></mat-icon></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

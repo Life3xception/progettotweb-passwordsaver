@@ -1,0 +1,35 @@
+.main {
+    width: 100%;
+}
+
+.main td, th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-caption {
+    display: flex;
+    justify-content: space-between;
+}
+
+.page-functionalities {
+    display: flex;
+    justify-content: space-evenly;
+    height: 2.5em;
+}
+
+.page-functionalities > * {
+    margin-left: 0.5em;
+}
+
+.page-functionalities > select {
+    width: 10em;
+} 
+
+.main td > button {
+    margin: 0.5em;
+}
+
+.actions-col {
+    width: 14em;
+}

@@ -2,12 +2,12 @@
     width: 100%;
 }
 
-.modify-password-form > h2 {
+.modify-servicetype-form > h2 {
     text-align: center;
     font-weight: bold;
 } 
 
-.modify-password-form > form {
+.modify-servicetype-form > form {
     width: 100%;
 } 
 
@@ -16,6 +16,6 @@
     font-size: small;
 }
 
-.isStarred-input {
+.validity-input {
     margin-left: 1em;
 }

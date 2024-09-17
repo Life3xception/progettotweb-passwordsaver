@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardService } from './shared/services/auth-guard.service';
+import { AdminGuardService } from './shared/services/admin-guard.service';
 
 const routes: Routes = [
   {
@@ -37,6 +38,16 @@ const routes: Routes = [
     path: 'services/:specificView/:value',
     loadChildren: () => import('./pages/services/services.module').then(m => m.ServicesModule),
     canActivate: [AuthGuardService]
+  },
+  {
+    path: 'servicetypes',
+    loadChildren: () => import('./pages/servicetypes/servicetypes.module').then(m => m.ServicetypesModule),
+    canActivate: [AuthGuardService, AdminGuardService]
+  },
+  {
+    path: 'servicetypes/:specificView/:value',
+    loadChildren: () => import('./pages/servicetypes/servicetypes.module').then(m => m.ServicetypesModule),
+    canActivate: [AuthGuardService, AdminGuardService]
   },
 ];
 
