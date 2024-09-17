@@ -3,8 +3,8 @@ import { ErrorHandlerService } from '../../shared/services/error-handler.service
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ServicesService } from '../../shared/services/services.service';
-import { DetailedService } from '../../shared/models/detailed-service.model';
-import { ServiceType } from '../../shared/models/servicetype.model';
+import { DetailedServiceI } from '../../shared/models/detailed-service.model';
+import { ServiceTypeI } from '../../shared/models/servicetype.model';
 import { ServicetypesService } from '../../shared/services/servicetypes.service';
 
 @Component({
@@ -13,12 +13,12 @@ import { ServicetypesService } from '../../shared/services/servicetypes.service'
   styleUrl: './services.component.css'
 })
 export class ServicesComponent {
-  services: DetailedService[] | undefined;
+  services: DetailedServiceI[] | undefined;
   selectedIdServiceType: number | undefined;
   selectedIdService: number | undefined;
   pageTitle: string = 'Lista dei Servizi';
-  serviceTypes: ServiceType[] | undefined;
-  serviceToDelete: DetailedService | undefined;
+  serviceTypes: ServiceTypeI[] | undefined;
+  serviceToDelete: DetailedServiceI | undefined;
 
   constructor(private errorHandlerService: ErrorHandlerService,
     private router: Router,
@@ -99,11 +99,11 @@ export class ServicesComponent {
       this.router.navigate(['services']);
   }
 
-  modifyService(serv: DetailedService): void {
+  modifyService(serv: DetailedServiceI): void {
     this.router.navigate(['services', 'modify-service', serv.idService]);
   }
 
-  deleteService(serv: DetailedService): void {
+  deleteService(serv: DetailedServiceI): void {
     this.serviceToDelete = serv;
   }
   

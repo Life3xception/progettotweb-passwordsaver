@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Service } from '../../../shared/models/service.model';
-import { ServiceType } from '../../../shared/models/servicetype.model';
+import { ServiceI } from '../../../shared/models/service.model';
+import { ServiceTypeI } from '../../../shared/models/servicetype.model';
 import { MessageService } from 'primeng/api';
 import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
 import { ServicesService } from '../../../shared/services/services.service';
@@ -15,8 +15,8 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 })
 export class ModifyServiceComponent implements OnInit {
   modifyServiceForm!: FormGroup;
-  currentService!: Service;
-  serviceTypes: ServiceType[] | undefined;
+  currentService!: ServiceI;
+  serviceTypes: ServiceTypeI[] | undefined;
 
   constructor(private messageService: MessageService,
     private formBuilder: FormBuilder,

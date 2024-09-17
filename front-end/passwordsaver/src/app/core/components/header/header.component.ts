@@ -28,6 +28,12 @@ export class HeaderComponent implements OnInit {
       url: 'services'
     }
   ];
+  menuItemsAdmin: MenuItem[] = [
+    {
+      text: 'Lista Tipi di Servizo',
+      url: 'servicetypes'
+    }
+  ];
   selectedMenuItem: MenuItem | undefined;
 
   constructor(private router: Router,
@@ -53,6 +59,11 @@ export class HeaderComponent implements OnInit {
           this.selectedMenuItem = this.menuItems.find(x => x.url === 'home');
       }
     });
+
+    if(this.isAdmin()) {
+      // spread operator allows to place an extended version of an array into another array
+      this.menuItems = [...this.menuItems, ...this.menuItemsAdmin]; 
+    }
   }
 
   handleClick(item: MenuItem): void {
@@ -67,5 +78,9 @@ export class HeaderComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  isAdmin(): boolean { 
+    return this.authService.isAdmin();
   }
 }

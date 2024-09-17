@@ -1,4 +1,4 @@
-export class Icon {
-    name!: string;
-    path!: string;
+export interface IconI {
+    name: string;
+    path: string;
 }

@@ -1,5 +1,5 @@
-import { Service } from "./service.model";
+import { ServiceI as ServiceI } from "./service.model";
 
-export class DetailedService extends Service {
-    serviceTypeName!: string;
+export interface DetailedServiceI extends ServiceI {
+    serviceTypeName: string;
 }

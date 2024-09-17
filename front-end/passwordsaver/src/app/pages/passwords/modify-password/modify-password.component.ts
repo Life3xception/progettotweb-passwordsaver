@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Service } from '../../../shared/models/service.model';
+import { ServiceI } from '../../../shared/models/service.model';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
 import { PasswordsService } from '../../../shared/services/passwords.service';
 import { ServicesService } from '../../../shared/services/services.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Password } from '../../../shared/models/password.model';
+import { PasswordI } from '../../../shared/models/password.model';
 import { environment } from '../../../environment/environment';
 
 @Component({
@@ -16,8 +16,8 @@ import { environment } from '../../../environment/environment';
 })
 export class ModifyPasswordComponent implements OnInit {
   modifyPwdForm!: FormGroup;
-  currentPwd!: Password;
-  services: Service[] | undefined;
+  currentPwd!: PasswordI;
+  services: ServiceI[] | undefined;
 
   constructor(private messageService: MessageService,
     private formBuilder: FormBuilder,

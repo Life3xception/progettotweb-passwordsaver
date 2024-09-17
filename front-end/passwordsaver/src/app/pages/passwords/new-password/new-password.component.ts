@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../environment/environment';
-import { Password } from '../../../shared/models/password.model';
+import { PasswordI } from '../../../shared/models/password.model';
 import { MessageService } from 'primeng/api';
 import { ServicesService } from '../../../shared/services/services.service';
 import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
-import { Service } from '../../../shared/models/service.model';
+import { ServiceI } from '../../../shared/models/service.model';
 import { PasswordsService } from '../../../shared/services/passwords.service';
 import { Router } from '@angular/router';
 
@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class NewPasswordComponent implements OnInit {
   newPwdForm!: FormGroup;
-  services: Service[] | undefined;
+  services: ServiceI[] | undefined;
 
   constructor(private formBuilder: FormBuilder,
     private messageService: MessageService,
@@ -73,7 +73,7 @@ export class NewPasswordComponent implements OnInit {
 
     this.messageService.clear();
 
-    let pwd: Password = {
+    let pwd: PasswordI = {
       idPassword: 0,
       name: this.newPwdForm.controls['name'].value,
       password: this.newPwdForm.controls['password'].value,

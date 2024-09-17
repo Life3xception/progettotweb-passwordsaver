@@ -1,6 +1,6 @@
-import { Icon } from "../models/icon.model";
+import { IconI } from "../models/icon.model";
 
-export const ICONS: Icon[] = [
+export const ICONS: IconI[] = [
     {
         name: 'delete',
         path: 'assets/imgs/svg-icons/delete.svg'

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Service } from '../../../shared/models/service.model';
-import { ServiceType } from '../../../shared/models/servicetype.model';
+import { ServiceI } from '../../../shared/models/service.model';
+import { ServiceTypeI } from '../../../shared/models/servicetype.model';
 import { MessageService } from 'primeng/api';
 import { ServicesService } from '../../../shared/services/services.service';
 import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
@@ -15,7 +15,7 @@ import { Router } from '@angular/router';
 })
 export class NewServiceComponent implements OnInit {
   newServiceForm!: FormGroup;
-  servicesTypes: ServiceType[] | undefined;
+  servicesTypes: ServiceTypeI[] | undefined;
 
   constructor(private formBuilder: FormBuilder,
     private messageService: MessageService,
@@ -48,7 +48,7 @@ export class NewServiceComponent implements OnInit {
 
     this.messageService.clear();
 
-    let service: Service = {
+    let service: ServiceI = {
       idService: 0,
       name: this.newServiceForm.controls['name'].value,
       idUser: 0, // viene settato lato be

@@ -1,7 +1,7 @@
-export class Service {
-    idService!: number;
-    name!: string;
-    idServiceType!: number;
-    idUser!: number;
-    validity!: boolean;
+export interface ServiceI {
+    idService: number;
+    name: string;
+    idServiceType: number;
+    idUser: number;
+    validity: boolean;
 }

@@ -1,5 +1,5 @@
-export class ServiceType {
-    idServiceType!: number;
-    name!: string;
-    validity!: boolean;
+export interface ServiceTypeI {
+    idServiceType: number;
+    name: string;
+    validity: boolean;
 }

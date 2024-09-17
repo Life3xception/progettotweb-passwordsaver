@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PasswordsService } from '../../shared/services/passwords.service';
 import { ErrorHandlerService } from '../../shared/services/error-handler.service';
-import { DetailedPassword } from '../../shared/models/detailed-password.model';
+import { DetailedPasswordI } from '../../shared/models/detailed-password.model';
 import { ServicesService } from '../../shared/services/services.service';
-import { Service } from '../../shared/models/service.model';
+import { ServiceI } from '../../shared/models/service.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,8 +12,8 @@ import { Router } from '@angular/router';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  starred: DetailedPassword[] | undefined;
-  usedServices: Service[] | undefined;
+  starred: DetailedPasswordI[] | undefined;
+  usedServices: ServiceI[] | undefined;
   showedStarredPwds = 3;
   showedUsedServices = 3;
 
@@ -39,12 +39,12 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  getPasswordDetail(pwd: DetailedPassword): void {
+  getPasswordDetail(pwd: DetailedPasswordI): void {
     // router navigation a pagina dettaglio password
     this.router.navigate(['passwords', 'password', pwd.idPassword]);
   }
 
-  getPasswordsByService(service: Service): void {
+  getPasswordsByService(service: ServiceI): void {
     // router navigation a lista password visualizzate per servizio
     this.router.navigate(['passwords', 'service', service.idService]);
   }

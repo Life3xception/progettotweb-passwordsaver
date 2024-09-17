@@ -1,8 +1,9 @@
-export class LoginResponse {
-    operation!: string;
-    username!: string;
-    success!: boolean;
-    error!: boolean;
-    errorMessage!: string;
-    token!: string;
+import { LoginDataI } from "./login-data.model";
+
+export interface LoginResponseI {
+    operation: string;
+    success: boolean;
+    error: boolean;
+    errorMessage: string;
+    loginData: LoginDataI;
 }

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Login } from '../models/login.model';
-import { LoginData } from '../models/login-data.model';
+import { LoginI } from '../models/login.model';
+import { LoginDataI } from '../models/login-data.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { BeMainApis } from '../../environment/BeServlets';
-import { LoginResponse } from '../models/login-response.model';
+import { LoginResponseI } from '../models/login-response.model';
 import { LocalStorageService } from './local-storage.service';
+import { UserTypeI } from '../models/user-type.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,19 +18,19 @@ export class AuthService {
     private localStorageService: LocalStorageService
   ) { }
 
-  login(login: Login): Observable<LoginResponse> {
+  login(login: LoginI): Observable<LoginResponseI> {
     let url = `${environment.apiEndpoint}/${BeMainApis.login}`;
-    return this.httpClient.post<LoginResponse>(url, login);
+    return this.httpClient.post<LoginResponseI>(url, login);
   }
 
-  setSession(loginData: LoginData) {
+  setSession(loginData: LoginDataI) {
     // salviamo il token in chiaro per non doverlo decifrare ad ogni richiesta
     this.localStorageService.add(environment.accessTokenName, loginData.token); 
     // salviamo anche i dati del login, cifrandoli
     this.localStorageService.addEncrypted(environment.loginDataName, JSON.stringify(loginData));
   }
 
-  getSessionData(): LoginData | undefined {
+  getSessionData(): LoginDataI | undefined {
     // recuperiamo i dati del login dal localStorage
     let data = this.localStorageService.getDecrypted(environment.loginDataName);
     // se erano settati li otterremo decriptati, altrimenti otterremo stringa vuota
@@ -42,12 +43,12 @@ export class AuthService {
     }
   }
 
-  /*getUserRoles(): Roles[] | undefined {
+  getUserType(): UserTypeI | undefined {
     // recuperiamo i dati di sessione
-    let login: Login|undefined = this.getSessionData();
+    let login: LoginDataI | undefined = this.getSessionData();
     // e se sono presenti ritorniamo i ruoli altrimenti undefined
-    return login ? login.roles : undefined;
-  }*/
+    return login ? JSON.parse(login.userType) : undefined;
+  }
 
   logout() {
     // rimuoviamo il token
@@ -65,20 +66,16 @@ export class AuthService {
     return (token != null && token !== '');
   }
 
-  /*isAdmin(): boolean {
+  isAdmin(): boolean {
     let isAdmin = false;
-    // recuperiamo i ruoli dell'utente
-    let roles = this.getUserRoles();
+    // recuperiamo il ruolo dell'utente
+    let role: UserTypeI | undefined = this.getUserType();
         
-    // se ci sono ruoli
-    if(roles) {
-      // controlliamo se l'utente ha il ruolo di admin
-      roles.forEach(role => {
-        if(role.name === environment.adminRole)
-          isAdmin = true;
-      });
+    // se il ruolo è settato, controlliamo se l'utente ha il ruolo di admin
+    if(role && role.name === environment.adminRole) {
+      isAdmin = true;
     }
 
     return isAdmin;
-  }*/
+  }
 }

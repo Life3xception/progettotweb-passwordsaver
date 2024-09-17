@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DetailedPassword } from '../../shared/models/detailed-password.model';
+import { DetailedPasswordI } from '../../shared/models/detailed-password.model';
 import { PasswordsService } from '../../shared/services/passwords.service';
 import { ErrorHandlerService } from '../../shared/services/error-handler.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { Service } from '../../shared/models/service.model';
+import { ServiceI } from '../../shared/models/service.model';
 import { ServicesService } from '../../shared/services/services.service';
 
 @Component({
@@ -13,13 +13,13 @@ import { ServicesService } from '../../shared/services/services.service';
   styleUrl: './passwords.component.css'
 })
 export class PasswordsComponent implements OnInit {
-  passwords: DetailedPassword[] | undefined;
+  passwords: DetailedPasswordI[] | undefined;
   selectedIdService: number | undefined;
   selectedIdPassword: number | undefined;
   showOnlyStarred: boolean = false;
   pageTitle: string = 'Lista delle Password';
-  services: Service[] | undefined;
-  pwdToDelete: DetailedPassword | undefined;
+  services: ServiceI[] | undefined;
+  pwdToDelete: DetailedPasswordI | undefined;
 
   constructor(private passwordsService: PasswordsService,
     private errorHandlerService: ErrorHandlerService,
@@ -119,7 +119,7 @@ export class PasswordsComponent implements OnInit {
       this.router.navigate(['passwords']);
   }
 
-  showPassword(pwd: DetailedPassword): void {
+  showPassword(pwd: DetailedPasswordI): void {
     if(!pwd.showed) {
       if(this.passwordsService.isEncoded(pwd)) {
         this.passwordsService.getDecodedPassword(pwd.idPassword).subscribe({
@@ -138,11 +138,11 @@ export class PasswordsComponent implements OnInit {
     }
   }
 
-  modifyPassword(pwd: DetailedPassword): void {
+  modifyPassword(pwd: DetailedPasswordI): void {
     this.router.navigate(['passwords', 'modify-password', pwd.idPassword]);
   }
 
-  deletePassword(pwd: DetailedPassword): void {
+  deletePassword(pwd: DetailedPasswordI): void {
     this.pwdToDelete = pwd;
   }
   

@@ -1,5 +1,5 @@
-import { Password } from "./password.model";
+import { PasswordI } from "./password.model";
 
-export class DetailedPassword extends Password {
-    serviceName!: string;
+export interface DetailedPasswordI extends PasswordI {
+    serviceName: string;
 }

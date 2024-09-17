@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Login } from '../../shared/models/login.model';
+import { LoginI } from '../../shared/models/login.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ErrorHandlerService } from '../../shared/services/error-handler.service';
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
 
     this.messageService.clear();
 
-    let login: Login = {
+    let login: LoginI = {
       username: this.loginForm.controls['username'].value,
       password: this.loginForm.controls['password'].value
     }
@@ -69,7 +69,7 @@ export class LoginComponent implements OnInit {
 
         // uso window.location.href e non router.navigate perché mi serve che venga ricaricata la pagina
         if(response.success) {
-          this.authService.setSession({username: response.username, token: response.token});
+          this.authService.setSession(response.loginData);
           setTimeout(() => window.location.href = '/home', 1000);
         }
       },

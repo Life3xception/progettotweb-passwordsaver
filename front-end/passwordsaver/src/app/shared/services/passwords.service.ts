@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { BeApis } from '../../environment/BeServlets';
-import { DetailedPassword } from '../models/detailed-password.model';
-import { Password } from '../models/password.model';
+import { DetailedPasswordI } from '../models/detailed-password.model';
+import { PasswordI } from '../models/password.model';
 import * as CryptoJS from 'crypto-js';
 import { Base64EncodeDecode } from '../utils/base64-encode-decode';
 
@@ -17,58 +17,58 @@ export class PasswordsService {
     private base64Decoder: Base64EncodeDecode
   ) { }
 
-  isEncoded(pwd: Password): boolean {
+  isEncoded(pwd: PasswordI): boolean {
     return this.base64Decoder.isBase64(pwd.password);
   }
 
-  decodePassword(pwd: Password): void {
+  decodePassword(pwd: PasswordI): void {
     pwd.password = this.base64Decoder.decode(pwd.password);
   }
 
-  getPassword(idPwd: number): Observable<Password> {
+  getPassword(idPwd: number): Observable<PasswordI> {
     let url = `${environment.apiEndpoint}/${BeApis.getpassword}?idPassword=${idPwd}`;
-    return this.httpClient.get<Password>(url);
+    return this.httpClient.get<PasswordI>(url);
   }
 
-  getDetailedPasswords(): Observable<DetailedPassword[]> {
+  getDetailedPasswords(): Observable<DetailedPasswordI[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedpasswords}`;
-    return this.httpClient.get<DetailedPassword[]>(url);
+    return this.httpClient.get<DetailedPasswordI[]>(url);
   }
 
-  getDetailedPassword(idPassword: number): Observable<DetailedPassword> {
+  getDetailedPassword(idPassword: number): Observable<DetailedPasswordI> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedpassword}?idPassword=${idPassword}`;
-    return this.httpClient.get<DetailedPassword>(url);
+    return this.httpClient.get<DetailedPasswordI>(url);
   }
 
-  getDetailedPasswordsByService(idService: number): Observable<DetailedPassword[]> {
+  getDetailedPasswordsByService(idService: number): Observable<DetailedPasswordI[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedpasswordsbyservice}?idService=${idService}`;
-    return this.httpClient.get<DetailedPassword[]>(url);
+    return this.httpClient.get<DetailedPasswordI[]>(url);
   }
 
-  getDetailedStarredPasswords(limit: number): Observable<DetailedPassword[]> {
+  getDetailedStarredPasswords(limit: number): Observable<DetailedPasswordI[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedstarredpasswords}`;
     if(limit != 0)
       url += `?limit=${limit}`;
-    return this.httpClient.get<DetailedPassword[]>(url);
+    return this.httpClient.get<DetailedPasswordI[]>(url);
   }
 
-  getDecodedPassword(idPwd: number): Observable<Password> {
+  getDecodedPassword(idPwd: number): Observable<PasswordI> {
     let url = `${environment.apiEndpoint}/${BeApis.getdecodedpassword}?idPassword=${idPwd}`;
-    return this.httpClient.get<Password>(url); // FIXME: in questo modo la password viaggia in chiaro, molto male!!!
+    return this.httpClient.get<PasswordI>(url); // FIXME: in questo modo la password viaggia in chiaro, molto male!!!
   }
 
-  addPassword(pwd: Password): Observable<Password> {
+  addPassword(pwd: PasswordI): Observable<PasswordI> {
     let url = `${environment.apiEndpoint}/${BeApis.addpassword}`;
-    return this.httpClient.post<Password>(url, pwd);
+    return this.httpClient.post<PasswordI>(url, pwd);
   }
 
-  updatePassword(pwd: Password): Observable<any> {
+  updatePassword(pwd: PasswordI): Observable<any> {
     let url = `${environment.apiEndpoint}/${BeApis.updatepassword}`;
     return this.httpClient.put(url, pwd);
   }
 
   deletePassword(idPassword: number): Observable<any> {
     let url = `${environment.apiEndpoint}/${BeApis.deletepassword}?idPassword=${idPassword}`;
-    return this.httpClient.delete<Password>(url);
+    return this.httpClient.delete<PasswordI>(url);
   }
 }
