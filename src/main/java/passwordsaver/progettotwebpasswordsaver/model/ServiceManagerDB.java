@@ -163,11 +163,11 @@ public class ServiceManagerDB {
 
     /***** SERVICETYPES METHODS *****/
 
-    public ArrayList<ServiceTypeDB> getAllServiceTypes() {
+    public ArrayList<ServiceTypeDB> getAllServiceTypes(boolean isAdmin) {
         ArrayList<ServiceTypeDB> sts = new ArrayList<>();
 
         try (Connection conn = persistence.getConnection()) {
-            sts = ServiceTypeDB.loadAllServiceTypes(conn, true);
+            sts = ServiceTypeDB.loadAllServiceTypes(conn, !isAdmin); // se admin -> non mettiamo controllo validità
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getAllServiceTypes: " + ex.getMessage());
         }
@@ -175,11 +175,11 @@ public class ServiceManagerDB {
         return sts;
     }
 
-    public ServiceTypeDB getServiceType(int idServiceType) {
+    public ServiceTypeDB getServiceType(int idServiceType, boolean isAdmin) {
         ServiceTypeDB st = null;
 
         try (Connection conn = persistence.getConnection()) {
-            st = ServiceTypeDB.loadServiceType(idServiceType, conn, true);
+            st = ServiceTypeDB.loadServiceType(idServiceType, conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getServiceType: " + ex.getMessage());
         }
@@ -187,11 +187,11 @@ public class ServiceManagerDB {
         return st;
     }
 
-    public boolean checkIfServiceTypeExists(int idServiceType) {
+    public boolean checkIfServiceTypeExists(int idServiceType, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = ServiceTypeDB.loadServiceType(idServiceType, conn, true) != null;
+            ret = ServiceTypeDB.loadServiceType(idServiceType, conn, !isAdmin) != null;
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - checkIfServiceTypeExists: " + ex.getMessage());
         }
@@ -223,11 +223,11 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public boolean updateServiceType(ServiceTypeDB st) {
+    public boolean updateServiceType(ServiceTypeDB st, boolean isAdmin) {
         boolean updated = false;
 
         try (Connection conn = persistence.getConnection()) {
-            updated = st.saveUpdate(conn);
+            updated = st.saveUpdate(conn, isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - updateServiceType: " + ex.getMessage());
         }
@@ -235,7 +235,7 @@ public class ServiceManagerDB {
         return updated;
     }
 
-    public boolean deleteServiceType(int idServiceType) {
+    public boolean deleteServiceType(int idServiceType) { // FIXME: qui non serve il parametro isAdmin, perché cancelliamo solo quelli validi, GIUSTO???
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {

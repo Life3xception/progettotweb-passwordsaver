@@ -108,13 +108,25 @@ public class ServiceTypeDB {
         return ret;
     }
 
-    public boolean saveUpdate(Connection conn) throws SQLException {
+    public boolean saveUpdate(Connection conn, boolean isAdmin) throws SQLException {
         boolean ret = false;
-        String sql = "UPDATE ServiceTypes SET Name = ? WHERE IdServiceType = ? AND Validity = TRUE";
+        String sql = "";
+
+        if(isAdmin)
+            sql = "UPDATE ServiceTypes SET Name = ?, Validity = ? WHERE IdServiceType = ?"; // TODO: se viene cambiata validità da true a false,
+                                                                                            //  bisogna anche cancellare tutti i servizi relativi e
+                                                                                            //  quindi le corrispondenti pwd
+        else
+            sql = "UPDATE ServiceTypes SET Name = ? WHERE IdServiceType = ? AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
-            st.setInt(2, idServiceType);
+            if(isAdmin) {
+                st.setBoolean(2, validity);
+                st.setInt(3, idServiceType);
+            } else {
+                st.setInt(2, idServiceType);
+            }
             ret = st.executeUpdate() > 0;
         }
 

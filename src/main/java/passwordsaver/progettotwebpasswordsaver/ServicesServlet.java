@@ -72,11 +72,12 @@ public class ServicesServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
             Map<String, String[]> pars = request.getParameterMap();
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             if(pars.containsKey("idServiceType")) {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
-                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting services by service type", "Service Type not found.");
                 } else {
                     // retrieving all the valid detailed services for the user by service type
@@ -160,13 +161,10 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
-
-            // only admin users can access this API // commentato perché ci serve come utente base in pagina lista servizi
-//            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
-//                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // retrieving all the servicetypes
-            ArrayList<ServiceTypeDB> serviceTypes = ServiceManagerDB.getManager().getAllServiceTypes();
+            ArrayList<ServiceTypeDB> serviceTypes = ServiceManagerDB.getManager().getAllServiceTypes(isAdmin);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(serviceTypes));
@@ -174,9 +172,10 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+            if(!isAdmin)
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             Map<String, String[]> pars = request.getParameterMap();
@@ -184,10 +183,11 @@ public class ServicesServlet extends HttpServlet {
             if(pars.containsKey("idServiceType")) {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
-                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service type", "Service Type not found.");
                 } else {
-                    ServiceTypeDB serviceType = ServiceManagerDB.getManager().getServiceType(idServiceType);
+                    // mettiamo isAdmin=true perché sappiamo che a questa API possono accedere solo gli admin
+                    ServiceTypeDB serviceType = ServiceManagerDB.getManager().getServiceType(idServiceType, isAdmin);
                     out.println(gson.toJson(serviceType));
                 }
             } else {
@@ -204,6 +204,7 @@ public class ServicesServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceDB class, so we perform the mapping
@@ -219,7 +220,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Service name already used.");
             } else if(s.getIdServiceType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Parameter idServiceType is required.");
-            } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType()) == null) {
+            } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType(), isAdmin) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Service Type doesn't exist.");
             } else if(ServiceManagerDB.getManager().addNewService(s, username) > 0) {
                 // adding the new service, we need to pass the username because
@@ -239,6 +240,7 @@ public class ServicesServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceTypeDB class, so we perform the mapping
@@ -246,7 +248,7 @@ public class ServicesServlet extends HttpServlet {
             ServiceTypeDB st = gson.fromJson(in, ServiceTypeDB.class);
 
             // first we check if the user is admin
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+            if(!isAdmin) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(st == null) { // input validation
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service type", "Empty request body.");
@@ -256,7 +258,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service type", "Service Type already exists.");
             } else if(ServiceManagerDB.getManager().addNewServiceType(st) > 0) {
                 // retrieving the servicetype inserted to return it to as response
-                st = ServiceManagerDB.getManager().getServiceType(st.getIdServiceType());
+                st = ServiceManagerDB.getManager().getServiceType(st.getIdServiceType(), isAdmin);
                 if(st != null)
                     out.println(gson.toJson(st));
                 else
@@ -275,6 +277,7 @@ public class ServicesServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceDB class, so we perform the mapping
@@ -296,7 +299,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Service name already used.");
             } else if(s.getIdServiceType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idServiceType is required.");
-            } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType()) == null) {
+            } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType(), isAdmin) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Service Type doesn't exist.");
             } else if(!ServiceManagerDB.getManager().updateService(s)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -305,6 +308,7 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the ServiceTypeDB class, so we perform the mapping
@@ -312,19 +316,19 @@ public class ServicesServlet extends HttpServlet {
             ServiceTypeDB st = gson.fromJson(in, ServiceTypeDB.class);
 
             // first we check if the user is admin
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+            if(!isAdmin) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(st == null) { // input validation
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Empty request body.");
             } else if(st.getIdServiceType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Parameter idServiceType is required.");
-            } else if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(st.getIdServiceType())) {
+            } else if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(st.getIdServiceType(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating service type", "Service Type not found.");
             } else if(st.getName() == null || st.getName().isEmpty()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Parameter name is required.");
             } else if(ServiceManagerDB.getManager().checkIfServiceTypeNameExists(st.getName(), st.getIdServiceType())) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service type", "Service Type name already used.");
-            } else if(!ServiceManagerDB.getManager().updateServiceType(st)) {
+            } else if(!ServiceManagerDB.getManager().updateServiceType(st, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -356,9 +360,10 @@ public class ServicesServlet extends HttpServlet {
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_DELETESERVICETYPE)) {
             response.setContentType("application/json");
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+            if(!isAdmin)
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             Map<String, String[]> pars = request.getParameterMap();
@@ -366,7 +371,7 @@ public class ServicesServlet extends HttpServlet {
             if(pars.containsKey("idServiceType")) {
                 int idServiceType = Integer.parseInt(pars.get("idServiceType")[0]);
 
-                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
+                if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service type", "Service Type not found.");
                 }  else if(!ServiceManagerDB.getManager().deleteServiceType(idServiceType)) { // TODO: devo fare anche annullamento di tutti i service
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
