@@ -88,12 +88,18 @@ public class UserTypeDB {
         return ret;
     }
 
-    public int saveAsNew(Connection conn) throws SQLException {
+    public int saveAsNew(Connection conn, boolean isAdmin) throws SQLException {
         int ret = -1;
-        String sql = "INSERT INTO UserTypes (Name) VALUES (?)";
+        String sql = "";
+        if(isAdmin)
+            sql = "INSERT INTO UserTypes (Name, Validity) VALUES (?, ?)";
+        else
+            sql = "INSERT INTO UserTypes (Name) VALUES (?)";
 
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
+            if(isAdmin)
+                st.setBoolean(2, validity);
 
             if (st.executeUpdate() > 0) {
                 ResultSet rs = st.executeQuery("SELECT LAST_INSERT_ID()");
@@ -107,13 +113,24 @@ public class UserTypeDB {
         return ret;
     }
 
-    public boolean saveUpdate(Connection conn) throws SQLException {
+    public boolean saveUpdate(Connection conn, boolean isAdmin) throws SQLException {
         boolean ret = false;
-        String sql = "UPDATE UserTypes SET Name = ? WHERE IdUserType = ? AND Validity = TRUE";
+        String sql = "";
+        if(isAdmin)
+            sql = "UPDATE UserTypes SET Name = ?, Validity = ? WHERE IdUserType = ?"; // TODO: al cambiamento di validity, vanno rimossi/ripristinati tutti gli utenti??
+        else
+            sql = "UPDATE UserTypes SET Name = ? WHERE IdUserType = ? AND Validity = TRUE";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
-            st.setInt(2, idUserType);
+
+            if(isAdmin) {
+                st.setBoolean(2, validity);
+                st.setInt(3, idUserType);
+            } else {
+                st.setInt(2, idUserType);
+            }
+
             ret = st.executeUpdate() > 0;
         }
 

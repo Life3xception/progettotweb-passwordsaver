@@ -82,7 +82,7 @@ public class UsersServlet extends HttpServlet {
             } else if(pars.containsKey("idUserType")) {
                 int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
 
-                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user", "User Type not found.");
                 } else {
                     ArrayList<DetailedUserDB> users = UserManagerDB.getManager().getAllDetailedUsersByUserType(idUserType, isAdmin);
@@ -152,13 +152,14 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+            if(!isAdmin)
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             // retrieving all the usertypes
-            ArrayList<UserTypeDB> userTypes = UserManagerDB.getManager().getAllUserTypes();
+            ArrayList<UserTypeDB> userTypes = UserManagerDB.getManager().getAllUserTypes(isAdmin);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(userTypes));
@@ -166,9 +167,10 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+            if(!isAdmin)
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             Map<String, String[]> pars = request.getParameterMap();
@@ -176,10 +178,10 @@ public class UsersServlet extends HttpServlet {
             if(pars.containsKey("idUserType")) {
                 int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
 
-                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting user type", "User Type not found.");
                 } else {
-                    UserTypeDB userType = UserManagerDB.getManager().getUserType(idUserType);
+                    UserTypeDB userType = UserManagerDB.getManager().getUserType(idUserType, isAdmin);
                     out.println(gson.toJson(userType));
                 }
             } else {
@@ -226,7 +228,7 @@ public class UsersServlet extends HttpServlet {
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
             } else if(u.getIdUserType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter idUserType is required.");
-            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "User type doesn't exist.");
             } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
                 // retrieving the user inserted to return it to as response
@@ -243,6 +245,7 @@ public class UsersServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserTypeDB class, so we perform the mapping
@@ -250,7 +253,7 @@ public class UsersServlet extends HttpServlet {
             UserTypeDB ut = gson.fromJson(in, UserTypeDB.class);
 
             // first we check if the user is admin
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+            if(!isAdmin) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(ut == null) { // input validation
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "Empty request body.");
@@ -258,9 +261,9 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), 0)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user type", "User type already exists.");
-            } else if(UserManagerDB.getManager().addNewUserType(ut) > 0) {
+            } else if(UserManagerDB.getManager().addNewUserType(ut, isAdmin) > 0) {
                 // retrieving the usertype inserted to return it to as response
-                ut = UserManagerDB.getManager().getUserType(ut.getIdUserType());
+                ut = UserManagerDB.getManager().getUserType(ut.getIdUserType(), isAdmin);
                 if(ut != null)
                     out.println(gson.toJson(ut));
                 else
@@ -306,7 +309,7 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Username already used.");
             } else if(u.getIdUserType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "Parameter idUserType is required.");
-            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType())) {
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user", "User type doesn't exist.");
             } else if(!UserManagerDB.getManager().updateUser(u, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -324,6 +327,7 @@ public class UsersServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the UserTypeDB class, so we perform the mapping
@@ -331,19 +335,19 @@ public class UsersServlet extends HttpServlet {
             UserTypeDB ut = gson.fromJson(in, UserTypeDB.class);
 
             // first we check if the user is admin
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username)) {
+            if(!isAdmin) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
             } else if(ut == null) { // input validation
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Empty request body.");
             } else if(ut.getIdUserType() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Parameter idUserType is required.");
-            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(ut.getIdUserType())) {
+            } else if(!UserManagerDB.getManager().checkIfUserTypeExists(ut.getIdUserType(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating user type", "User Type not found.");
             } else if(ut.getName() == null || ut.getName().isEmpty()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "Parameter name is required.");
             } else if(UserManagerDB.getManager().checkIfUserTypeNameExists(ut.getName(), ut.getIdUserType())) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating user type", "User type name already used.");
-            } else if(!UserManagerDB.getManager().updateUserType(ut)) {
+            } else if(!UserManagerDB.getManager().updateUserType(ut, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -390,7 +394,7 @@ public class UsersServlet extends HttpServlet {
             if(pars.containsKey("idUserType")) {
                 int idUserType = Integer.parseInt(pars.get("idUserType")[0]);
 
-                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
+                if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType, false)) { // Non serve eliminare un usertype già eliminato
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user type", "User Type not found.");
                 }  else if(!UserManagerDB.getManager().deleteUserType(idUserType)) { // TODO: devo eliminare anche tutti gli utenti, o switchare ad un altro usertype
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

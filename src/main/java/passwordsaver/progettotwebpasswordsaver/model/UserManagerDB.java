@@ -197,21 +197,21 @@ public class UserManagerDB {
     }
 
     /***** USERTYPES METHODS *****/
-    public ArrayList<UserTypeDB> getAllUserTypes() {
+    public ArrayList<UserTypeDB> getAllUserTypes(boolean isAdmin) {
         ArrayList<UserTypeDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = UserTypeDB.loadAllUserTypes(conn, true);
+            ret = UserTypeDB.loadAllUserTypes(conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getAllUserTypes: " + ex.getMessage());
         }
         return ret;
     }
 
-    public UserTypeDB getUserType(int idUserType) {
+    public UserTypeDB getUserType(int idUserType, boolean isAdmin) {
         UserTypeDB ut = null;
 
         try (Connection conn = persistence.getConnection()) {
-            ut = UserTypeDB.loadUserType(idUserType, conn, true);
+            ut = UserTypeDB.loadUserType(idUserType, conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - getUserType: " + ex.getMessage());
         }
@@ -219,11 +219,11 @@ public class UserManagerDB {
         return ut;
     }
 
-    public boolean checkIfUserTypeExists(int idUserType) {
+    public boolean checkIfUserTypeExists(int idUserType, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = UserTypeDB.loadUserType(idUserType, conn, true) != null;
+            ret = UserTypeDB.loadUserType(idUserType, conn, !isAdmin) != null;
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - checkIfUserTypeExists: "  + ex.getMessage());
         }
@@ -243,11 +243,11 @@ public class UserManagerDB {
         return ret;
     }
 
-    public int addNewUserType(UserTypeDB ut) {
+    public int addNewUserType(UserTypeDB ut, boolean isAdmin) {
         int ret = -1;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = ut.saveAsNew(conn);
+            ret = ut.saveAsNew(conn, isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - addNewUserType: " + ex.getMessage());
         }
@@ -255,11 +255,11 @@ public class UserManagerDB {
         return ret;
     }
 
-    public boolean updateUserType(UserTypeDB ut) {
+    public boolean updateUserType(UserTypeDB ut, boolean isAdmin) {
         boolean updated = false;
 
         try (Connection conn = persistence.getConnection()) {
-            updated = ut.saveUpdate(conn);
+            updated = ut.saveUpdate(conn, isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - updateUserType: " + ex.getMessage());
         }
