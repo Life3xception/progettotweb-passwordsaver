@@ -45,10 +45,9 @@ INSERT INTO `Passwords` (`IdPassword`, `Name`, `Password`, `Email`, `Username`, 
 (3,	'password 3',	'd/PkB1YwsFXzJ3H3KZRIaA==',	'admin@admin.it',	'admin',	1,	2,	'',	1,	1),
 (4,	'password 4',	'HYhP7ZJ9KHRuxgzkQ9AoAQ==',	'admin@admin.it',	'admin',	1,	3,	'',	1,	0),
 (5,	'prova',	'wsI7NpZLra2GWAlk+13Ilw==',	'',	'stefano',	2,	4,	'Sinonimo di prova, inglese',	0,	1),
-(6,	'test',	'nW/3gUNzYXBD/NvTvxCUVA==',	'',	'stefano',	2,	3,	'Sinonimo di prova, inglese',	0,	1),
-(8,	'Password di Giovanni',	'HdoACLrXiIrApanPeue33w==',	'',	'',	1,	2,	'',	1,	1),
-(9,	'Prova',	'sfsD+x3eqvcJS8bLrEsR+w==',	'',	'',	1,	1,	'',	0,	1),
-(10,	'asdsa',	'V0yz27kIfH6SWLeEfgkiFg==',	'',	'',	1,	3,	'',	0,	1);
+(6,	'Password di Giovanni',	'HdoACLrXiIrApanPeue33w==',	'',	'',	1,	2,	'',	1,	1),
+(7,	'Prova',	'sfsD+x3eqvcJS8bLrEsR+w==',	'',	'',	1,	1,	'',	0,	1),
+(8,	'asdsa',	'V0yz27kIfH6SWLeEfgkiFg==',	'',	'',	1,	3,	'',	0,	1);
 
 DROP TABLE IF EXISTS `ServiceTypes`;
 CREATE TABLE `ServiceTypes` (
@@ -105,9 +104,9 @@ CREATE TABLE `UserTypes` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO `UserTypes` (`IdUserType`, `Name`, `Validity`) VALUES
-(1,	'Admin',	1),
-(2,	'User',	1),
-(3,	'Manager',	0);
+(1,	'ADMIN',	1),
+(2,	'USER',	1),
+(3,	'MANAGER',	0);
 
 DROP TABLE IF EXISTS `Users`;
 CREATE TABLE `Users` (

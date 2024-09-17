@@ -1,5 +1,6 @@
 package passwordsaver.progettotwebpasswordsaver.login;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.model.LoginManagerDB;
+import passwordsaver.progettotwebpasswordsaver.model.UserManagerDB;
+import passwordsaver.progettotwebpasswordsaver.model.UserTypeDB;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,6 +85,7 @@ public class LoginServlet extends HttpServlet {
 
         if(request.getServletPath().equals(Apis.LOGIN)) {
             response.setContentType("application/json");
+            Gson gson = new Gson();
 
             // retrieve the object passed in the POST request
             BufferedReader in = request.getReader();
@@ -98,6 +102,7 @@ public class LoginServlet extends HttpServlet {
             boolean error = true;
             String errorMessage = "";
             String token = "";
+            String userType = "";
 
             // check if a user is already logged in (if null, no JWT in request)
             if(LoginService.getCurrentLogin(request) != null) {
@@ -112,7 +117,10 @@ public class LoginServlet extends HttpServlet {
                             errorMessage = "Failed to log in the user.";
                         }
                     }*/
-                    token = JwtUtil.createToken(username);
+
+                    userType = gson.toJson(UserManagerDB.getManager().getUserTypeOfUser(username));
+
+                    token = JwtUtil.createToken(username, userType);
 
                     // if no error occurred previously
                     //if(errorMessage.isEmpty()) {
@@ -126,11 +134,18 @@ public class LoginServlet extends HttpServlet {
 
             // creation of response JsonObject
             result.addProperty("operation", operation);
-            result.addProperty("username", username);
             result.addProperty("success", success);
             result.addProperty("error", error);
             result.addProperty("errorMessage", errorMessage);
-            result.addProperty("token", token);
+
+            // creating login data object only on successful login
+            if(success) {
+                JsonObject loginData = new JsonObject();
+                loginData.addProperty("username", username);
+                loginData.addProperty("token", token);
+                loginData.addProperty("userType", userType);
+                result.add("loginData", loginData);
+            }
 
             // return of response object
             response.getWriter().println(result);

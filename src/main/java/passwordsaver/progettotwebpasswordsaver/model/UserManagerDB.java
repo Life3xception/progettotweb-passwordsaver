@@ -61,6 +61,19 @@ public class UserManagerDB {
         return u;
     }
 
+    public UserTypeDB getUserTypeOfUser(String username) {
+        UserTypeDB res = null;
+
+        try (Connection conn = persistence.getConnection()) {
+            UserDB u = UserDB.loadUserByUsername(username, conn, true, true);
+            res = UserTypeDB.loadUserType(u.getIdUserType(), conn, true);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - getUserTypeOfUser: "  + ex.getMessage());
+        }
+
+        return res;
+    }
+
     public boolean userExists(int idUser) {
         boolean ret = false;
 

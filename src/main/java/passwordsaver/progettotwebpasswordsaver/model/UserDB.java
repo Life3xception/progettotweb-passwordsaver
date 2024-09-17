@@ -100,7 +100,7 @@ public class UserDB {
         String sql = "";
 
         if(limited)
-            sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE Username = ?";
+            sql = "SELECT IdUser, Username, Email, IdUserType, Validity FROM Users WHERE IdUser = ?";
         else
             sql = "SELECT * FROM Users WHERE IdUser = ?";
 

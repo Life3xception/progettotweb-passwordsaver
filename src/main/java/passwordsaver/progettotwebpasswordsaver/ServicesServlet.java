@@ -161,9 +161,9 @@ public class ServicesServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
 
-            // only admin users can access this API
-            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            // only admin users can access this API // commentato perché ci serve come utente base in pagina lista servizi
+//            if(!UserManagerDB.getManager().checkIfUserIsAdmin(username))
+//                response.sendError(HttpServletResponse.SC_FORBIDDEN);
 
             // retrieving all the servicetypes
             ArrayList<ServiceTypeDB> serviceTypes = ServiceManagerDB.getManager().getAllServiceTypes();
@@ -347,7 +347,7 @@ public class ServicesServlet extends HttpServlet {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service", "Service not found.");
                 } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service", "User is not owner of service.");
-                } else if(!ServiceManagerDB.getManager().deleteService(idService)) {
+                } else if(!ServiceManagerDB.getManager().deleteService(idService)) { // TODO: devo fare anche annullamento di tutte le password!
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
@@ -368,7 +368,7 @@ public class ServicesServlet extends HttpServlet {
 
                 if(!ServiceManagerDB.getManager().checkIfServiceTypeExists(idServiceType)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service type", "Service Type not found.");
-                }  else if(!ServiceManagerDB.getManager().deleteServiceType(idServiceType)) {
+                }  else if(!ServiceManagerDB.getManager().deleteServiceType(idServiceType)) { // TODO: devo fare anche annullamento di tutti i service
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {

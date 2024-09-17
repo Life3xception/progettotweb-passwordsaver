@@ -16,6 +16,7 @@ public class Apis {
     public static final String PASSWORDS_DELETEPASSWORD = PASSWORDS + "/deletepassword";
     public static final String USERS = "/users";
     public static final String USERS_GETUSER = USERS + "/getuser";
+    public static final String USERS_GETUSERTYPEOFUSER = USERS + "/getusertypeofuser";
     public static final String USERS_ADDUSER = USERS + "/adduser";
     public static final String USERS_UPDATEUSER = USERS + "/updateuser";
     public static final String USERS_DELETEUSER = USERS + "/deleteuser";

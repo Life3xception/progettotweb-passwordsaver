@@ -20,6 +20,7 @@ import java.util.Map;
 @WebServlet(name = "Users-Servlet", urlPatterns = {
         Apis.USERS,
         Apis.USERS_GETUSER,
+        Apis.USERS_GETUSERTYPEOFUSER,
         Apis.USERS_ADDUSER,
         Apis.USERS_UPDATEUSER,
         Apis.USERS_DELETEUSER,
@@ -74,6 +75,13 @@ public class UsersServlet extends HttpServlet {
             } else {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error getting user", "idUser must be provided.");
             }
+        } else if(request.getServletPath().equals(Apis.USERS_GETUSERTYPEOFUSER)) {
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+            String username = LoginService.getCurrentLogin(request);
+
+            UserTypeDB res = UserManagerDB.getManager().getUserTypeOfUser(username);
+            out.println(gson.toJson(res));
         } else if(request.getServletPath().equals(Apis.USERTYPES)) {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
@@ -290,7 +298,7 @@ public class UsersServlet extends HttpServlet {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user", "User not found.");
                 } else if(UserManagerDB.getManager().getUser(idUser).getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error deleting user", "Could not delete another user.");
-                } else if(!UserManagerDB.getManager().deleteUser(idUser)) {
+                } else if(!UserManagerDB.getManager().deleteUser(idUser)) { // TODO: devo eliminare anche tutte le password e tutti i services dell'utente
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
                     // if the user was not admin, he deleted its account, so after removing the user
@@ -316,7 +324,7 @@ public class UsersServlet extends HttpServlet {
 
                 if(!UserManagerDB.getManager().checkIfUserTypeExists(idUserType)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting user type", "User Type not found.");
-                }  else if(!UserManagerDB.getManager().deleteUserType(idUserType)) {
+                }  else if(!UserManagerDB.getManager().deleteUserType(idUserType)) { // TODO: devo eliminare anche tutti gli utenti, o switchare ad un altro usertype
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             } else {
