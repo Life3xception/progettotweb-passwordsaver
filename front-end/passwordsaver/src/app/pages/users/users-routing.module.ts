@@ -4,7 +4,8 @@ import { UsersComponent } from './users.component';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ModifyUserComponent } from './modify-user/modify-user.component';
 import { AdminGuardService } from '../../shared/services/admin-guard.service';
-import { ModifyUserGuardService } from '../../shared/services/modify-user-guard.service';
+import { OnlyAuthUserGuardService } from '../../shared/services/only-auth-user-guard.service';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   {
@@ -20,7 +21,12 @@ const routes: Routes = [
   {
     path: 'modify-user/:idUser',
     component: ModifyUserComponent,
-    canActivate: [ModifyUserGuardService]
+    canActivate: [OnlyAuthUserGuardService]
+  },
+  {
+    path: 'change-password/:idUser',
+    component: ChangePasswordComponent,
+    canActivate: [OnlyAuthUserGuardService]
   }
 ];
 

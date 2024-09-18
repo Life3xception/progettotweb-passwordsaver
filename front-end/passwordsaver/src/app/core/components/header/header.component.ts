@@ -98,4 +98,8 @@ export class HeaderComponent implements OnInit {
   goToUserDetails(): void {
     this.router.navigate(['users', 'modify-user', this.authService.getSessionData()?.idUser])
   }
+
+  goToChangePwd(): void {
+    this.router.navigate(['users', 'change-password', this.authService.getSessionData()?.idUser])
+  }
 }

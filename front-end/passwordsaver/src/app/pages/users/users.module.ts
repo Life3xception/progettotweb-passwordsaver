@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ModifyUserComponent } from './modify-user/modify-user.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 
 
@@ -14,7 +15,8 @@ import { ModifyUserComponent } from './modify-user/modify-user.component';
   declarations: [
     UsersComponent,
     NewUserComponent,
-    ModifyUserComponent
+    ModifyUserComponent,
+    ChangePasswordComponent
   ],
   imports: [
     CommonModule,

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
-import { map, Observable } from 'rxjs';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ModifyUserGuardService {
+export class OnlyAuthUserGuardService {
 
   constructor(private authService: AuthService,
     private router: Router

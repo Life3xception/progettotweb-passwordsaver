@@ -43,6 +43,11 @@ export class UsersService {
     return this.httpClient.put(url, user);
   }
 
+  changePassword(user: UserI): Observable<any> {
+    let url = `${environment.apiEndpoint}/${BeApis.changepassword}`;
+    return this.httpClient.put(url, user);
+  }
+
   deleteUser(idUser: number): Observable<any> {
     let url = `${environment.apiEndpoint}/${BeApis.deleteuser}?idUser=${idUser}`;
     return this.httpClient.delete(url);

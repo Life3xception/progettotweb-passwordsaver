@@ -98,6 +98,7 @@
   
 .dropdown-item {
     padding: 0.5em 1em;
+    margin-bottom: 0.5em;
     font-size: 1em;
     color: #333;
     transition: background-color 0.3s ease;

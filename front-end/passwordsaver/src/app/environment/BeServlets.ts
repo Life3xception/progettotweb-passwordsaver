@@ -25,6 +25,7 @@ export const BeApis = {
     getdetailedusersbyusertype: `${BeMainApis.users}/getdetailedusersbyusertype`,
     adduser: `${BeMainApis.users}/adduser`,
     updateuser: `${BeMainApis.users}/updateuser`,
+    changepassword: `${BeMainApis.users}/changepassword`,
     deleteuser: `${BeMainApis.users}/deleteuser`,
     getusertype: `${BeMainApis.usertypes}/getusertype`,
     addusertype: `${BeMainApis.usertypes}/addusertype`,
