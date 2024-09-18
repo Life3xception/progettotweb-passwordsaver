@@ -161,9 +161,16 @@ public class UserDB {
         return u;
     }
 
-    public int saveAsNew(Connection conn, BCryptPasswordEncoder encoder) throws SQLException {
+    public int saveAsNew(Connection conn, BCryptPasswordEncoder encoder, boolean isAdmin) throws SQLException {
         int ret = -1;
-        String sql = "INSERT INTO Users (Email, Username, Password, IdUserType, " +
+        String sql = "";
+
+        if(isAdmin)
+            sql = "INSERT INTO Users (Email, Username, Password, IdUserType, " +
+                    "EncodedSecretKey, InitializationVector, Validity) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        else
+            sql = "INSERT INTO Users (Email, Username, Password, IdUserType, " +
                 "EncodedSecretKey, InitializationVector) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -193,6 +200,9 @@ public class UserDB {
                 st.close();
                 return ret;
             }
+
+            if(isAdmin)
+                st.setBoolean(7, validity);
 
             if (st.executeUpdate() > 0) {
                 // The ID that was generated is maintained in the server on a per-connection basis.

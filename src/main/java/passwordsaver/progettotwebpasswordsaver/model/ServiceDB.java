@@ -150,9 +150,14 @@ public class ServiceDB {
         return ret;
     }
 
-    public int saveAsNew(String loggedUsername, Connection conn) throws SQLException {
+    public int saveAsNew(String loggedUsername, Connection conn, boolean isAdmin) throws SQLException {
         int ret = -1; // -1 means an error occurred during saving
-        String sql = "INSERT INTO Services (Name, IdServiceType, IdUser) VALUES (?, ?, ?)";
+        String sql = "";
+
+        if(isAdmin)
+            sql = "INSERT INTO Services (Name, IdServiceType, IdUser, Validity) VALUES (?, ?, ?, ?)";
+        else
+            sql = "INSERT INTO Services (Name, IdServiceType, IdUser) VALUES (?, ?, ?)";
 
         try(PreparedStatement st = conn.prepareStatement(sql)) {
             // before adding the parameters, we have to retrieve the idUser from the username
@@ -162,6 +167,13 @@ public class ServiceDB {
             st.setString(1, name);
             st.setInt(2, idServiceType);
             st.setInt(3, idUser);
+
+            if(isAdmin) {
+                // dobbiamo settare la validità del servizio alla stessa del service type
+                ServiceTypeDB sType = ServiceTypeDB.loadServiceType(idServiceType, conn, false);
+                validity = sType != null && sType.getValidity();
+                st.setBoolean(4, validity);
+            }
 
             if (st.executeUpdate() > 0) {
                 // The ID that was generated is maintained in the server on a per-connection basis.

@@ -150,7 +150,7 @@ public class PasswordsServlet extends HttpServlet {
             if(params.containsKey("idService")) {
                 int idService = Integer.parseInt(params.get("idService")[0]);
 
-                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                if(!ServiceManagerDB.getManager().serviceExists(idService, false)) { // non vogliamo che il fato che un admin possa aver inserito service non validi intacchi le password
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting passwords by service", "Service not found.");
                 } else {
                     // retrieving all the valid passwords by service for the user
@@ -209,6 +209,7 @@ public class PasswordsServlet extends HttpServlet {
             BufferedReader in = request.getReader();
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the PasswordDB class, so we perform the mapping
@@ -226,7 +227,7 @@ public class PasswordsServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Invalid email address.");
             } else if(p.getIdService() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Parameter idService is required.");
-            } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
+            } else if(ServiceManagerDB.getManager().getService(p.getIdService(), false) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "User is not owner of service.");
@@ -253,6 +254,7 @@ public class PasswordsServlet extends HttpServlet {
             response.setContentType("application/json");
             BufferedReader in = request.getReader();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // in the body of the request we expect to have the data
             // corresponding to the PasswordDB class, so we perform the mapping
@@ -276,7 +278,7 @@ public class PasswordsServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Invalid email address.");
             } else if(p.getIdService() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter idService is required.");
-            } else if(ServiceManagerDB.getManager().getService(p.getIdService()) == null) {
+            } else if(ServiceManagerDB.getManager().getService(p.getIdService(), false) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Service doesn't exist.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "User is not owner of service.");

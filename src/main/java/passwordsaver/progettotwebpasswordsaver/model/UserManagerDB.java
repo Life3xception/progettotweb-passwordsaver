@@ -158,11 +158,11 @@ public class UserManagerDB {
     }
 
     // Returns the id of the added user
-    public int addNewUser(UserDB user) {
+    public int addNewUser(UserDB user, boolean isAdmin) {
         int ret = -1;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = user.saveAsNew(conn, bcryptEncoder);
+            ret = user.saveAsNew(conn, bcryptEncoder, isAdmin);
         } catch (SQLException ex) {
             System.out.println("UserManagerDB - addNewUser: " + ex.getMessage());
         }

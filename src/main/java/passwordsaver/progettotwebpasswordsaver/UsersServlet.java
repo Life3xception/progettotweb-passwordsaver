@@ -230,7 +230,7 @@ public class UsersServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "Parameter idUserType is required.");
             } else if(!UserManagerDB.getManager().checkIfUserTypeExists(u.getIdUserType(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding user", "User type doesn't exist.");
-            } else if(UserManagerDB.getManager().addNewUser(u) > 0) {
+            } else if(UserManagerDB.getManager().addNewUser(u, isAdmin) > 0) {
                 // retrieving the user inserted to return it to as response
                 u = UserManagerDB.getManager().getUser(u.getIdUser(), isAdmin);
                 if(u != null)

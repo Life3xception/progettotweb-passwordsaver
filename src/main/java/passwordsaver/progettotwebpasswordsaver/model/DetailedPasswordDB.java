@@ -98,7 +98,7 @@ public class DetailedPasswordDB {
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
 
-        sql += "\nORDER BY P.Name";
+        sql += "\nORDER BY ServiceName, P.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
@@ -124,7 +124,7 @@ public class DetailedPasswordDB {
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
 
-        sql += "\nORDER BY P.Name";
+        sql += "\nORDER BY ServiceName, P.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
@@ -151,7 +151,7 @@ public class DetailedPasswordDB {
         if(validityCheck)
             sql += " AND P.Validity = TRUE AND S.Validity = TRUE";
 
-        sql += "\nORDER BY P.Name";
+        sql += "\nORDER BY ServiceName, P.Name";
 
         if(limit != 0)
             sql += "\nLIMIT ?";

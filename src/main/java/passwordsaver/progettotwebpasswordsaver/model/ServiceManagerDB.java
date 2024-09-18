@@ -61,11 +61,11 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public ServiceDB getService(int idService) {
+    public ServiceDB getService(int idService, boolean isAdmin) {
         ServiceDB s = null;
 
         try (Connection conn = persistence.getConnection()) {
-            s = ServiceDB.loadService(idService, conn, true);
+            s = ServiceDB.loadService(idService, conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getService: "  + ex.getMessage());
         }
@@ -73,11 +73,11 @@ public class ServiceManagerDB {
         return s;
     }
 
-    public DetailedServiceDB getDetailedService(int idService) {
+    public DetailedServiceDB getDetailedService(int idService, boolean isAdmin) {
         DetailedServiceDB s = null;
 
         try (Connection conn = persistence.getConnection()) {
-            s = DetailedServiceDB.loadService(idService, conn, true);
+            s = DetailedServiceDB.loadService(idService, conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getDetailedService: "  + ex.getMessage());
         }
@@ -98,11 +98,11 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public boolean serviceExists(int idService) {
+    public boolean serviceExists(int idService, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = ServiceDB.loadService(idService, conn, true) != null;
+            ret = ServiceDB.loadService(idService, conn, !isAdmin) != null;
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - serviceExists: "  + ex.getMessage());
         }
@@ -123,11 +123,11 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public int addNewService(ServiceDB service, String username) {
+    public int addNewService(ServiceDB service, String username, boolean isAdmin) {
         int ret = -1;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = service.saveAsNew(username, conn);
+            ret = service.saveAsNew(username, conn, isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - addNewService: " + ex.getMessage());
         }

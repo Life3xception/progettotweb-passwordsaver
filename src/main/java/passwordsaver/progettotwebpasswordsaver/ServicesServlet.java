@@ -100,10 +100,10 @@ public class ServicesServlet extends HttpServlet {
             if(pars.containsKey("idService")) {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
-                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                if(!ServiceManagerDB.getManager().serviceExists(idService, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service", "Service not found.");
                 } else {
-                    ServiceDB service = ServiceManagerDB.getManager().getService(idService);
+                    ServiceDB service = ServiceManagerDB.getManager().getService(idService, isAdmin);
 
                     if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                         JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting service", "Could not get data of service of another user.");
@@ -125,10 +125,10 @@ public class ServicesServlet extends HttpServlet {
             if(pars.containsKey("idService")) {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
-                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                if(!ServiceManagerDB.getManager().serviceExists(idService, isAdmin)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error getting service", "Service not found.");
                 } else {
-                    DetailedServiceDB service = ServiceManagerDB.getManager().getDetailedService(idService);
+                    DetailedServiceDB service = ServiceManagerDB.getManager().getDetailedService(idService, isAdmin);
 
                     if(service.getIdUser() != loggedUser.getIdUser() && !isAdmin) {
                         JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error getting service", "Could not get data of service of another user.");
@@ -222,12 +222,12 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Parameter idServiceType is required.");
             } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType(), isAdmin) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding service", "Service Type doesn't exist.");
-            } else if(ServiceManagerDB.getManager().addNewService(s, username) > 0) {
+            } else if(ServiceManagerDB.getManager().addNewService(s, username, isAdmin) > 0) {
                 // adding the new service, we need to pass the username because
                 // we need to retrieve the user's id
 
                 // retrieving the service inserted to return it to as response
-                s = ServiceManagerDB.getManager().getService(s.getIdService());
+                s = ServiceManagerDB.getManager().getService(s.getIdService(), isAdmin);
                 if(s != null)
                     out.println(gson.toJson(s));
                 else
@@ -289,7 +289,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Empty request body.");
             } else if(s.getIdService() == 0) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idService is required.");
-            } else if(!ServiceManagerDB.getManager().serviceExists(s.getIdService())) {
+            } else if(!ServiceManagerDB.getManager().serviceExists(s.getIdService(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating service", "Service not found.");
             } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(s.getIdService(), username)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "User is not owner of service.");
@@ -347,7 +347,7 @@ public class ServicesServlet extends HttpServlet {
             if(pars.containsKey("idService")) {
                 int idService = Integer.parseInt(pars.get("idService")[0]);
 
-                if(!ServiceManagerDB.getManager().serviceExists(idService)) {
+                if(!ServiceManagerDB.getManager().serviceExists(idService, false)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service", "Service not found.");
                 } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service", "User is not owner of service.");
