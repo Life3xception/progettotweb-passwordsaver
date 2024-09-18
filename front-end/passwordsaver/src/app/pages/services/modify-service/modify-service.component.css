@@ -18,7 +18,12 @@
 
 .modify-service-form > form {
     width: 100%;
-} 
+}
+
+.validity-input {
+    margin-left: 1em;
+    transform: scale(1.2); /* Slightly larger checkbox */
+}
 
 .form-label {
     font-weight: 500;

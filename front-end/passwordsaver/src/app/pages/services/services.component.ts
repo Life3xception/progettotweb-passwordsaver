@@ -6,6 +6,7 @@ import { ServicesService } from '../../shared/services/services.service';
 import { DetailedServiceI } from '../../shared/models/detailed-service.model';
 import { ServiceTypeI } from '../../shared/models/servicetype.model';
 import { ServicetypesService } from '../../shared/services/servicetypes.service';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-services',
@@ -26,6 +27,7 @@ export class ServicesComponent {
     private messageService: MessageService,
     private servicesService: ServicesService,
     private serviceTypesService: ServicetypesService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -128,5 +130,9 @@ export class ServicesComponent {
         error: (err) => this.errorHandlerService.handle(err, undefined, 'servicesToast')
       });
     }
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }

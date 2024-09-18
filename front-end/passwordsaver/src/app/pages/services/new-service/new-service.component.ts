@@ -7,6 +7,7 @@ import { ServicesService } from '../../../shared/services/services.service';
 import { ErrorHandlerService } from '../../../shared/services/error-handler.service';
 import { ServicetypesService } from '../../../shared/services/servicetypes.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-new-service',
@@ -22,7 +23,8 @@ export class NewServiceComponent implements OnInit {
     private servicesService: ServicesService,
     private errorHandlerService: ErrorHandlerService,
     private serviceTypesService: ServicetypesService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -33,10 +35,18 @@ export class NewServiceComponent implements OnInit {
       error: (err) => this.errorHandlerService.handle(err, undefined, 'newServiceToast')
     });
 
-    this.newServiceForm = this.formBuilder.group({
-      'name': new FormControl('', Validators.required),
-      'serviceType': new FormControl('', Validators.required),
-    });
+    if(this.isAdmin()) {
+      this.newServiceForm = this.formBuilder.group({
+        'name': new FormControl('', Validators.required),
+        'serviceType': new FormControl('', Validators.required),
+        'validity': new FormControl(true)
+      });
+    } else {
+      this.newServiceForm = this.formBuilder.group({
+        'name': new FormControl('', Validators.required),
+        'serviceType': new FormControl('', Validators.required),
+      });
+    }
   }
 
   onSubmit(event: any) {
@@ -53,7 +63,7 @@ export class NewServiceComponent implements OnInit {
       name: this.newServiceForm.controls['name'].value,
       idUser: 0, // viene settato lato be
       idServiceType: parseInt(this.newServiceForm.controls['serviceType'].value),
-      validity: true
+      validity: this.isAdmin() ? this.newServiceForm.controls['validity'].value : true
     };
 
     this.servicesService.addService(service).subscribe({
@@ -68,5 +78,9 @@ export class NewServiceComponent implements OnInit {
       },
       error: (err) => this.errorHandlerService.handle(err, undefined, 'newServiceToast')
     });
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }

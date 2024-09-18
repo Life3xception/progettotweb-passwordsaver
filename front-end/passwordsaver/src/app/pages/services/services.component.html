@@ -34,6 +34,7 @@
                 <tr>
                     <th scope="col">Nome</th>
                     <th scope="col">Tipo di Servizio</th>
+                    <th scope="col" *ngIf="isAdmin()">Validità</th>
                     <th scope="col">Azioni</th>
                 </tr>
             </thead>
@@ -41,6 +42,9 @@
                 <tr *ngFor="let serv of services">
                     <td class="name-col">{{serv.name}}</td>
                     <td class="servicetype-name-col">{{serv.serviceTypeName}}</td>
+                    <td class="validity-col" *ngIf="isAdmin()">
+                        <input class="form-check-input" [id]="'validity-' + serv.idService" type="checkbox" [disabled]="true" [checked]="serv.validity"/>
+                    </td>
                     <td class="actions-col">
                         <button type="button" class="btn btn-primary" (click)="modifyService(serv)"><mat-icon class="field-icon" svgIcon="edit"></mat-icon></button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" (click)="deleteService(serv)"><mat-icon class="field-icon" svgIcon="delete"></mat-icon></button>

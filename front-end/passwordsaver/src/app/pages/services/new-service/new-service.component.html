@@ -38,6 +38,14 @@
                         Selezionare un tipo di servizio.
                     </small>
                 </div>
+                <div class="col-md-4 offset-4" *ngIf="isAdmin()">
+                    <label for="validity" class="form-label">Validità:</label>
+                    <input 
+                        type="checkbox"
+                        formControlName="validity" 
+                        id="validity"
+                        class="form-check-input validity-input">
+                </div>
                 <div class="col-4 offset-4 text-center">
                     <button class="btn btn-primary" type="submit" [disabled]="!newServiceForm.valid" (click)="onSubmit($event)">Aggiungi Servizio</button>
                 </div>

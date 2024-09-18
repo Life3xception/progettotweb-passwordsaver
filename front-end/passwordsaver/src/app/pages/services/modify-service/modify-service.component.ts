@@ -7,6 +7,7 @@ import { ErrorHandlerService } from '../../../shared/services/error-handler.serv
 import { ServicesService } from '../../../shared/services/services.service';
 import { ServicetypesService } from '../../../shared/services/servicetypes.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-modify-service',
@@ -24,7 +25,8 @@ export class ModifyServiceComponent implements OnInit {
     private servicesService: ServicesService,
     private serviceTypesService: ServicetypesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -43,10 +45,18 @@ export class ModifyServiceComponent implements OnInit {
               error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyServiceToast')
             });
         
-            this.modifyServiceForm = this.formBuilder.group({
-              'name': new FormControl(this.currentService.name, Validators.required),
-              'serviceType': new FormControl(this.currentService.idServiceType, Validators.required),
-            });
+            if(this.isAdmin()) {
+              this.modifyServiceForm = this.formBuilder.group({
+                'name': new FormControl(this.currentService.name, Validators.required),
+                'serviceType': new FormControl(this.currentService.idServiceType, Validators.required),
+                'validity': new FormControl(this.currentService.validity)
+              });
+            } else {
+              this.modifyServiceForm = this.formBuilder.group({
+                'name': new FormControl(this.currentService.name, Validators.required),
+                'serviceType': new FormControl(this.currentService.idServiceType, Validators.required),
+              });
+            }
           },
           error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyServiceToast')
         });
@@ -74,6 +84,8 @@ export class ModifyServiceComponent implements OnInit {
 
     this.currentService.name = this.modifyServiceForm.controls['name'].value;
     this.currentService.idServiceType = parseInt(this.modifyServiceForm.controls['serviceType'].value);
+    if(this.isAdmin())
+      this.currentService.validity = this.modifyServiceForm.controls['validity'].value
 
     this.servicesService.updateService(this.currentService).subscribe({
       next: () => {
@@ -87,5 +99,9 @@ export class ModifyServiceComponent implements OnInit {
       },
       error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyServiceToast')
     });
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }
