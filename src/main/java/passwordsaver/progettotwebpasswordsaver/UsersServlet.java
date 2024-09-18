@@ -26,6 +26,7 @@ import java.util.Map;
         Apis.USERS_GETUSERTYPEOFUSER,
         Apis.USERS_ADDUSER,
         Apis.USERS_UPDATEUSER,
+        Apis.USERS_CHANGEPASSWORD,
         Apis.USERS_DELETEUSER,
         Apis.USERTYPES,
         Apis.USERTYPES_GETUSERTYPE,
@@ -319,6 +320,28 @@ public class UsersServlet extends HttpServlet {
                     // we need to tell the fe to perform logout!
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", "Username has changed. Please log in again");
                 }
+            }
+        } else if(request.getServletPath().equals(Apis.USERS_CHANGEPASSWORD)) {
+            response.setContentType("application/json");
+            BufferedReader in = request.getReader();
+            String username = LoginService.getCurrentLogin(request);
+
+            // in the body of the request we expect to have the data
+            // corresponding to the UserDB class, so we perform the mapping
+            // using the Gson library
+            UserDB u = gson.fromJson(in, UserDB.class);
+
+            // input validation
+            if (u == null) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error changing password", "Empty request body.");
+            } else if (u.getIdUser() == 0) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error changing password", "Parameter idUser is required.");
+            } else if (!UserManagerDB.getManager().userExists(u.getIdUser(), false)) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error changing password", "User not found.");
+            } else if (UserManagerDB.getManager().getUserByUsername(username, true).getIdUser() != u.getIdUser()) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Error changing password", "Could not change password of another user.");
+            } else if (!UserManagerDB.getManager().changePassword(u)) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else if(request.getServletPath().equals(Apis.USERTYPES_UPDATEUSERTYPE)) {
             response.setContentType("application/json");

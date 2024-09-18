@@ -182,6 +182,18 @@ public class UserManagerDB {
         return updated;
     }
 
+    public boolean changePassword(UserDB user) {
+        boolean changed = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            changed = user.changePassword(conn, bcryptEncoder);
+        } catch (SQLException ex) {
+            System.out.println("UserManagerDB - changePassword: " + ex.getMessage());
+        }
+
+        return changed;
+    }
+
     public boolean deleteUser(int idUser) {
         boolean deleted = false;
 

@@ -278,6 +278,23 @@ public class UserDB {
         return ret;
     }
 
+    public boolean changePassword(Connection conn, BCryptPasswordEncoder encoder) throws SQLException {
+        boolean ret = false;
+        String sql = "UPDATE Users SET Password = ? WHERE IdUser = ? AND Validity = TRUE";
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            // we suppose to have, at this point, a plaintext password in our property,
+            // but we MUST save it as encoded!
+            this.password = encoder.encode(this.password); // FIXME: vedere se farla arrivare criptata
+
+            st.setString(1, password);
+            st.setInt(2, idUser);
+            ret = st.executeUpdate() > 0;
+        }
+
+        return ret;
+    }
+
     public boolean delete(Connection conn) throws SQLException {
         boolean deleted = false;
         String sql = "UPDATE Users SET Validity = FALSE WHERE IdUser = ? AND Validity = TRUE";

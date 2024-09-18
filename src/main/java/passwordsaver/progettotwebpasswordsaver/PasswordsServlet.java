@@ -33,6 +33,17 @@ import java.util.Map;
 public class PasswordsServlet extends HttpServlet {
     private Gson gson;
 
+    /*
+    *  TODO:
+    *   - Signup page
+    *   - Cambio password
+    *   - capire se in signup/adduser/updateuser le pwd devono arrivare dal fe criptate o no
+    *   - attivare https!!
+    *   - api di reset di IV e key dell'utente (?)
+    *   - lato admin, tutte le operazioni di ripristino (password cancellate, altro?)
+    *   - aggiungere eye nei campi password per vederla nasconderla (login, signup, changepwd, aggiunta utente)
+    * */
+
     public void init() { gson = new Gson(); }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

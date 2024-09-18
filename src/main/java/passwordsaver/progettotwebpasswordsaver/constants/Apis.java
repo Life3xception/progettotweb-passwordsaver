@@ -21,6 +21,7 @@ public class Apis {
     public static final String USERS_GETUSERTYPEOFUSER = USERS + "/getusertypeofuser";
     public static final String USERS_ADDUSER = USERS + "/adduser";
     public static final String USERS_UPDATEUSER = USERS + "/updateuser";
+    public static final String USERS_CHANGEPASSWORD = USERS + "/changepassword";
     public static final String USERS_DELETEUSER = USERS + "/deleteuser";
     public static final String USERTYPES = "/usertypes";
     public static final String USERTYPES_GETUSERTYPE = USERTYPES + "/getusertype";
