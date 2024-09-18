@@ -3,6 +3,7 @@
     /* tolto width perché allarga troppo l'elemento e fa apparire la scrollbar orizzontale*/
     height: 100%;
     margin: 2em;
+    padding: 2em;
 }
 
 .main h2 {
@@ -17,46 +18,40 @@
 
 .section h2 {
     padding-left: 0.1em;
+    font-size: 1.75em;
+    font-weight: bold;
+    margin-bottom: 1.5em;
+    color: #333;
 }
 
-.starred-card {
-    /* border: 1px solid #645f5f;
-    border-radius: 10px;
-    margin: 0.8em; */
+.starred-card, .service-card {
     width: 16em;
-    /* height: 4em; */
-    padding: 1em 0.5em;
-    margin: 1em;
-    border: 1px solid rgba(0, 0, 0, 0.176);
     display: flex;
     flex-direction: column;
-    /* box-sizing: border-box; */
     border-radius: 6px;
     cursor: pointer;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1em;
+    margin: 1em;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.starred-card > * {
+.starred-card > *, .service-card > * {
     padding: 0.5em;
 }
 
-.service-card {
-    /* border: 1px solid #645f5f;
-    border-radius: 10px;
-    margin: 0.8em; */
-    width: 16em;
-    /* height: 4em; */
-    padding: 1em 0.5em;
-    margin: 1em;
-    border: 1px solid rgba(0, 0, 0, 0.176);
-    display: flex;
-    flex-direction: column;
-    /* box-sizing: border-box; */
-    border-radius: 6px;
-    cursor: pointer;
+.starred-card:hover, .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15);
 }
 
-.service-card > * {
-    padding: 0.5em;
+h4 {
+    font-size: 1.25em;
+    margin-bottom: 0.5em;
+    color: #0d6efd;
 }
 
 .see-more {
@@ -64,8 +59,13 @@
     display: flex;
     justify-content: flex-end;
     padding-right: 5em;
+    margin-top: 1em;
 }
 
 .see-more > * {
     width: 10em;
+}
+
+.see-more button {
+    background-color: #0d6efd;
 }

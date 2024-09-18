@@ -22,5 +22,26 @@ body * {
 body > app-root {
     width: 100%;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+  
+a {
+    text-decoration: none;
+    color: #0d6efd;
+}
+  
+a:hover {
+    color: #0046a2;
+}
+
+.validation-error {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 0.25em;
+}

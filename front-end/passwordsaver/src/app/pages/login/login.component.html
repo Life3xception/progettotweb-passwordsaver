@@ -4,9 +4,6 @@
     <form [formGroup]="loginForm" class="row g-3 needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
         <div class="col-md-4 offset-4">
             <label for="username" class="form-label">Username</label>
-            <!-- <div class="input-group has-validation"> -->
-            <!-- <span class="input-group-text" id="inputGroupPrepend">&#64;</span> -->
-            <!-- removed from input: aria-describedby="inputGroupPrepend" -->
             <input 
                 type="text" 
                 class="form-control" 
@@ -18,9 +15,8 @@
                                     : ''"
                 required>
             <small class="validation-error" *ngIf="!loginForm.controls['username'].valid && loginForm.controls['username'].dirty">
-                Please insert the username.
+                Inserisci lo username.
             </small>
-          <!-- </div> -->
         </div>
         <div class="col-md-4 offset-4">
             <label for="password" class="form-label">Password</label>
@@ -35,7 +31,7 @@
                                     : ''"
                 required>
             <small class="validation-error" *ngIf="!loginForm.controls['password'].valid && loginForm.controls['password'].dirty">
-                Please insert the password.
+                Inserisci la password.
             </small>
         </div>
         <div class="col-4 offset-4 text-center">

@@ -1,37 +1,65 @@
 .main {
     width: 100%;
 }
-/* 
-.new-usertype-form {
-    margin-top: 6em;
-    padding: 5em 1em;
-    display: flex;
-    /* flex-direction: column; */
-    /*align-items: center;
-    border: 2px solid rgb(51, 47, 47);
-    border-radius: 25px;
-    background-color: #fffff9;
-} */
 
-/* it takes only the childs of .new-usertype-form, not every child element */
-/* .new-usertype-form > * {
-    margin: 1.5em;
-} */
+.new-usertype-form {
+    background-color: #ffffff;
+    padding: 2em;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
 
 .new-usertype-form > h2 {
     text-align: center;
     font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5em;
 } 
 
 .new-usertype-form > form {
     width: 100%;
 } 
 
-.validation-error {
-    color: red;
-    font-size: small;
+.form-label {
+    font-weight: 500;
+    color: #495057; /* Subtle grey for label */
+    margin-bottom: 0.5em;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+     border-radius: 4px;
+    padding: 0.75em;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 5px rgba(13, 110, 253, 0.25); /* Add slight shadow on focus */
+    outline: none;
 }
 
 .validity-input {
     margin-left: 1em;
+    transform: scale(1.2); /* Slightly larger checkbox */
+}
+
+button[type="submit"] {
+    padding: 0.75em 1.5em;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+button[type="submit"]:disabled {
+    background-color: #6c757d; /* Greyed out when disabled */
+    cursor: not-allowed; 
+}
+
+button[type=submit]:hover:not(:disabled) {
+    background-color: #0056b3; /* Darker blue on hover when not disabled */
 }

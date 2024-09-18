@@ -1,12 +1,12 @@
 .login-form {
     margin-top: 6em;
-    padding: 5em 1em;
     display: flex;
-    /* flex-direction: column; */
+    flex-direction: column;
     align-items: center;
-    border: 2px solid rgb(51, 47, 47);
-    border-radius: 25px;
-    background-color: #fffff9;
+    padding: 3em 2em;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* it takes only the childs of .login-form, not every child element */
@@ -17,13 +17,47 @@
 .login-form > h3 {
     text-align: center;
     font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5em;
 }
 
 .login-form > form {
     width: 100%;
 }
 
-.validation-error {
-    color: red;
-    font-size: small;
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 0.5em;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+  
+.form-control:focus {
+    border-color: #0d6efd;
+    outline: none;
+}
+
+button[type="submit"] {
+    padding: 0.75em 1.5em;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+button[type="submit"]:disabled {
+    background-color: #6c757d; /* Greyed out when disabled */
+    cursor: not-allowed; 
+}
+
+button[type=submit]:hover:not(:disabled) {
+    background-color: #0056b3; /* Darker blue on hover when not disabled */
 }
