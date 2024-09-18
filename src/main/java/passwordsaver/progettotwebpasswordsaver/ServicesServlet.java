@@ -44,10 +44,6 @@ public class ServicesServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
 
-            // TODO: potrebbe servire per richiesta servizi per tipo servizio
-            // retrieving the parameters from the querystring as a key-value Map
-            // Map<String, String[]> params = request.getParameterMap();
-
             // retrieving all the valid services for the user
             ArrayList<ServiceDB> services = ServiceManagerDB.getManager().getAllServices(username);
 
@@ -58,10 +54,6 @@ public class ServicesServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
             boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
-
-            // TODO: potrebbe servire per richiesta servizi per tipo servizio
-            // retrieving the parameters from the querystring as a key-value Map
-            // Map<String, String[]> params = request.getParameterMap();
 
             // retrieving all the valid services for the user
             ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServices(username, isAdmin);

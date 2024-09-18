@@ -193,7 +193,7 @@ public class PasswordDB {
             st.setString(4, username);
             st.setInt(5, idUser);
             st.setInt(6, idService);
-            st.setString(7, passPhrase); // TODO: needs to be validated?
+            st.setString(7, passPhrase);
             st.setBoolean(8, isStarred);
 
             if (st.executeUpdate() > 0) {

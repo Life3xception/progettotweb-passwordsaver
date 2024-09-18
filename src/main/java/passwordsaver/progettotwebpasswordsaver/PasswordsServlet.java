@@ -41,10 +41,6 @@ public class PasswordsServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
 
-            // TODO: potrebbe servire per richiesta password per tipo servizio
-            // retrieving the parameters from the querystring as a key-value Map
-            // Map<String, String[]> params = request.getParameterMap();
-
             // retrieving all the valid passwords for the user
             ArrayList<PasswordDB> passwords = PasswordManagerDB.getManager().getAllPasswords(username);
 
@@ -129,10 +125,6 @@ public class PasswordsServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
-
-            // TODO: potrebbe servire per richiesta password per tipo servizio
-            // retrieving the parameters from the querystring as a key-value Map
-            // Map<String, String[]> params = request.getParameterMap();
 
             // retrieving all the valid passwords for the user
             ArrayList<DetailedPasswordDB> passwords = PasswordManagerDB.getManager().getAllDetailedPasswords(username);

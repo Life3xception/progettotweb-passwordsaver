@@ -142,6 +142,7 @@ public class LoginServlet extends HttpServlet {
             if(success) {
                 JsonObject loginData = new JsonObject();
                 loginData.addProperty("username", username);
+                loginData.addProperty("idUser", UserManagerDB.getManager().getUserByUsername(username, false).getIdUser());
                 loginData.addProperty("token", token);
                 loginData.addProperty("userType", userType);
                 result.add("loginData", loginData);

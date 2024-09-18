@@ -235,7 +235,7 @@ public class ServiceManagerDB {
         return updated;
     }
 
-    public boolean deleteServiceType(int idServiceType) { // FIXME: qui non serve il parametro isAdmin, perché cancelliamo solo quelli validi, GIUSTO???
+    public boolean deleteServiceType(int idServiceType) {
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {
