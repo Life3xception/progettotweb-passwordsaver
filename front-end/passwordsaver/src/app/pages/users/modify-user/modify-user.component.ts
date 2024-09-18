@@ -8,6 +8,7 @@ import { UsertypesService } from '../../../shared/services/usertypes.service';
 import { UsersService } from '../../../shared/services/users.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { environment } from '../../../environment/environment';
+import { AuthService } from '../../../shared/services/auth.service';
 
 @Component({
   selector: 'app-modify-user',
@@ -25,7 +26,8 @@ export class ModifyUserComponent implements OnInit {
     private userTypesService: UsertypesService,
     private usersService: UsersService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -37,19 +39,26 @@ export class ModifyUserComponent implements OnInit {
           next: (user) => {
             this.currentUser = user;
 
-            this.userTypesService.getUserTypes().subscribe({
-              next: (userTypes) => {
-                this.userTypes = userTypes;
-              },
-              error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyUserToast')
-            });
-        
-            this.modifyUserForm = this.formBuilder.group({
-              'username': new FormControl(this.currentUser.username, Validators.required),
-              'email': new FormControl(this.currentUser.email, Validators.compose([Validators.required, Validators.pattern(environment.emailRegex)])),
-              'userType': new FormControl(this.currentUser.idUserType, Validators.required),
-              'validity': new FormControl(this.currentUser.validity),
-            });
+            if(this.isAdmin()) {
+              this.userTypesService.getUserTypes().subscribe({
+                next: (userTypes) => {
+                  this.userTypes = userTypes;
+                },
+                error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyUserToast')
+              });
+
+              this.modifyUserForm = this.formBuilder.group({
+                'username': new FormControl(this.currentUser.username, Validators.required),
+                'email': new FormControl(this.currentUser.email, Validators.compose([Validators.required, Validators.pattern(environment.emailRegex)])),
+                'userType': new FormControl(this.currentUser.idUserType, Validators.required),
+                'validity': new FormControl(this.currentUser.validity),
+              });
+            } else {
+              this.modifyUserForm = this.formBuilder.group({
+                'username': new FormControl(this.currentUser.username, Validators.required),
+                'email': new FormControl(this.currentUser.email, Validators.compose([Validators.required, Validators.pattern(environment.emailRegex)]))
+              });
+            }
           },
           error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyUserToast')
         });
@@ -74,11 +83,14 @@ export class ModifyUserComponent implements OnInit {
       return;
 
     this.messageService.clear();
-
+    
     this.currentUser.username = this.modifyUserForm.controls['username'].value;
     this.currentUser.email = this.modifyUserForm.controls['email'].value;
-    this.currentUser.idUserType = parseInt(this.modifyUserForm.controls['userType'].value);
-    this.currentUser.validity = this.modifyUserForm.controls['validity'].value;
+
+    if(this.isAdmin()) {
+      this.currentUser.idUserType = parseInt(this.modifyUserForm.controls['userType'].value);
+      this.currentUser.validity = this.modifyUserForm.controls['validity'].value;
+    }
 
     this.usersService.updateUser(this.currentUser).subscribe({
       next: () => {
@@ -92,5 +104,9 @@ export class ModifyUserComponent implements OnInit {
       },
       error: (err) => this.errorHandlerService.handle(err, undefined, 'modifyUserToast')
     });
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 }

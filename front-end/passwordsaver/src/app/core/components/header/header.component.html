@@ -4,7 +4,15 @@
             <a><span class="ml-2">{{ item.text }}</span></a>
         </div>
     </div> 
-    <div class="user-profile">
-        <button type="button" class="btn btn-primary" (click)="logout()">Logout</button>
+    <div class="user-profile dropdown">
+        <button class="btn btn-primary dropdown-toggle no-caret" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <!-- <span class="user-image">{{userInitials}}</span> -->
+            {{userInitials}}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
+            <li><a class="dropdown-item" (click)="goToUserDetails()">Dettagli</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+        </ul>
     </div>
 </div>

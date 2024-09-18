@@ -1,7 +1,6 @@
-import { UserTypeI } from "./user-type.model";
-
 export interface LoginDataI {
     username: string;
+    idUser: number;
     token: string;
     userType: string;
 }

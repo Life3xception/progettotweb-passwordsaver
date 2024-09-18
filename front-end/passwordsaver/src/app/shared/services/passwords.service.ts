@@ -54,7 +54,7 @@ export class PasswordsService {
 
   getDecodedPassword(idPwd: number): Observable<PasswordI> {
     let url = `${environment.apiEndpoint}/${BeApis.getdecodedpassword}?idPassword=${idPwd}`;
-    return this.httpClient.get<PasswordI>(url); // FIXME: in questo modo la password viaggia in chiaro, molto male!!!
+    return this.httpClient.get<PasswordI>(url); // FIXME: password viaggia base64 encoded, non molto sicuro
   }
 
   addPassword(pwd: PasswordI): Observable<PasswordI> {

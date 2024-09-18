@@ -36,7 +36,7 @@
                         Email non valida.
                     </small>
                 </div>
-                <div class="col-md-4 offset-4">
+                <div class="col-md-4 offset-4" *ngIf="isAdmin()">
                     <label for="userType" class="form-label">Tipo Utente:</label>
                     <select 
                         id="userType"
@@ -53,7 +53,7 @@
                         Selezionare un tipo di utente.
                     </small>
                 </div>
-                <div class="col-md-4 offset-4">
+                <div class="col-md-4 offset-4" *ngIf="isAdmin()">
                     <label for="validity" class="form-label">Validità:</label>
                     <input 
                         type="checkbox"

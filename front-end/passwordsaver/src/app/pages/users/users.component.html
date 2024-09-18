@@ -28,8 +28,13 @@
                 <button type="button" class="btn btn-success" (click)="goToNewUser()">Aggiungi Utente</button>
             </div>
         </div>
-        <p *ngIf="users?.length == 0">Nessun utente presente per il tipo di utente selezionato</p>
-        <table class="table table-striped table-bordered" *ngIf="users?.length != 0">
+        <p *ngIf="users?.length == 0">
+            {{selectedIdUserType == 0 ? 
+                "Nessun utente presente. Inizia ad aggiungerne per visualizzare dei risultati." : 
+                "Nessun utente presente per il tipo di utente selezionato."
+            }}
+        </p>
+        <table class="table table-striped table-bordered" *ngIf="users != undefined && users.length != 0">
             <thead>
                 <tr>
                     <th scope="col">Username</th>

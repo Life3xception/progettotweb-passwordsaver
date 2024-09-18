@@ -17,11 +17,22 @@ export class ErrorHandlerService {
   ) { }
 
   handle(error: any, toastMessage?: Message, toastKey?: string): void {
-    console.log(error); // TO REMOVE (?)
+    // console.log(error); // TODO TO REMOVE (?)
     if(error instanceof HttpErrorResponse) {
       if(error.status === 401 && !this.router.url.includes('login')) {
-        this.authService.logout(); // dobbiamo fare logout, altrimenti ci manda a login che ci manda a home
-        window.location.href  = '/login'; // per forzare il ricaricamento della pagine e quindi dei componenti
+        // se abbiamo un messaggio, prima lo visualizziamo
+        if(error.error && error.error.error && toastKey) {
+          this.messageService.add({key: toastKey,
+              severity: 'warn',
+              summary: error.error.error,
+              detail: error.error.message,
+              sticky: true
+            });
+        }
+        setTimeout(() => {
+          this.authService.logout(); // dobbiamo fare logout, altrimenti ci manda a login che ci manda a home
+          window.location.href  = '/login'; // per forzare il ricaricamento della pagine e quindi dei componenti
+        }, 1000);
       } else if(error.status === 403) {
         // reindirizziamo alla pagina home
         setTimeout(() => this.router.navigate(['home']), 1000);

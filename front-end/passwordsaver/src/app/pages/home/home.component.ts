@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  starred: DetailedPasswordI[] | undefined;
+  starredPasswords: DetailedPasswordI[] | undefined;
   usedServices: ServiceI[] | undefined;
   showedStarredPwds = 3;
   showedUsedServices = 3;
@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.passwordsService.getDetailedStarredPasswords(this.showedStarredPwds).subscribe({
       next: (passwords) => {
-        this.starred = passwords;
+        this.starredPasswords = passwords;
       },
       error: (err) => this.errorHandlerService.handle(err, undefined, 'homeToast') 
     });

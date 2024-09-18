@@ -2,31 +2,37 @@
     <p-toast key="homeToast" />
     <div class="section">
         <h2>Preferiti</h2>
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="starredPasswords?.length == 0">
+            <p>Non hai ancora selezionato dei preferiti. Vai alla pagina della lista delle password per aggiungerne.</p>
+        </div>
+        <div class="col-md-12" *ngIf="starredPasswords != undefined && starredPasswords.length != 0">
             <div class="row">
-                <div (click)="getPasswordDetail(item)" class="starred-card col-md-3" *ngFor="let item of starred">
+                <div (click)="getPasswordDetail(item)" class="starred-card col-md-3" *ngFor="let item of starredPasswords">
                     <h4 class="h4">{{item.name}}</h4>
                     <span>{{item.username}}</span>
                     <span>{{item.serviceName}}</span>
                 </div>
             </div>
-        </div>
-        <div class="see-more">
-            <button type="button" class="btn btn-primary" (click)="seeMore('starred')">Vedi altre ...</button>
+            <div class="see-more">
+                <button type="button" class="btn btn-primary" (click)="seeMore('starred')">Vedi altre ...</button>
+            </div>
         </div>
     </div>
     <div class="section">
         <h2>Servizi più usati</h2>
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="usedServices?.length == 0">
+            <p>Non hai ancora inserito password. Vai alla pagina della lista delle password per aggiungerne.</p>
+        </div>
+        <div class="col-md-12" *ngIf="usedServices != undefined && usedServices.length != 0">
             <div class="row">
                 <div (click)="getPasswordsByService(service)" class="service-card col-md-3" *ngFor="let service of usedServices">
                     <h4 class="h4">{{service.name}}</h4>
                     <span>Clicca per vedere le password</span>
                 </div>
             </div>
-        </div>
-        <div class="see-more">
-            <button type="button" class="btn btn-primary" (click)="seeMore('services')">Vedi altri ...</button>
+            <div class="see-more">
+                <button type="button" class="btn btn-primary" (click)="seeMore('services')">Vedi altri ...</button>
+            </div>
         </div>
     </div>
 </div>

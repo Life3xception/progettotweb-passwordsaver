@@ -43,6 +43,7 @@ export class HeaderComponent implements OnInit {
     }
   ];
   selectedMenuItem: MenuItem | undefined;
+  userInitials: string = 'U';
 
   constructor(private router: Router,
     private authService: AuthService
@@ -72,6 +73,8 @@ export class HeaderComponent implements OnInit {
       // spread operator allows to place an extended version of an array into another array
       this.menuItems = [...this.menuItems, ...this.menuItemsAdmin]; 
     }
+
+    this.userInitials = this.authService.getSessionData()?.username.toUpperCase().substring(0,2) ?? 'U';
   }
 
   handleClick(item: MenuItem): void {
@@ -90,5 +93,9 @@ export class HeaderComponent implements OnInit {
 
   isAdmin(): boolean { 
     return this.authService.isAdmin();
+  }
+
+  goToUserDetails(): void {
+    this.router.navigate(['users', 'modify-user', this.authService.getSessionData()?.idUser])
   }
 }

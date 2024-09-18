@@ -24,8 +24,8 @@
                 <button type="button" class="btn btn-success" (click)="goToNewServiceType()">Aggiungi Tipo di Servizio</button>
             </div>
         </div>
-        <p *ngIf="serviceTypes?.length == 0">Nessuna tipo di servizio presente.</p>
-        <table class="table table-striped table-bordered" *ngIf="serviceTypes?.length != 0">
+        <p *ngIf="serviceTypes?.length == 0">Nessun tipo di servizio presente.</p>
+        <table class="table table-striped table-bordered" *ngIf="serviceTypes != undefined && serviceTypes.length != 0">
             <thead>
                 <tr>
                     <th scope="col">Nome</th>

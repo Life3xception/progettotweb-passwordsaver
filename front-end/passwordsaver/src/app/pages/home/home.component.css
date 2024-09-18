@@ -24,6 +24,10 @@
     color: #333;
 }
 
+.section p {
+    padding-left: 0.2em;
+}
+
 .starred-card, .service-card {
     width: 16em;
     display: flex;
