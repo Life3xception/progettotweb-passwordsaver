@@ -57,13 +57,14 @@ public class ServicesServlet extends HttpServlet {
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             String username = LoginService.getCurrentLogin(request);
+            boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
             // TODO: potrebbe servire per richiesta servizi per tipo servizio
             // retrieving the parameters from the querystring as a key-value Map
             // Map<String, String[]> params = request.getParameterMap();
 
             // retrieving all the valid services for the user
-            ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServices(username);
+            ArrayList<DetailedServiceDB> services = ServiceManagerDB.getManager().getAllDetailedServices(username, isAdmin);
 
             // returning the arraylist as an array of JsonObject using the Gson library
             out.println(gson.toJson(services));
@@ -291,7 +292,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idService is required.");
             } else if(!ServiceManagerDB.getManager().serviceExists(s.getIdService(), isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error updating service", "Service not found.");
-            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(s.getIdService(), username)) {
+            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(s.getIdService(), username, isAdmin)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "User is not owner of service.");
             } else if(s.getName() == null || s.getName().isEmpty()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter name is required.");
@@ -301,7 +302,7 @@ public class ServicesServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Parameter idServiceType is required.");
             } else if(ServiceManagerDB.getManager().getServiceType(s.getIdServiceType(), isAdmin) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating service", "Service Type doesn't exist.");
-            } else if(!ServiceManagerDB.getManager().updateService(s)) {
+            } else if(!ServiceManagerDB.getManager().updateService(s, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else if(request.getServletPath().equals(Apis.SERVICETYPES_UPDATESERVICETYPE)) {
@@ -349,7 +350,7 @@ public class ServicesServlet extends HttpServlet {
 
                 if(!ServiceManagerDB.getManager().serviceExists(idService, false)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_NOT_FOUND, "Error deleting service", "Service not found.");
-                } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username)) {
+                } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(idService, username, false)) {
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting service", "User is not owner of service.");
                 } else if(!ServiceManagerDB.getManager().deleteService(idService)) { // TODO: devo fare anche annullamento di tutte le password!
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

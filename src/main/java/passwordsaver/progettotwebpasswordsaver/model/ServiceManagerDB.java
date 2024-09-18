@@ -31,10 +31,10 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public ArrayList<DetailedServiceDB> getAllDetailedServices(String username) {
+    public ArrayList<DetailedServiceDB> getAllDetailedServices(String username, boolean isAdmin) {
         ArrayList<DetailedServiceDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
-            ret = DetailedServiceDB.loadAllServices(username, conn, true);
+            ret = DetailedServiceDB.loadAllServices(username, conn, !isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - getAllDetailedServices: " + ex.getMessage());
         }
@@ -85,12 +85,12 @@ public class ServiceManagerDB {
         return s;
     }
 
-    public boolean userIsOwnerOfService(int idService, String username) {
+    public boolean userIsOwnerOfService(int idService, String username, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
-            ret = ServiceDB.loadService(idService, conn, true).getIdUser() == idUser;
+            ret = ServiceDB.loadService(idService, conn, !isAdmin).getIdUser() == idUser;
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - userIsOwnerOfService: "  + ex.getMessage());
         }
@@ -135,11 +135,11 @@ public class ServiceManagerDB {
         return ret;
     }
 
-    public boolean updateService(ServiceDB service) {
+    public boolean updateService(ServiceDB service, boolean isAdmin) {
         boolean updated = false;
 
         try (Connection conn = persistence.getConnection()) {
-            updated = service.saveUpdate(conn);
+            updated = service.saveUpdate(conn, isAdmin);
         } catch (SQLException ex) {
             System.out.println("ServiceManagerDB - updateService: " + ex.getMessage());
         }

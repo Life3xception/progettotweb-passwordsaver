@@ -171,7 +171,10 @@ public class ServiceDB {
             if(isAdmin) {
                 // dobbiamo settare la validità del servizio alla stessa del service type
                 ServiceTypeDB sType = ServiceTypeDB.loadServiceType(idServiceType, conn, false);
-                validity = sType != null && sType.getValidity();
+                validity = sType != null && sType.getValidity() && validity;
+                // se sType non esiste, validity diventa false (ma in teoria se arriviamo qua esiste, è più un controllo per sicurezza)
+                // se sType esiste ed è invalido, validity diventa false
+                // se sType esiste ed è valido, validity non cambia
                 st.setBoolean(4, validity);
             }
 
@@ -193,14 +196,26 @@ public class ServiceDB {
         return ret;
     }
 
-    public boolean saveUpdate(Connection conn) throws SQLException {
+    public boolean saveUpdate(Connection conn, boolean isAdmin) throws SQLException {
         boolean ret = false;
-        String sql = "UPDATE Services SET Name = ?, IdServiceType = ? WHERE IdService = ? AND Validity = TRUE";
+        String sql = "";
+
+        if(isAdmin)
+            sql = "UPDATE Services SET Name = ?, IdServiceType = ?, Validity = ? WHERE IdService = ?";
+        else
+            sql = "UPDATE Services SET Name = ?, IdServiceType = ? WHERE IdService = ? AND Validity = TRUE";
 
         try (PreparedStatement st = conn.prepareStatement(sql)) {
             st.setString(1, name);
             st.setInt(2, idServiceType);
-            st.setInt(3, idService);
+
+            if(isAdmin) {
+                st.setBoolean(3, validity);
+                st.setInt(4, idService);
+            } else {
+                st.setInt(3, idService);
+            }
+
             ret = st.executeUpdate() > 0;
         }
 

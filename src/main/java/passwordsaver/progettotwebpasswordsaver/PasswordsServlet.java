@@ -229,7 +229,7 @@ public class PasswordsServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService(), false) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "Service doesn't exist.");
-            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
+            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username, false)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error adding password", "User is not owner of service.");
             } else if(PasswordManagerDB.getManager().addNewPassword(p, username) > 0) {
                 // adding the new password, we need to pass the username because
@@ -280,7 +280,7 @@ public class PasswordsServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Parameter idService is required.");
             } else if(ServiceManagerDB.getManager().getService(p.getIdService(), false) == null) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "Service doesn't exist.");
-            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username)) {
+            } else if(!ServiceManagerDB.getManager().userIsOwnerOfService(p.getIdService(), username, false)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error updating password", "User is not owner of service.");
             } else if(!PasswordManagerDB.getManager().updatePassword(p, username)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

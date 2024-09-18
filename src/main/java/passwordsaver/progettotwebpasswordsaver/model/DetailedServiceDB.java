@@ -67,7 +67,7 @@ public class DetailedServiceDB {
         if(validityCheck)
             sql += " AND S.Validity = TRUE AND ST.Validity = TRUE";
 
-        sql += "\nORDER BY S.Name";
+        sql += "\nORDER BY ServiceTypeName, S.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
@@ -93,7 +93,7 @@ public class DetailedServiceDB {
         if(validityCheck)
             sql += " AND S.Validity = TRUE AND ST.Validity = TRUE";
 
-        sql += "\nORDER BY S.Name";
+        sql += "\nORDER BY ServiceTypeName, S.Name";
 
         int idUser = UserDB.loadUserByUsername(username, conn, true, true).getIdUser();
 
