@@ -316,11 +316,8 @@ public class UsersServlet extends HttpServlet {
             } else {
                 // the update was successful, if the username has changed
                 if(!username.equals(u.getUsername())) {
-                    // we need to perform logout
-                    if(!LoginService.doLogOut(request.getSession(), username)) {  //FIXME: qui la logica è cambiata!!!
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    }
-                    // it will be the client to manage the redirect to login page
+                    // we need to tell the fe to perform logout!
+                    JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", "Username has changed. Please log in again");
                 }
             }
         } else if(request.getServletPath().equals(Apis.USERTYPES_UPDATEUSERTYPE)) {
@@ -373,10 +370,9 @@ public class UsersServlet extends HttpServlet {
                 } else if(!UserManagerDB.getManager().deleteUser(idUser)) { // TODO: devo eliminare anche tutte le password e tutti i services dell'utente
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 } else {
-                    // if the user was not admin, he deleted its account, so after removing the user
-                    // we have to destroy the session
-                    if(!isAdmin && !LoginService.doLogOut(request.getSession(), username))
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    // if the user was not admin, he deleted its account, so after removing the user it is no longer authorized
+                    if(!isAdmin)
+                        JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", "Account deleted");
                 }
             } else {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error deleting user", "idUser must be provided.");
