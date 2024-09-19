@@ -8,15 +8,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Apis;
-import passwordsaver.progettotwebpasswordsaver.model.LoginManagerDB;
-import passwordsaver.progettotwebpasswordsaver.model.UserManagerDB;
-import passwordsaver.progettotwebpasswordsaver.model.UserTypeDB;
+import passwordsaver.progettotwebpasswordsaver.constants.Config;
+import passwordsaver.progettotwebpasswordsaver.model.*;
+import passwordsaver.progettotwebpasswordsaver.utils.JsonErrorResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "Login-Servlet", urlPatterns = { Apis.LOGIN })
+@WebServlet(name = "Login-Servlet", urlPatterns = { Apis.LOGIN, Apis.SIGNUP })
 public class LoginServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // GET accepts /login (to check login status)
@@ -110,6 +110,48 @@ public class LoginServlet extends HttpServlet {
 
             // return of response object
             response.getWriter().println(result);
+        } else if(request.getServletPath().equals(Apis.SIGNUP)) {
+            response.setContentType("application/json");
+            Gson gson = new Gson();
+            BufferedReader in = request.getReader();
+            PrintWriter out = response.getWriter();
+            
+            // in the body of the request we expect to have the data
+            // corresponding to the UserDB class, so we perform the mapping
+            // using the Gson library
+            UserDB u = gson.fromJson(in, UserDB.class);
+
+            if(u == null) { // input validation
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Empty request body.");
+            } else if(u.getEmail() == null || u.getEmail().isEmpty()) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Parameter email is required.");
+            } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Invalid email address.");
+            } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Email address already used with another account.");
+            } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Parameter username is required.");
+            } else if(UserManagerDB.getManager().checkIfUsernameExists(u.getIdUser(), u.getUsername())) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Username already used.");
+            } else if(u.getPassword() == null || u.getPassword().isEmpty()) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Parameter password is required.");
+            } else if(!u.getPassword().matches(Config.PASSWORD_PATTERN)) {
+                JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Password must be from 8 to 50 " +
+                        "characters long and contain at least one lowercase letter, at least one uppercase letter," +
+                        " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
+            } else if(UserManagerDB.getManager().addNewUser(u, false) <= 0) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } else {
+                // creation of response JsonObject
+                JsonObject result = new JsonObject();
+                result.addProperty("operation", "signup");
+                result.addProperty("success", true);
+                result.addProperty("error", false);
+                result.addProperty("errorMessage", "");
+
+                // return of response object
+                out.println(result);
+            }
         } else
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }

@@ -22,7 +22,7 @@ public class AuthFilter extends HttpFilter {
         }
 
         // check if the route requested is the login (doesn't require to be logged in)
-        if (req.getServletPath().equals(Apis.LOGIN)) {
+        if (req.getServletPath().startsWith(Apis.LOGIN)) {
             chain.doFilter(req, res);
             return;
         }

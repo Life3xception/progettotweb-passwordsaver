@@ -35,13 +35,14 @@ public class PasswordsServlet extends HttpServlet {
 
     /*
     *  TODO:
-    *   - Signup page
-    *   - Cambio password
     *   - capire se in signup/adduser/updateuser le pwd devono arrivare dal fe criptate o no
     *   - attivare https!!
     *   - api di reset di IV e key dell'utente (?)
-    *   - lato admin, tutte le operazioni di ripristino (password cancellate, altro?)
+    *   - lato admin, tutte le operazioni di ripristino (password cancellate, altro?) (FE)
+    *   - aggiungere funzione di annullamento ricorsivo su cancellazione tiposerv/tipoutente/serv/utente
     *   - aggiungere eye nei campi password per vederla nasconderla (login, signup, changepwd, aggiunta utente)
+    *   - campi password devono avere tutti tipo password, non text
+    *   - aggiungere logger e tabella Logs su DB
     * */
 
     public void init() { gson = new Gson(); }

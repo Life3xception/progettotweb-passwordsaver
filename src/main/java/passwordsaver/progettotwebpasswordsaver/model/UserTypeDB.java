@@ -88,6 +88,21 @@ public class UserTypeDB {
         return ret;
     }
 
+    public static int getBaseUserTypeId(Connection conn) throws SQLException {
+        int ret = 0;
+        String sql = "SELECT idUserType FROM UserTypes WHERE Name LIKE 'USER' AND Validity = TRUE";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            ResultSet rs = st.executeQuery();
+
+            if (rs.next()) {
+                ret = rs.getInt(1);
+            }
+        }
+
+        return ret;
+    }
+
     public int saveAsNew(Connection conn, boolean isAdmin) throws SQLException {
         int ret = -1;
         String sql = "";

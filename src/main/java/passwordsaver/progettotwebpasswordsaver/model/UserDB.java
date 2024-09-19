@@ -179,6 +179,11 @@ public class UserDB {
             // but we MUST save it as encoded!
             this.password = encoder.encode(this.password);
 
+            if(idUserType == 0) {
+                // new user registering, we have to add a user type
+                idUserType = UserTypeDB.getBaseUserTypeId(conn);
+            }
+
             // now we can add the parameters to the statement
             st.setString(1, email);
             st.setString(2, username);
