@@ -59,6 +59,19 @@ public class PasswordManagerDB {
     }
 
     // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
+    public ArrayList<DetailedPasswordDB> getAllDetailedDeletedPasswordsByUser(String username, int idUser) {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        try (Connection conn = persistence.getConnection()) {
+            ret = DetailedPasswordDB.loadAllDeletedPasswordsByUser(conn, idUser);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllDetailedDeletedPasswordsByUser: " + (!ret.isEmpty() ? "Deleted passwords loaded" : "Deleted password not loaded"), conn);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - getAllDetailedDeletedPasswordsByUser: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getAllDetailedDeletedPasswordsByUser: " + ex.getMessage());
+        }
+        return ret;
+    }
+
+    // TODO: eventually, if useful, add isAdmin parameter to method and use it in method
     public ArrayList<PasswordDB> getAllStarredPasswords(String username, int limit) {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
@@ -141,11 +154,11 @@ public class PasswordManagerDB {
         return ret;
     }
 
-    public boolean passwordExists(String username, int idPwd) {
+    public boolean passwordExists(String username, int idPwd, boolean isAdmin) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
-            ret = PasswordDB.loadPassword(idPwd, conn, true, false) != null;
+            ret = PasswordDB.loadPassword(idPwd, conn, !isAdmin, false) != null;
             LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - passwordExists: " + (ret ? "Password exists" : "Password doesn't exist"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - passwordExists: "  + ex.getMessage());
@@ -181,6 +194,20 @@ public class PasswordManagerDB {
         }
 
         return updated;
+    }
+
+    public boolean recoverPassword(int idPassword, String username) {
+        boolean recovered = false;
+
+        try (Connection conn = persistence.getConnection()) {
+            recovered = PasswordDB.recoverPassword(conn, idPassword);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - recoverPassword: " + (recovered ? "Password recovered" : "Password not recovered"), conn);
+        } catch (SQLException ex) {
+            System.out.println("PasswordManagerDB - recoverPassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - recoverPassword: " + ex.getMessage());
+        }
+
+        return recovered;
     }
 
     public boolean deletePassword(String username, int idPwd) {

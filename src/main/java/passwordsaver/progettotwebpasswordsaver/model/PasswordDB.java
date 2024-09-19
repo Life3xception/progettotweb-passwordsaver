@@ -158,6 +158,17 @@ public class PasswordDB {
         return p;
     }
 
+    public static boolean recoverPassword(Connection conn, int idPassword) throws SQLException {
+        boolean ret = false;
+        String sql = "UPDATE Passwords SET Validity = TRUE WHERE IdPassword = ?";
+
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idPassword);
+            ret = st.executeUpdate() > 0;
+        }
+        return ret;
+    }
+
     public int saveAsNew(String loggedUsername, Connection conn) throws SQLException {
         int ret = -1; // -1 means an error occurred during saving
         String sql = "INSERT INTO Passwords (Name, Password, Email, Username, IdUser, IdService, PassPhrase, IsStarred) " +

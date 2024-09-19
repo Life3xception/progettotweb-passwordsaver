@@ -138,6 +138,27 @@ public class DetailedPasswordDB {
         return ret;
     }
 
+    public static ArrayList<DetailedPasswordDB> loadAllDeletedPasswordsByUser(Connection conn, int idUser) throws SQLException {
+        ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
+        String sql = """
+                SELECT P.*, S.Name AS ServiceName
+                FROM Passwords AS P INNER JOIN Services AS S ON P.IdService = S.IdService
+                WHERE P.IdUser = ? AND P.Validity = FALSE AND S.Validity = TRUE
+                ORDER BY ServiceName, P.Name
+                """;
+
+        try(PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, idUser);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next()) {
+                ret.add(fromResultSet(rs));
+            }
+        }
+
+        return ret;
+    }
+
     public static ArrayList<DetailedPasswordDB> loadAllStarredPasswords(String username, Connection conn, boolean validityCheck, int limit) throws SQLException {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         String sql = """

@@ -9,10 +9,12 @@ public class Apis {
     public static final String PASSWORDS_GETDECODEDPASSWORD = PASSWORDS + "/getdecodedpassword";
     public static final String PASSWORDS_GETDETAILEDPASSWORDS = PASSWORDS + "/getdetailedpasswords";
     public static final String PASSWORDS_GETDETAILEDPASSWORDSBYSERVICE = PASSWORDS + "/getdetailedpasswordsbyservice";
+    public static final String PASSWORDS_GETDETAILEDDELETEDPASSWORDSBYUSER = PASSWORDS + "/getdetaileddeletedpasswordsbyuser";
     public static final String PASSWORDS_GETSTARREDPASSWORDS = PASSWORDS + "/getstarredpasswords";
     public static final String PASSWORDS_GETDETAILEDSTARREDPASSWORDS = PASSWORDS + "/getdetailedstarredpasswords";
     public static final String PASSWORDS_ADDPASSWORD = PASSWORDS + "/addpassword";
     public static final String PASSWORDS_UPDATEPASSWORD = PASSWORDS + "/updatepassword";
+    public static final String PASSWORDS_RECOVERPASSWORD = PASSWORDS + "/recoverpassword";
     public static final String PASSWORDS_DELETEPASSWORD = PASSWORDS + "/deletepassword";
     public static final String USERS = "/users";
     public static final String USERS_GETDETAILEDUSERS = USERS + "/getdetailedusers";
