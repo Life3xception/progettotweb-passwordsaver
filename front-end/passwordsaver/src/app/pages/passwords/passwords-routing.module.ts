@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { PasswordsComponent } from './passwords.component';
 import { NewPasswordComponent } from './new-password/new-password.component';
 import { ModifyPasswordComponent } from './modify-password/modify-password.component';
+import { RecoverPasswordsComponent } from './recover-passwords/recover-passwords.component';
+import { AdminGuardService } from '../../shared/services/admin-guard.service';
 
 const routes: Routes = [
   {
@@ -16,6 +18,11 @@ const routes: Routes = [
   {
     path: 'modify-password/:idPassword',
     component: ModifyPasswordComponent
+  },
+  {
+    path: 'recover-passwords',
+    component: RecoverPasswordsComponent,
+    canActivate: [AdminGuardService]
   }
 ];
 

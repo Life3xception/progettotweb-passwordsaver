@@ -45,6 +45,11 @@ export class PasswordsService {
     return this.httpClient.get<DetailedPasswordI[]>(url);
   }
 
+  getDetailedDeletedPasswordsByUser(idUser: number): Observable<DetailedPasswordI[]> {
+    let url = `${environment.apiEndpoint}/${BeApis.getdetaileddeletedpasswordsbyuser}?idUser=${idUser}`;
+    return this.httpClient.get<DetailedPasswordI[]>(url);
+  }
+
   getDetailedStarredPasswords(limit: number): Observable<DetailedPasswordI[]> {
     let url = `${environment.apiEndpoint}/${BeApis.getdetailedstarredpasswords}`;
     if(limit != 0)
@@ -64,6 +69,11 @@ export class PasswordsService {
 
   updatePassword(pwd: PasswordI): Observable<any> {
     let url = `${environment.apiEndpoint}/${BeApis.updatepassword}`;
+    return this.httpClient.put(url, pwd);
+  }
+
+  recoverPassword(pwd: PasswordI): Observable<any> {
+    let url = `${environment.apiEndpoint}/${BeApis.recoverpassword}`;
     return this.httpClient.put(url, pwd);
   }
 

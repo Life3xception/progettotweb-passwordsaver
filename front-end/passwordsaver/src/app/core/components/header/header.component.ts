@@ -40,6 +40,10 @@ export class HeaderComponent implements OnInit {
     {
       text: 'Lista Tipi di Utenti',
       url: 'usertypes'
+    },
+    {
+      text: 'Recupera Passwords',
+      url: 'passwords/recover-passwords'
     }
   ];
   selectedMenuItem: MenuItem | undefined;
@@ -60,8 +64,15 @@ export class HeaderComponent implements OnInit {
         // ad ogni cambiamento di route, cancelliamo il selectedItem
         this.selectedMenuItem = undefined;
 
-        // impostiamo come selezionato il menuitem con proprietà url contenuta nell'url della route, se esiste
-        this.selectedMenuItem = this.menuItems.find((x: MenuItem) => event.url.slice(1).includes(x.url));
+        console.log(this.menuItems);
+
+        // impostiamo come selezionato il menuitem con proprietà url uguale alla url della route, se esiste
+        this.selectedMenuItem = this.menuItems.find((x: MenuItem) => event.url.slice(1) == x.url);
+
+        // se non abbiamo trovato una corrispondenza impostiamo come selezionato il menuitem con proprietà
+        // url inclusa nella url della route, se esiste
+        if(!this.selectedMenuItem)
+          this.selectedMenuItem = this.menuItems.find((x: MenuItem) => event.url.slice(1).includes(x.url));
 
         // nel caso non abbiamo trovato il menuitem e la url è /, allora settiamo attivo home
         if(!this.selectedMenuItem && event.url === '/')
@@ -71,7 +82,7 @@ export class HeaderComponent implements OnInit {
 
     if(this.isAdmin()) {
       // spread operator allows to place an extended version of an array into another array
-      this.menuItems = [...this.menuItems, ...this.menuItemsAdmin]; 
+      this.menuItems = [...this.menuItems, ...this.menuItemsAdmin];
     }
 
     this.userInitials = this.authService.getSessionData()?.username.toUpperCase().substring(0,2) ?? 'UT';

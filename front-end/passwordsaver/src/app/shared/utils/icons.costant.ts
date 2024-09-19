@@ -20,5 +20,13 @@ export const ICONS: IconI[] = [
     {
         name: 'hide-password',
         path: 'assets/imgs/svg-icons/hide_password.svg'
+    },
+    {
+        name: 'chevron-right',
+        path: 'assets/imgs/svg-icons/chevron_right.svg'
+    },
+    {
+        name: 'recover',
+        path: 'assets/imgs/svg-icons/recover.svg'
     }
 ];
