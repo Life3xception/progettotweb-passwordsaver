@@ -29,7 +29,7 @@ public class PoolingPersistenceManager {
             config.setJdbcUrl("jdbc:mysql://localhost:3306/PasswordSaver");
             config.setUsername("root");
             config.setPassword("4321test");
-            config.setMaximumPoolSize(10);
+            config.setMaximumPoolSize(25);
             config.addDataSourceProperty("cachePrepStmts", "true");
             config.addDataSourceProperty("prepStmtCacheSize", "250");
             config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

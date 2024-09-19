@@ -45,9 +45,12 @@ public class LoginManagerDB {
                 String hashedPwd = rs.getString("Password");
                 result = encoder.matches(password, hashedPwd);
             }
+
+            LogManagerDB.getManager().addNewLogWithConnection(username, (result ? "Successful" : "Invalid") + " login", conn);
         } catch (SQLException ex) {
             // evaluate to log in DB
             System.out.println("LoginManagerDB - validateCredentials: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog("not-logged-user", "LoginManagerDB - validateCredentials: " + ex.getMessage());
         }
 
         return result;

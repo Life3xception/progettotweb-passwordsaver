@@ -7,6 +7,7 @@ USE PasswordSaver;
 /*
 DROP TABLE IF EXISTS Translations;
 DROP TABLE IF EXISTS Languages;
+DROP TABLE IF EXISTS LogTable;
 DROP TABLE IF EXISTS Passwords;
 DROP TABLE IF EXISTS Services;
 DROP TABLE IF EXISTS ServiceTypes;
@@ -84,3 +85,11 @@ CREATE TABLE Translations (
     PRIMARY KEY (IdTranslation)
 );
 
+CREATE TABLE LogTable (
+    IdLog INT NOT NULL AUTO_INCREMENT,
+    IdUser INT NOT NULL,
+    Timestamp TIMESTAMP NOT NULL,
+    Message VARCHAR(500) NOT NULL,
+    PRIMARY KEY (IdLog),
+    CONSTRAINT FK_LogTable_Users FOREIGN KEY (IdUser) REFERENCES `Users`(IdUser)
+);

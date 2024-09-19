@@ -24,8 +24,10 @@ public class PasswordManagerDB {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = PasswordDB.loadAllPasswords(username, conn, true);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllPasswords: " + (!ret.isEmpty() ? "Passwords loaded" : "Password not loaded"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllPasswords: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username, "PasswordManagerDB - getAllPasswords: " + ex.getMessage());
         }
         return ret;
     }
@@ -35,8 +37,10 @@ public class PasswordManagerDB {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = DetailedPasswordDB.loadAllPasswords(username, conn, true);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllDetailedPasswords: " + (!ret.isEmpty() ? "Passwords loaded" : "Password not loaded"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllDetailedPasswords: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username, "PasswordManagerDB - getAllDetailedPasswords: " + ex.getMessage());
         }
         return ret;
     }
@@ -46,8 +50,10 @@ public class PasswordManagerDB {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = DetailedPasswordDB.loadAllPasswordsByService(username, conn, true, idService);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllDetailedPasswordsByService: " + (!ret.isEmpty() ? "Passwords loaded" : "Password not loaded"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllDetailedPasswordsByService: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getAllDetailedPasswordsByService: " + ex.getMessage());
         }
         return ret;
     }
@@ -57,8 +63,10 @@ public class PasswordManagerDB {
         ArrayList<PasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = PasswordDB.loadAllStarredPasswords(username, conn, true, limit);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllStarredPasswords: " + (!ret.isEmpty() ? "Starred passwords loaded" : "Starred password not loaded"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllStarredPasswords: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getAllStarredPasswords: " + ex.getMessage());
         }
         return ret;
     }
@@ -68,43 +76,51 @@ public class PasswordManagerDB {
         ArrayList<DetailedPasswordDB> ret = new ArrayList<>();
         try (Connection conn = persistence.getConnection()) {
             ret = DetailedPasswordDB.loadAllStarredPasswords(username, conn, true, limit);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getAllDetailedStarredPasswords: " + (!ret.isEmpty() ? "Starred passwords loaded" : "Starred password not loaded"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - getAllDetailedStarredPasswords: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getAllDetailedStarredPasswords: " + ex.getMessage());
         }
         return ret;
     }
 
-    public PasswordDB getPassword(int idPwd) {
+    public PasswordDB getPassword(String username, int idPwd) {
         PasswordDB p = null;
 
         try (Connection conn = persistence.getConnection()) {
             p = PasswordDB.loadPassword(idPwd, conn, true, false);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getPassword: " + (p != null ? "Password loaded" : "Password not loaded"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - getPassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getPassword: " + ex.getMessage());
         }
 
         return p;
     }
 
-    public DetailedPasswordDB getDetailedPassword(int idPwd) {
+    public DetailedPasswordDB getDetailedPassword(String username, int idPwd) {
         DetailedPasswordDB p = null;
 
         try (Connection conn = persistence.getConnection()) {
             p = DetailedPasswordDB.loadPassword(idPwd, conn, true);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getDetailedPassword: " + (p != null ? "Password loaded" : "Password not loaded"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - getDetailedPassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getDetailedPassword: " + ex.getMessage());
         }
 
         return p;
     }
 
-    public PasswordDB getDecodedPassword(int idPwd) {
+    public PasswordDB getDecodedPassword(String username, int idPwd) {
         PasswordDB p = null;
 
         try (Connection conn = persistence.getConnection()) {
             p = PasswordDB.loadPassword(idPwd, conn, true, true);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - getDecodedPassword: " + (p != null ? "Password decoded" : "Password not decoded"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - getDecodedPassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - getDecodedPassword: " + ex.getMessage());
         }
 
         return p;
@@ -116,20 +132,24 @@ public class PasswordManagerDB {
         try (Connection conn = persistence.getConnection()) {
             int idUser = UserManagerDB.getManager().getUserByUsername(username, true).getIdUser();
             ret = PasswordDB.loadPassword(idPwd, conn, true, false).getIdUser() == idUser;
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - userIsOwnerOfPassword: " + (ret ? "User owner of password" : "User not owner of password"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - userIsOwnerOfPassword: "  + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - userIsOwnerOfPassword: "  + ex.getMessage());
         }
 
         return ret;
     }
 
-    public boolean passwordExists(int idPwd) {
+    public boolean passwordExists(String username, int idPwd) {
         boolean ret = false;
 
         try (Connection conn = persistence.getConnection()) {
             ret = PasswordDB.loadPassword(idPwd, conn, true, false) != null;
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - passwordExists: " + (ret ? "Password exists" : "Password doesn't exist"), conn);
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - passwordExists: "  + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - passwordExists: "  + ex.getMessage());
         }
 
         return ret;
@@ -140,8 +160,10 @@ public class PasswordManagerDB {
 
         try (Connection conn = persistence.getConnection()) {
             ret = pwd.saveAsNew(username, conn);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - addNewPassword: " + (ret != -1 ? "Password added" : "Password not added"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - addNewPassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - addNewPassword: " + ex.getMessage());
         }
 
         return ret;
@@ -152,22 +174,27 @@ public class PasswordManagerDB {
 
         try (Connection conn = persistence.getConnection()) {
             updated = pwd.saveUpdate(conn, username);
+            LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - updatePassword: " + (updated ? "Password updated" : "Password not updated"), conn);
         } catch (SQLException ex) {
             System.out.println("PasswordManagerDB - updatePassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - updatePassword: " + ex.getMessage());
         }
 
         return updated;
     }
 
-    public boolean deletePassword(int idPwd) {
+    public boolean deletePassword(String username, int idPwd) {
         boolean deleted = false;
 
         try (Connection conn = persistence.getConnection()) {
             PasswordDB pwd = PasswordDB.loadPassword(idPwd, conn, true, false);
-            if(pwd != null)
+            if(pwd != null) {
                 deleted = pwd.delete(conn);
+                LogManagerDB.getManager().addNewLogWithConnection(username, "PasswordManagerDB - deletePassword: " + (deleted ? "Password deleted" : "Password not deleted"), conn);
+            }
         } catch (Exception ex) {
             System.out.println("PasswordManagerDB - deletePassword: " + ex.getMessage());
+            LogManagerDB.getManager().addNewLog(username,"PasswordManagerDB - deletePassword: " + ex.getMessage());
         }
 
         return deleted;

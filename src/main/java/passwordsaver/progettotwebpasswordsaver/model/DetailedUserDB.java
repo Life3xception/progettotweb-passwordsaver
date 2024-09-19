@@ -1,14 +1,10 @@
 package passwordsaver.progettotwebpasswordsaver.model;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import passwordsaver.progettotwebpasswordsaver.encryption.AesEncoder;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Base64;
 
 public class DetailedUserDB {
     private int idUser;

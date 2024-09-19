@@ -54,7 +54,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // POST accepts only /login to perform log in
+        // POST accepts /login to perform log in and /login/signup to perform signup
 
         if(request.getServletPath().equals(Apis.LOGIN)) {
             response.setContentType("application/json");
@@ -127,7 +127,7 @@ public class LoginServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Parameter email is required.");
             } else if(!u.getEmail().matches(Config.EMAIL_PATTERN)) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Invalid email address.");
-            } else if(UserManagerDB.getManager().checkIfEmailExists(u.getIdUser(), u.getEmail())) {
+            } else if(UserManagerDB.getManager().checkIfEmailExists("not-logged-user", u.getIdUser(), u.getEmail())) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Email address already used with another account.");
             } else if(u.getUsername() == null || u.getUsername().isEmpty()) {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Parameter username is required.");
@@ -139,7 +139,7 @@ public class LoginServlet extends HttpServlet {
                 JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST, "Error during signup", "Password must be from 8 to 50 " +
                         "characters long and contain at least one lowercase letter, at least one uppercase letter," +
                         " at least one digit between 0 and 9 and at least one special character in [@$!%*#?&]");
-            } else if(UserManagerDB.getManager().addNewUser(u, false) <= 0) {
+            } else if(UserManagerDB.getManager().addNewUser("not-logged-user", u, false) <= 0) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
                 // creation of response JsonObject

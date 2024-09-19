@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import passwordsaver.progettotwebpasswordsaver.model.LogManagerDB;
 
 import java.io.IOException;
 
@@ -16,13 +17,16 @@ public class AuthFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         // check if the user is logged in
-        if (LoginService.getCurrentLogin(req) != null) {
+        String username = LoginService.getCurrentLogin(req);
+        if (username != null) {
+            LogManagerDB.getManager().addNewLog(username, req.getMethod().toUpperCase() + " request to " + req.getServletPath());
             chain.doFilter(req, res);
             return;
         }
 
-        // check if the route requested is the login (doesn't require to be logged in)
+        // check if the route requested is in the login servlet (doesn't require to be logged in)
         if (req.getServletPath().startsWith(Apis.LOGIN)) {
+            LogManagerDB.getManager().addNewLog("not-logged-user", req.getMethod().toUpperCase() + " request to " + req.getServletPath());
             chain.doFilter(req, res);
             return;
         }
