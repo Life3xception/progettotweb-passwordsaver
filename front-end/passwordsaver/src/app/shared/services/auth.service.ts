@@ -4,10 +4,11 @@ import { LoginI } from '../models/login.model';
 import { LoginDataI } from '../models/login-data.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
-import { BeMainApis } from '../../environment/BeServlets';
+import { BeApis, BeMainApis } from '../../environment/BeServlets';
 import { LoginResponseI } from '../models/login-response.model';
 import { LocalStorageService } from './local-storage.service';
 import { UserTypeI } from '../models/user-type.model';
+import { UserI } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,11 @@ export class AuthService {
   login(login: LoginI): Observable<LoginResponseI> {
     let url = `${environment.apiEndpoint}/${BeMainApis.login}`;
     return this.httpClient.post<LoginResponseI>(url, login);
+  }
+
+  signup(user: UserI): Observable<LoginResponseI> {
+    let url = `${environment.apiEndpoint}/${BeApis.signup}`;
+    return this.httpClient.post<LoginResponseI>(url, user);
   }
 
   setSession(loginData: LoginDataI) {

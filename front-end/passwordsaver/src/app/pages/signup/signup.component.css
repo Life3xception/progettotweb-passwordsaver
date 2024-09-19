@@ -1,4 +1,4 @@
-.login-form {
+.signup-form {
     margin-top: 3em;
     margin-bottom: 3em;
     display: flex;
@@ -10,20 +10,20 @@
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* it takes only the childs of .login-form, not every child element */
-.login-form > * {
+/* it takes only the childs of .signup-form, not every child element */
+.signup-form > * {
     margin: 1.5em;
     margin-bottom: 1em;
 }
 
-.login-form > h3 {
+.signup-form > h3 {
     text-align: center;
     font-weight: bold;
     color: #333;
     margin-bottom: 1.5em;
 }
 
-.login-form > form {
+.signup-form > form {
     width: 100%;
 }
 

@@ -1,5 +1,5 @@
 <main>
-  <div *ngIf="hasNotRoute('login')" class="header-wrapper">
+  <div *ngIf="hasNotRoute('login') && hasNotRoute('signup')" class="header-wrapper">
     <app-header></app-header>
   </div>
   <section class="content">

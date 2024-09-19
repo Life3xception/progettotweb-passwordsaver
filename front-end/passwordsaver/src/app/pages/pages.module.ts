@@ -7,6 +7,7 @@ import { ServicesModule } from './services/services.module';
 import { ServicetypesModule } from './servicetypes/servicetypes.module';
 import { UsersModule } from './users/users.module';
 import { UsertypesModule } from './usertypes/usertypes.module';
+import { SignupModule } from './signup/signup.module';
 
 
 
@@ -21,7 +22,8 @@ import { UsertypesModule } from './usertypes/usertypes.module';
     ServicesModule,
     ServicetypesModule,
     UsersModule,
-    UsertypesModule
+    UsertypesModule,
+    SignupModule
   ]
 })
 export class PagesModule { }

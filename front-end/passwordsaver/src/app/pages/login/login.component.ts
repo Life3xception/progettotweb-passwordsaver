@@ -20,25 +20,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    //var forms = document.querySelectorAll('.needs-validation')
-
-    // Loop over them and prevent submission
-    /*Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event: any) {
-          console.log("CALLED");
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-
-          console.log("VALID 1");
-          
-          form.classList.add('was-validated')
-        }, false)
-      })*/
-
     this.loginForm = this.formBuilder.group({
       'username': new FormControl('', Validators.required),
       'password': new FormControl('', Validators.required)

@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
     }
   ];
   selectedMenuItem: MenuItem | undefined;
-  userInitials: string = 'U';
+  userInitials: string = 'UT';
 
   constructor(private router: Router,
     private authService: AuthService
@@ -74,7 +74,7 @@ export class HeaderComponent implements OnInit {
       this.menuItems = [...this.menuItems, ...this.menuItemsAdmin]; 
     }
 
-    this.userInitials = this.authService.getSessionData()?.username.toUpperCase().substring(0,2) ?? 'U';
+    this.userInitials = this.authService.getSessionData()?.username.toUpperCase().substring(0,2) ?? 'UT';
   }
 
   handleClick(item: MenuItem): void {

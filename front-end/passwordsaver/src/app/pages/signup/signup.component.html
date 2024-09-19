@@ -1,0 +1,105 @@
+<p-toast key="signupToast" />
+<div class="col-md-8 offset-2 signup-form">
+    <h3 class="h3">Registrati</h3>
+    <form [formGroup]="signupForm" class="row g-3 needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
+        <div class="col-md-4 offset-4">
+            <label for="username" class="form-label">Username</label>
+            <input 
+                type="text" 
+                class="form-control" 
+                formControlName="username" 
+                id="username" 
+                [ngClass]="signupForm.controls['username'].value != '' ? 
+                                    !signupForm.controls['username'].valid && signupForm.controls['username'].dirty ? 
+                                        'is-invalid' : 'is-valid' 
+                                    : ''"
+                required>
+            <small class="validation-error" *ngIf="!signupForm.controls['username'].valid && signupForm.controls['username'].dirty">
+                Inserisci lo username.
+            </small>
+        </div>
+        <div class="col-md-4 offset-4">
+            <label for="email" class="form-label">Email</label>
+            <input 
+                type="text" 
+                class="form-control" 
+                formControlName="email" 
+                id="email"
+                [ngClass]="signupForm.controls['email'].value != '' ? 
+                            !signupForm.controls['email'].valid && signupForm.controls['email'].dirty ? 
+                                'is-invalid' : 'is-valid' 
+                            : ''"
+                required>
+            <small class="validation-error" *ngIf="!signupForm.controls['email'].valid && signupForm.controls['email'].dirty">
+                Email non valida.
+            </small>
+        </div>
+        <div class="col-md-4 offset-4">
+            <label for="password" class="form-label">Password</label>
+            <input
+                type="text" 
+                class="form-control" 
+                formControlName="password"
+                id="password" 
+                [ngClass]="signupForm.controls['password'].value != '' ? 
+                            !signupForm.controls['password'].valid && signupForm.controls['password'].dirty ? 
+                                'is-invalid' : 'is-valid' 
+                            : ''"
+                required
+                autocomplete="true">
+            <small class="validation-error" *ngIf="(signupForm.controls['password'].dirty || signupForm.controls['password'].value != '') && !isPwdValid(signupForm.controls['password'].value)">
+                La password non rispetta i criteri minimi richiesti:
+                <ul>
+                    <li>Lunghezza compresa tra 8 e 50 caratteri</li>
+                    <li>Almeno una maiuscola</li>
+                    <li>Almeno una minuscola</li>
+                    <li>Almeno una cifra fra 0 e 9</li>
+                    <li>Almeno un carattere speciale tra {{"[@$!%*#?&]"}}</li>
+                </ul>
+            </small>
+            <small class="validation-error" *ngIf="(!signupForm.controls['password'].valid || !signupForm.controls['confirmPassword'].valid ) && 
+                                                signupForm.controls['password'].dirty && 
+                                                signupForm.controls['confirmPassword'].dirty && 
+                                                signupForm.controls['password'].value != signupForm.controls['confirmPassword'].value">
+                Le due password non coincidono.
+            </small>
+        </div>
+        <div class="col-md-4 offset-4">
+            <label for="confirmPassword" class="form-label">Conferma Password</label>
+            <input
+                type="text" 
+                class="form-control" 
+                formControlName="confirmPassword"
+                id="confirmPassword" 
+                [ngClass]="signupForm.controls['confirmPassword'].value != '' ? 
+                            !signupForm.controls['confirmPassword'].valid && signupForm.controls['confirmPassword'].dirty ? 
+                                'is-invalid' : 'is-valid' 
+                            : ''"
+                required
+                autocomplete="true">
+            <small class="validation-error" *ngIf="(signupForm.controls['confirmPassword'].dirty || signupForm.controls['confirmPassword'].value != '') && !isPwdValid(signupForm.controls['confirmPassword'].value)">
+                La password non rispetta i criteri minimi richiesti:
+                <ul>
+                    <li>Lunghezza compresa tra 8 e 50 caratteri</li>
+                    <li>Almeno una maiuscola</li>
+                    <li>Almeno una minuscola</li>
+                    <li>Almeno una cifra fra 0 e 9</li>
+                    <li>Almeno un carattere speciale tra {{"[@$!%*#?&]"}}</li>
+                </ul>
+            </small>
+            <small class="validation-error" *ngIf="(!signupForm.controls['password'].valid || !signupForm.controls['confirmPassword'].valid ) && 
+                                                signupForm.controls['confirmPassword'].dirty && 
+                                                signupForm.controls['password'].dirty && 
+                                                signupForm.controls['password'].value != signupForm.controls['confirmPassword'].value">
+                Le due password non coincidono.
+            </small>
+        </div>
+        <div class="col-4 offset-4 text-center">
+            <button class="btn btn-primary" type="submit" [disabled]="!signupForm.valid" (click)="onSubmit($event)">Registrati</button>
+        </div>
+    </form>
+    <hr class="divider"/>
+    <div class="go-to-login">
+        <p>Torna al <a href="/login">login</a></p>
+    </div>
+</div>
