@@ -2,7 +2,7 @@ package passwordsaver.progettotwebpasswordsaver.constants;
 
 public class Apis {
     public static final String LOGIN = "/login";
-    public static final String SIGNUP = LOGIN + "/signup";
+    public static final String SIGNUP = "/signup";
     public static final String PASSWORDS = "/passwords";
     public static final String PASSWORDS_GETPASSWORD = PASSWORDS + "/getpassword";
     public static final String PASSWORDS_GETDETAILEDPASSWORD = PASSWORDS + "/getdetailedpassword";

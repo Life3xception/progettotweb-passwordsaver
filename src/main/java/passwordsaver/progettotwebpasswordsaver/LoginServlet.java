@@ -1,4 +1,4 @@
-package passwordsaver.progettotwebpasswordsaver.login;
+package passwordsaver.progettotwebpasswordsaver;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import passwordsaver.progettotwebpasswordsaver.constants.Apis;
 import passwordsaver.progettotwebpasswordsaver.constants.Config;
+import passwordsaver.progettotwebpasswordsaver.login.JwtUtil;
+import passwordsaver.progettotwebpasswordsaver.login.LoginService;
 import passwordsaver.progettotwebpasswordsaver.model.*;
 import passwordsaver.progettotwebpasswordsaver.utils.JsonErrorResponse;
 
