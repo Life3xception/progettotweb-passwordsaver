@@ -1,70 +1,9 @@
 <p-toast key="modifyUserToast"></p-toast>
 <div class="main">
-    <div class="col-md-8 offset-2 mt-5 modify-user-form">
-        <h2 class="h2 mb-4">Modifica Utente</h2>
-        <form *ngIf="modifyUserForm !== undefined" [formGroup]="modifyUserForm" class="needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
-            <div class="row g-3">
-                <div class="col-md-4 offset-4">
-                    <label for="username" class="form-label">Username</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="username" 
-                        id="username" 
-                        [ngClass]="modifyUserForm.controls['username'].value != '' ? 
-                                    !modifyUserForm.controls['username'].valid && modifyUserForm.controls['username'].dirty ? 
-                                        'is-invalid' : 'is-valid' 
-                                    : ''"
-                        required>
-                    <small class="validation-error" *ngIf="!modifyUserForm.controls['username'].valid && modifyUserForm.controls['username'].dirty">
-                        Inserire l'username dell'utente.
-                    </small>
-                </div>
-                <div class="col-md-4 offset-4">
-                    <label for="email" class="form-label">Email</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="email" 
-                        id="email"
-                        [ngClass]="modifyUserForm.controls['email'].value != '' ? 
-                                    !modifyUserForm.controls['email'].valid && modifyUserForm.controls['email'].dirty ? 
-                                        'is-invalid' : 'is-valid' 
-                                    : ''"
-                        required>
-                    <small class="validation-error" *ngIf="!modifyUserForm.controls['email'].valid && modifyUserForm.controls['email'].dirty">
-                        Email non valida.
-                    </small>
-                </div>
-                <div class="col-md-4 offset-4" *ngIf="isAdmin()">
-                    <label for="userType" class="form-label">Tipo Utente:</label>
-                    <select 
-                        id="userType"
-                        formControlName="userType"
-                        class="form-select"
-                        [ngClass]="modifyUserForm.controls['userType'].value != '' ? 
-                                    !modifyUserForm.controls['userType'].valid && modifyUserForm.controls['userType'].dirty ? 
-                                        'is-invalid' : 'is-valid' 
-                                    : ''"
-                        required>
-                        <option value="{{ut.idUserType}}" *ngFor="let ut of userTypes">{{ut.name}}</option>
-                    </select>
-                    <small class="validation-error" *ngIf="modifyUserForm.controls['userType'].value == '' && modifyUserForm.controls['userType'].dirty">
-                        Selezionare un tipo di utente.
-                    </small>
-                </div>
-                <div class="col-md-4 offset-4" *ngIf="isAdmin()">
-                    <label for="validity" class="form-label">Validità:</label>
-                    <input 
-                        type="checkbox"
-                        formControlName="validity" 
-                        id="validity"
-                        class="form-check-input validity-input">
-                </div>
-                <div class="col-4 offset-4 text-center">
-                    <button class="btn btn-primary" type="submit" [disabled]="!modifyUserForm.valid" (click)="onSubmit($event)">Salva</button>
-                </div>
-            </div>
-        </form>
-    </div>
+    <app-user-form [page]="'modify-user'"
+        [idUser]="currentIdUser"
+        [toastKey]="'modifyUserToast'"
+        [title]="'Modifica Utente'"
+        [submitButton]="'Salva'"
+    ></app-user-form>
 </div>

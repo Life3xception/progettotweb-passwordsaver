@@ -1,0 +1,91 @@
+<div class="col-md-8 offset-2 mt-5 user-form">
+    <h2 class="h2 mb-4">{{title}}</h2>
+    <form *ngIf="userForm !== undefined" [formGroup]="userForm" class="needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
+        <div class="row g-3">
+            <div class="col-md-4 offset-4">
+                <label for="username" class="form-label">Username</label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="username" 
+                    id="username" 
+                    [ngClass]="userForm.controls['username'].value != '' ? 
+                                !userForm.controls['username'].valid && userForm.controls['username'].dirty ? 
+                                    'is-invalid' : 'is-valid' 
+                                : ''"
+                    required>
+                <small class="validation-error" *ngIf="!userForm.controls['username'].valid && userForm.controls['username'].dirty">
+                    Inserire l'username dell'utente.
+                </small>
+            </div>
+            <div class="col-md-4 offset-4">
+                <label for="email" class="form-label">Email</label>
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="email" 
+                    id="email"
+                    [ngClass]="userForm.controls['email'].value != '' ? 
+                                !userForm.controls['email'].valid && userForm.controls['email'].dirty ? 
+                                    'is-invalid' : 'is-valid' 
+                                : ''"
+                    required>
+                <small class="validation-error" *ngIf="!userForm.controls['email'].valid && userForm.controls['email'].dirty">
+                    Email non valida.
+                </small>
+            </div>
+            <div *ngIf="currentUser === undefined" class="col-md-4 offset-4">
+                <label for="password" class="form-label">Password</label>
+                <input
+                    type="text" 
+                    class="form-control" 
+                    formControlName="password"
+                    id="password" 
+                    [ngClass]="userForm.controls['password'].value != '' ? 
+                                !userForm.controls['password'].valid && userForm.controls['password'].dirty ? 
+                                    'is-invalid' : 'is-valid' 
+                                : ''"
+                    required>
+                <small class="validation-error" *ngIf="!userForm.controls['password'].valid && userForm.controls['password'].dirty">
+                    La password non rispetta i criteri minimi richiesti:
+                    <ul>
+                        <li>Lunghezza compresa tra 8 e 50 caratteri</li>
+                        <li>Almeno una maiuscola</li>
+                        <li>Almeno una minuscola</li>
+                        <li>Almeno una cifra fra 0 e 9</li>
+                        <li>Almeno un carattere speciale tra {{"[@$!%*#?&]"}}</li>
+                    </ul>
+                </small>
+            </div>
+            <div *ngIf="isAdmin()" class="col-md-4 offset-4">
+                <label for="userType" class="form-label">Tipo Utente:</label>
+                <select 
+                    id="userType"
+                    formControlName="userType"
+                    class="form-select"
+                    [ngClass]="userForm.controls['userType'].value != '' ? 
+                                !userForm.controls['userType'].valid && userForm.controls['userType'].dirty ? 
+                                    'is-invalid' : 'is-valid' 
+                                : ''"
+                    required>
+                    <option selected value="">-</option>
+                    <option value="{{ut.idUserType}}" *ngFor="let ut of userTypes">{{ut.name}}</option>
+                </select>
+                <small class="validation-error" *ngIf="userForm.controls['userType'].value == '' && userForm.controls['userType'].dirty">
+                    Selezionare un tipo di utente.
+                </small>
+            </div>
+            <div *ngIf="isAdmin()" class="col-md-4 offset-4">
+                <label for="validity" class="form-label">Validità:</label>
+                <input 
+                    type="checkbox"
+                    formControlName="validity" 
+                    id="validity"
+                    class="form-check-input validity-input">
+            </div>
+            <div class="col-4 offset-4 text-center">
+                <button class="btn btn-primary" type="submit" [disabled]="!userForm.valid" (click)="onSubmit($event)">{{submitButton}}</button>
+            </div>
+        </div>
+    </form>
+</div>

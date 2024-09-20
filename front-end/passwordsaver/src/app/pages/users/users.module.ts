@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { NewUserComponent } from './new-user/new-user.component';
 import { ModifyUserComponent } from './modify-user/modify-user.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { CoreModule } from '../../core/core.module';
 
 
 
@@ -23,7 +24,8 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     ToastModule,
     ReactiveFormsModule,
     MatIconModule,
-    UsersRoutingModule
+    UsersRoutingModule,
+    CoreModule
   ]
 })
 export class UsersModule { }
