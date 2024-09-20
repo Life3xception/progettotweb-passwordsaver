@@ -1,37 +1,7 @@
 <p-toast key="newUserTypeToast"></p-toast>
 <div class="main">
-    <div class="col-md-8 offset-2 mt-5 new-usertype-form">
-        <h2 class="h2 mb-4">Nuovo Tipo di Utente</h2>
-        <form [formGroup]="newUserTypeForm" class="needs-validation" (keydown.enter)="onSubmit($event)" (submit)="onSubmit($event)" novalidate>
-            <div class="row g-3">
-                <div class="col-md-4 offset-4">
-                    <label for="name" class="form-label">Nome</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="name" 
-                        id="name" 
-                        [ngClass]="newUserTypeForm.controls['name'].value != '' ? 
-                                    !newUserTypeForm.controls['name'].valid && newUserTypeForm.controls['name'].dirty ? 
-                                        'is-invalid' : 'is-valid' 
-                                    : ''"
-                        required>
-                    <small class="validation-error" *ngIf="!newUserTypeForm.controls['name'].valid && newUserTypeForm.controls['name'].dirty">
-                        Inserire il nome del tipo di utente.
-                    </small>
-                </div>
-                <div class="col-md-4 offset-4">
-                    <label for="validity" class="form-label">Validità:</label>
-                    <input 
-                        type="checkbox"
-                        formControlName="validity" 
-                        id="validity"
-                        class="form-check-input validity-input">
-                </div>
-                <div class="col-4 offset-4 text-center">
-                    <button class="btn btn-primary" type="submit" [disabled]="!newUserTypeForm.valid" (click)="onSubmit($event)">Aggiungi Tipo di Utente</button>
-                </div>
-            </div>
-        </form>
-    </div>
+    <app-usertype-form [page]="'new-usertype'"
+        [toastKey]="'newUserTypeToast'"
+        [title]="'Nuovo Tipo di Utente'"
+        [submitButton]="'Aggiungi Tipo di Utente'"></app-usertype-form>
 </div>

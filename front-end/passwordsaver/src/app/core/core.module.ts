@@ -21,7 +21,8 @@ import { ToastModule } from 'primeng/toast';
   ],
   exports: [
     HeaderComponent,
-    UserFormComponent
+    UserFormComponent,
+    UsertypeFormComponent
   ]
 })
 export class CoreModule { }

@@ -7,6 +7,7 @@ import { ModifyUsertypeComponent } from './modify-usertype/modify-usertype.compo
 import { ToastModule } from 'primeng/toast';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { CoreModule } from '../../core/core.module';
 
 
 
@@ -21,7 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
     ToastModule,
     ReactiveFormsModule,
     MatIconModule,
-    UsertypesRoutingModule
+    UsertypesRoutingModule,
+    CoreModule
   ]
 })
 export class UsertypesModule { }
