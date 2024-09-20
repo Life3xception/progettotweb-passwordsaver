@@ -1,5 +1,6 @@
 export const BeMainApis = {
     login: 'login',
+    signup: `signup`,
     passwords: 'passwords',
     users: 'users',
     usertypes: 'usertypes',
@@ -8,7 +9,6 @@ export const BeMainApis = {
 };
 
 export const BeApis = {
-    signup: `${BeMainApis.login}/signup`,
     getpassword: `${BeMainApis.passwords}/getpassword`,
     getdecodedpassword: `${BeMainApis.passwords}/getdecodedpassword`,
     getstarredpasswords: `${BeMainApis.passwords}/getstarredpasswords`,

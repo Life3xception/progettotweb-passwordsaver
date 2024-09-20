@@ -4,7 +4,7 @@ import { LoginI } from '../models/login.model';
 import { LoginDataI } from '../models/login-data.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
-import { BeApis, BeMainApis } from '../../environment/BeServlets';
+import { BeMainApis } from '../../environment/BeServlets';
 import { LoginResponseI } from '../models/login-response.model';
 import { LocalStorageService } from './local-storage.service';
 import { UserTypeI } from '../models/user-type.model';
@@ -25,7 +25,7 @@ export class AuthService {
   }
 
   signup(user: UserI): Observable<LoginResponseI> {
-    let url = `${environment.apiEndpoint}/${BeApis.signup}`;
+    let url = `${environment.apiEndpoint}/${BeMainApis.signup}`;
     return this.httpClient.post<LoginResponseI>(url, user);
   }
 
