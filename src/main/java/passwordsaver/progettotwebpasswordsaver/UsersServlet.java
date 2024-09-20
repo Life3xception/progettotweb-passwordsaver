@@ -244,6 +244,7 @@ public class UsersServlet extends HttpServlet {
         response.setContentType("application/json");
         BufferedReader in = request.getReader();
         String username = LoginService.getCurrentLogin(request);
+        UserDB loggedUser = UserManagerDB.getManager().getUserByUsername(username, true);
         boolean isAdmin = UserManagerDB.getManager().checkIfUserIsAdmin(username);
 
         if(request.getServletPath().equals(Apis.USERS_UPDATEUSER)) {
@@ -278,8 +279,8 @@ public class UsersServlet extends HttpServlet {
             } else if(!UserManagerDB.getManager().updateUser(username, u, isAdmin)) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } else {
-                // the update was successful, if the username has changed
-                if(!username.equals(u.getUsername())) {
+                // the update was successful, if the username has changed and the user is the same as the logged one
+                if(loggedUser.getIdUser() == u.getIdUser() && !username.equals(u.getUsername())) {
                     // we need to tell the fe to perform logout!
                     JsonErrorResponse.sendJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized", "Username has changed. Please log in again");
                 }

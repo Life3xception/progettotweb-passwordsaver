@@ -12,6 +12,6 @@ public class StartupContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        LogManagerDB.getManager().addNewLog("not-logged-user", "SERVER SHUTODOWN");
+        LogManagerDB.getManager().addNewLog("not-logged-user", "SERVER SHUTDOWN");
     }
 }
